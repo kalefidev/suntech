@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo";
+
+@theme {
+  --font-sans: "Archivo Variable", system-ui, sans-serif;
+
+  --color-noite: #14213d;
+  --color-ceu: #cfe8f3;
+  --color-nuvem: #f4f7fa;
+  --color-sol: #ffb22c;
+  --color-brasa: #e8773a;
+  --color-grafite: #2b3036;
+
+  --color-energia-luz: #ffd166;
+  --color-energia-painel: #ff9f1c;
+  --color-energia-guardada: #3ddc97;
+  --color-energia-saida: #4cc9f0;
+}
+
+:root {
+  /* --fg é atualizada pelo ScrollTrigger conforme dayTime (src/scene/daylight.ts). */
+  --fg: var(--color-nuvem);
+}
+
+html,
+body {
+  background: var(--color-noite);
+  color: var(--fg);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100;
+  overflow-x: hidden;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+.scene-canvas-wrap {
+  position: fixed !important;
+  inset: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none;
+  /* Negativo de propósito: um `fixed` com z-index 0 pinta DEPOIS do conteúdo
+     não-posicionado do DOM (as seções, que não têm `position`), cobrindo o
+     texto mesmo com `pointer-events: none`. Negativo garante que o canvas
+     fica atrás de qualquer conteúdo normal do documento. */
+  z-index: -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
