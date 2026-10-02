@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-02T14:49:30.156Z",
+  "generatedAt": "2026-10-02T22:49:08.775Z",
   "title": "Design System: SunTech",
   "extensions": {
     "colorMeta": {
@@ -153,6 +153,186 @@
           "oklch(83.6% 0.081 222.5)",
           "oklch(95.0% 0.055 222.5)"
         ]
+      },
+      "material-caixa": {
+        "role": "neutral",
+        "displayName": "Material: caixa",
+        "canonical": "oklch(19.6% 0.006 271.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 271.1)",
+          "oklch(26.4% 0.005 271.1)",
+          "oklch(37.9% 0.006 271.1)",
+          "oklch(49.3% 0.006 271.1)",
+          "oklch(60.7% 0.006 271.1)",
+          "oklch(72.1% 0.005 271.1)",
+          "oklch(83.6% 0.004 271.1)",
+          "oklch(95.0% 0.003 271.1)"
+        ]
+      },
+      "material-caixa-dentro": {
+        "role": "neutral",
+        "displayName": "Material: caixa por dentro",
+        "canonical": "oklch(23.0% 0.008 264.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.005 264.4)",
+          "oklch(26.4% 0.007 264.4)",
+          "oklch(37.9% 0.008 264.4)",
+          "oklch(49.3% 0.008 264.4)",
+          "oklch(60.7% 0.008 264.4)",
+          "oklch(72.1% 0.007 264.4)",
+          "oklch(83.6% 0.006 264.4)",
+          "oklch(95.0% 0.004 264.4)"
+        ]
+      },
+      "material-aco": {
+        "role": "neutral",
+        "displayName": "Material: aço",
+        "canonical": "oklch(79.9% 0.010 252.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 252.8)",
+          "oklch(26.4% 0.008 252.8)",
+          "oklch(37.9% 0.010 252.8)",
+          "oklch(49.3% 0.010 252.8)",
+          "oklch(60.7% 0.010 252.8)",
+          "oklch(72.1% 0.009 252.8)",
+          "oklch(83.6% 0.007 252.8)",
+          "oklch(95.0% 0.005 252.8)"
+        ]
+      },
+      "material-cabo": {
+        "role": "neutral",
+        "displayName": "Material: cabo e plugues",
+        "canonical": "oklch(18.7% 0.006 271.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 271.1)",
+          "oklch(26.4% 0.005 271.1)",
+          "oklch(37.9% 0.006 271.1)",
+          "oklch(49.3% 0.006 271.1)",
+          "oklch(60.7% 0.006 271.1)",
+          "oklch(72.1% 0.005 271.1)",
+          "oklch(83.6% 0.004 271.1)",
+          "oklch(95.0% 0.003 271.1)"
+        ]
+      },
+      "material-led-apagado": {
+        "role": "neutral",
+        "displayName": "Material: LED apagado",
+        "canonical": "oklch(24.1% 0.039 238.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.025 238.2)",
+          "oklch(26.4% 0.033 238.2)",
+          "oklch(37.9% 0.038 238.2)",
+          "oklch(49.3% 0.039 238.2)",
+          "oklch(60.7% 0.038 238.2)",
+          "oklch(72.1% 0.033 238.2)",
+          "oklch(83.6% 0.026 238.2)",
+          "oklch(95.0% 0.018 238.2)"
+        ]
+      },
+      "material-lente": {
+        "role": "neutral",
+        "displayName": "Material: lente do LED",
+        "canonical": "oklch(93.4% 0.040 229.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.026 229.4)",
+          "oklch(26.4% 0.033 229.4)",
+          "oklch(37.9% 0.038 229.4)",
+          "oklch(49.3% 0.040 229.4)",
+          "oklch(60.7% 0.038 229.4)",
+          "oklch(72.1% 0.034 229.4)",
+          "oklch(83.6% 0.027 229.4)",
+          "oklch(95.0% 0.018 229.4)"
+        ]
+      },
+      "material-celular": {
+        "role": "neutral",
+        "displayName": "Material: celular",
+        "canonical": "oklch(23.5% 0.012 264.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 264.3)",
+          "oklch(26.4% 0.010 264.3)",
+          "oklch(37.9% 0.012 264.3)",
+          "oklch(49.3% 0.012 264.3)",
+          "oklch(60.7% 0.012 264.3)",
+          "oklch(72.1% 0.011 264.3)",
+          "oklch(83.6% 0.008 264.3)",
+          "oklch(95.0% 0.006 264.3)"
+        ]
+      },
+      "material-fio-vermelho": {
+        "role": "neutral",
+        "displayName": "Material: fio vermelho",
+        "canonical": "oklch(50.3% 0.179 28.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.116 28.7)",
+          "oklch(26.4% 0.149 28.7)",
+          "oklch(37.9% 0.171 28.7)",
+          "oklch(49.3% 0.179 28.7)",
+          "oklch(60.7% 0.173 28.7)",
+          "oklch(72.1% 0.152 28.7)",
+          "oklch(83.6% 0.120 28.7)",
+          "oklch(95.0% 0.081 28.7)"
+        ]
+      },
+      "material-fio-preto": {
+        "role": "neutral",
+        "displayName": "Material: fio preto",
+        "canonical": "oklch(20.9% 0.006 271.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 271.1)",
+          "oklch(26.4% 0.005 271.1)",
+          "oklch(37.9% 0.006 271.1)",
+          "oklch(49.3% 0.006 271.1)",
+          "oklch(60.7% 0.006 271.1)",
+          "oklch(72.1% 0.005 271.1)",
+          "oklch(83.6% 0.004 271.1)",
+          "oklch(95.0% 0.003 271.1)"
+        ]
+      },
+      "luz-estudio": {
+        "role": "neutral",
+        "displayName": "Luz do estúdio",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.4% 0.000 89.9)",
+          "oklch(37.9% 0.000 89.9)",
+          "oklch(49.3% 0.000 89.9)",
+          "oklch(60.7% 0.000 89.9)",
+          "oklch(72.1% 0.000 89.9)",
+          "oklch(83.6% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ]
+      },
+      "luz-quente": {
+        "role": "neutral",
+        "displayName": "Luz quente (chave)",
+        "canonical": "oklch(97.7% 0.019 75.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 75.3)",
+          "oklch(26.4% 0.015 75.3)",
+          "oklch(37.9% 0.018 75.3)",
+          "oklch(49.3% 0.019 75.3)",
+          "oklch(60.7% 0.018 75.3)",
+          "oklch(72.1% 0.016 75.3)",
+          "oklch(83.6% 0.012 75.3)",
+          "oklch(95.0% 0.008 75.3)"
+        ]
+      },
+      "luz-fria": {
+        "role": "neutral",
+        "displayName": "Luz fria (preenchimento)",
+        "canonical": "oklch(86.4% 0.066 263.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.043 263.3)",
+          "oklch(26.4% 0.055 263.3)",
+          "oklch(37.9% 0.063 263.3)",
+          "oklch(49.3% 0.066 263.3)",
+          "oklch(60.7% 0.064 263.3)",
+          "oklch(72.1% 0.056 263.3)",
+          "oklch(83.6% 0.044 263.3)",
+          "oklch(95.0% 0.030 263.3)"
+        ]
       }
     },
     "typographyMeta": {
@@ -207,6 +387,42 @@
       "caption": {
         "displayName": "Legenda",
         "purpose": "Aula N, fontes e rótulos de estimativa, sempre abaixo do que explicam."
+      },
+      "role": {
+        "displayName": "Função da peça",
+        "purpose": "A função de cada peça na lista de \"Por dentro\"."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Números dos callouts e das etiquetas do esquema, dentro das pastilhas."
+      },
+      "menu-number": {
+        "displayName": "Número do menu",
+        "purpose": "O número de cada parte na folha do menu do celular."
+      },
+      "menu-title": {
+        "displayName": "Título do menu",
+        "purpose": "O nome de cada parte na folha do menu do celular."
+      },
+      "hud-clock": {
+        "displayName": "Relógio do HUD",
+        "purpose": "O tempo do modo pitch; cresce com a tela para ler a 3 m."
+      },
+      "hud-sector": {
+        "displayName": "Setor do HUD",
+        "purpose": "O setor que está falando, em Sol."
+      },
+      "hud-stop": {
+        "displayName": "Parada do HUD",
+        "purpose": "O momento do pitch que está na tela."
+      },
+      "hud-label": {
+        "displayName": "Rótulo do HUD",
+        "purpose": "\"Fala agora\", acima do setor."
+      },
+      "hud-button": {
+        "displayName": "Botão do HUD",
+        "purpose": "Pausar, Continuar e Sair."
       }
     },
     "shadows": [
@@ -319,6 +535,22 @@
       "description": "Folha em Noite com as 6 partes, o número da parte atual em Sol e a aula como legenda.",
       "html": "<ol class=\"ds-sheet\"><li><a href=\"#\" aria-current=\"true\"><b>1</b><span><strong>O problema</strong><small>Aula 2: Kickoff inspirador</small></span></a></li><li><a href=\"#\"><b>2</b><span><strong>O cliente</strong><small>Aula 3: Conhecendo o cliente</small></span></a></li></ol>",
       "css": ".ds-sheet{margin:0;padding:1rem 1.25rem;list-style:none;background:#14213d;color:#f4f7fa;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-sheet a{display:grid;grid-template-columns:3.25rem minmax(0,1fr);align-items:baseline;padding-block:0.95rem;color:inherit;text-decoration:none;border-top:1px solid rgb(244 247 250 / 0.16)}.ds-sheet b{font-size:2.25rem;font-stretch:125%;font-weight:800;line-height:1}.ds-sheet a[aria-current] b{color:#ffb22c}.ds-sheet strong{display:block;font-size:1.25rem;font-stretch:110%;font-weight:650;line-height:1.2;margin-bottom:0.2rem}.ds-sheet small{font-size:0.875rem;font-weight:450}.ds-sheet a:focus-visible{outline:2px solid #f4f7fa;outline-offset:3px}"
+    },
+    {
+      "name": "HUD do modo pitch",
+      "kind": "custom",
+      "refersTo": "pitch-hud",
+      "description": "Faixa fixa em Grafite: relógio, quem fala (em Sol), a parada, a barra de progresso e os botões.",
+      "html": "<div class=\"ds-hud\"><p class=\"ds-hud__clock\">1:24<small> / 3:00</small></p><p class=\"ds-hud__now\"><span class=\"ds-hud__label\">Fala agora</span><b>Produtos</b> Como funciona</p><div class=\"ds-hud__actions\"><button type=\"button\">Pausar</button><button type=\"button\">Sair</button></div><div class=\"ds-hud__track\"><i></i></div></div>",
+      "css": ".ds-hud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:\"clock now actions\" \"track track track\";align-items:center;gap:0.6rem 1.5rem;padding:0.9rem 1.5rem 1rem;background:#2b3036;color:#f4f7fa;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-hud p{margin:0}.ds-hud__clock{grid-area:clock;font-size:1.6rem;font-stretch:112%;font-weight:700}.ds-hud__clock small{font-size:0.6em;font-weight:500;opacity:0.7}.ds-hud__now{grid-area:now;display:flex;flex-wrap:wrap;align-items:baseline;gap:0.25rem 1rem;font-size:1.2rem;font-weight:600}.ds-hud__label{flex-basis:100%;font-size:0.8rem;opacity:0.7}.ds-hud__now b{color:#ffb22c;font-size:1.35rem;font-stretch:112%}.ds-hud__actions{grid-area:actions;display:flex;gap:0.5rem}.ds-hud button{min-height:2.75rem;padding:0.55em 1.1em;border:1.5px solid rgb(244 247 250 / 0.55);border-radius:999px;background:none;color:inherit;font:inherit;font-size:1rem;font-weight:650}.ds-hud__track{grid-area:track;height:3px;border-radius:999px;background:rgb(244 247 250 / 0.22);overflow:hidden}.ds-hud__track i{display:block;height:100%;width:47%;background:#ffb22c}"
+    },
+    {
+      "name": "Etiqueta do esquema",
+      "kind": "chip",
+      "refersTo": "step-tag",
+      "description": "Pílula Noite presa ao esquema 3D: o número acende na cor da etapa; a etapa em curso ganha um anel.",
+      "html": "<div class=\"ds-steps\"><span class=\"ds-step\" data-state=\"lit\" style=\"--c:#FFD166\"><b>1</b>Captar</span><span class=\"ds-step\" data-state=\"active\" style=\"--c:#3DDC97\"><b>3</b>Guardar</span><span class=\"ds-step\" data-state=\"off\" style=\"--c:#4CC9F0\"><b>4</b>Entregar</span></div>",
+      "css": ".ds-steps{display:flex;flex-wrap:wrap;gap:1rem;padding:1.5rem;background:#cfe8f3;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-step{display:inline-flex;align-items:center;gap:0.45rem;padding:0.28rem 0.75rem 0.28rem 0.3rem;border-radius:999px;background:#14213d;color:#f4f7fa;font-size:0.875rem;font-stretch:108%;font-weight:650}.ds-step b{display:inline-grid;place-items:center;width:1.35rem;height:1.35rem;border-radius:999px;background:#2b3036;font-size:0.75rem}.ds-step:not([data-state=\"off\"]) b{background:var(--c);color:#14213d}.ds-step[data-state=\"active\"]{box-shadow:0 0 0 1.5px var(--c)}.ds-step[data-state=\"off\"]{opacity:0.85}"
     }
   ],
   "narrative": {

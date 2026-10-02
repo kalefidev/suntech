@@ -7,7 +7,7 @@ const [input, output, x, y, w, h, scale = "2"] = process.argv.slice(2);
 const s = Number(scale);
 const b64 = (await readFile(input)).toString("base64");
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: Number(w) * s, height: Number(h) * s } });
+const page = await browser.newPage({ viewport: { width: Math.round(Number(w) * s), height: Math.round(Number(h) * s) } });
 await page.setContent(
   `<body style="margin:0;overflow:hidden"><img src="data:image/png;base64,${b64}" style="transform-origin:0 0;transform:translate(${-Number(x) * s}px,${-Number(y) * s}px) scale(${s});image-rendering:pixelated"></body>`,
 );

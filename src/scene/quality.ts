@@ -14,7 +14,7 @@ export interface QualitySettings {
   particles: number;
   /** Resolução do ContactShadows; 0 = sombra falsa. */
   shadowSize: number;
-  post: { bloom: boolean; noise: boolean; vignette: boolean };
+  post: { bloom: boolean; noise: boolean };
   /** Texturas procedurais: geradas uma vez, no tier de entrada. */
   textures: { cells: number; pcb: number };
   envSize: number;
@@ -27,7 +27,7 @@ const TIERS: Record<QualityTier, QualitySettings> = {
     dpr: [1, 2],
     particles: 160,
     shadowSize: 1024,
-    post: { bloom: true, noise: true, vignette: true },
+    post: { bloom: true, noise: true },
     textures: { cells: 2048, pcb: 1024 },
     envSize: 256,
     cloudOctaves: 5,
@@ -37,7 +37,7 @@ const TIERS: Record<QualityTier, QualitySettings> = {
     dpr: [1, 1.5],
     particles: 80,
     shadowSize: 512,
-    post: { bloom: true, noise: false, vignette: true },
+    post: { bloom: true, noise: false },
     textures: { cells: 1024, pcb: 512 },
     envSize: 128,
     cloudOctaves: 4,
@@ -47,7 +47,7 @@ const TIERS: Record<QualityTier, QualitySettings> = {
     dpr: [1, 1],
     particles: 32,
     shadowSize: 0,
-    post: { bloom: false, noise: false, vignette: false },
+    post: { bloom: false, noise: false },
     textures: { cells: 512, pcb: 256 },
     envSize: 64,
     cloudOctaves: 3,

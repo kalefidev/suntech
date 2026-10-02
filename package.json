@@ -11,7 +11,8 @@
     "lint": "oxlint",
     "snap": "node scripts/snap.mjs",
     "check:numbers": "node scripts/check-numbers.mjs",
-    "test:pitch": "node scripts/pitch-test.mjs"
+    "test:pitch": "node scripts/pitch-test.mjs",
+    "og": "node scripts/og.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",

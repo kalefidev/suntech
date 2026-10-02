@@ -186,7 +186,9 @@ const photonFragment = /* glsl */ `
     float glow = exp(-dot(tip, tip) * 160.0);
     float a = max(body * head * head, glow * 0.7) * vAlpha * uIntensity;
     if (a < 0.004) discard;
-    gl_FragColor = vec4(mix(uColor, vec3(1.0), clamp(head * 0.4 + glow * 0.4, 0.0, 1.0)), a);
+    // A cabeça passa de 1 (HDR): o Bloom faz o fóton brilhar.
+    vec3 color = mix(uColor, vec3(1.0), clamp(head * 0.4 + glow * 0.4, 0.0, 1.0));
+    gl_FragColor = vec4(color * (1.0 + 2.2 * glow), a);
   }
 `;
 

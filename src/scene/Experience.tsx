@@ -10,6 +10,7 @@ import { LightShaft } from "./LightShaft";
 import { Product } from "./Product/Product";
 import { CalloutProjector } from "./Callouts";
 import { Energy } from "./Energy/Energy";
+import { Effects } from "./Effects";
 import { loadProductTextures } from "./textures";
 import { DebugPerf } from "./DebugPerf";
 import { quality } from "./quality";
@@ -58,6 +59,8 @@ export function Experience() {
 
   return (
     <PerformanceMonitor onIncline={quality.incline} onDecline={quality.decline} onFallback={quality.fallback} flipflops={3}>
+      {/* Primeiro da árvore: o composer troca o tone mapping antes de qualquer material compilar. */}
+      <Effects />
       <Sky />
       <CameraRig />
       <Lights />

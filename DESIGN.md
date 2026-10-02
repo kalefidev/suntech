@@ -12,6 +12,18 @@ colors:
   energia-painel: "#FF9F1C"
   energia-guardada: "#3DDC97"
   energia-saida: "#4CC9F0"
+  material-caixa: "#141518"
+  material-caixa-dentro: "#1B1D21"
+  material-aco: "#B9BEC4"
+  material-cabo: "#121316"
+  material-led-apagado: "#0B2230"
+  material-lente: "#CFEFFF"
+  material-celular: "#1B1E24"
+  material-fio-vermelho: "#B4261E"
+  material-fio-preto: "#17181B"
+  luz-estudio: "#FFFFFF"
+  luz-quente: "#FFF6EA"
+  luz-fria: "#BCD3FF"
 typography:
   display:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
@@ -93,9 +105,60 @@ typography:
     fontSize: "0.875rem"
     fontWeight: 450
     lineHeight: 1.4
+  role:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.95rem"
+    fontWeight: 420
+    lineHeight: 1.45
+  micro:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    lineHeight: 1
+  menu-number:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "2.25rem"
+    fontWeight: 800
+    lineHeight: 1
+    fontVariation: "'wdth' 125"
+  menu-title:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 650
+    lineHeight: 1.2
+    fontVariation: "'wdth' 110"
+  hud-clock:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.6rem, 2.2vw, 2.75rem)"
+    fontWeight: 700
+    lineHeight: 1.1
+    fontVariation: "'wdth' 112"
+  hud-sector:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.35rem, 1.75vw, 2.1rem)"
+    fontWeight: 700
+    lineHeight: 1.1
+    fontVariation: "'wdth' 112"
+  hud-stop:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.2rem, 1.5vw, 1.85rem)"
+    fontWeight: 600
+    lineHeight: 1.15
+  hud-label:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(0.8rem, 0.75vw, 1rem)"
+    fontWeight: 600
+    lineHeight: 1.2
+  hud-button:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1rem, 0.95vw, 1.25rem)"
+    fontWeight: 650
+    lineHeight: 1.2
+    fontVariation: "'wdth' 108"
 rounded:
   pill: "999px"
   ticket: "18px"
+  focus: "2px"
 spacing:
   gutter: "clamp(1.25rem, 4vw, 2.5rem)"
   header: "4rem"
@@ -192,6 +255,16 @@ o nome escrito ao lado:
   mais fundo (#8DBBDA), definido no `daylight.ts`.
 - **Grafite** (#2B3036): isolamento dos fios, contorno das amostras de cor da
   energia e HUD do modo pitch.
+
+### Materiais do produto (3D)
+Cores físicas, não de interface: só existem nos materiais PBR da cena, nunca
+no DOM. A caixa é um preto fosco quente (#141518; por dentro, #1B1D21), as
+peças de metal são aço (#B9BEC4), o cabo e os plugues são quase pretos
+(#121316), os fios internos são o vermelho e o preto de sempre (#B4261E e
+#17181B), o LED apagado é um azul-petróleo (#0B2230) atrás de uma lente
+clara (#CFEFFF), e o celular é um grafite frio (#1B1E24). As luzes do
+estúdio (os painéis do ambiente) são branco puro, uma chave quente (#FFF6EA)
+e um preenchimento frio (#BCD3FF).
 
 ### Named Rules
 **A Regra da Hora.** Toda cor de céu, sol, nuvens, estrelas, luz da cena e
@@ -366,6 +439,28 @@ tabulares e o rótulo "(estimativa)" na legenda da tabela de custos.
 ### Legenda da energia
 Cada cor de energia é um traço em pílula, contornado de Grafite, com o nome
 escrito ao lado em `--fg`.
+
+### Etiquetas do esquema
+As 4 etapas de "Como funciona" em pílulas Noite presas ao esquema 3D: o
+número numa pastilha Grafite (apagada) que acende na cor da etapa, e um anel
+na cor da etapa em curso. A cor é luz dentro da pastilha escura, nunca tinta
+sobre o céu. No celular, à esquerda da coluna do esquema.
+
+### Barras de custo
+Na tabela de custos, uma barra de 5px em `currentColor` embaixo de cada item,
+com a parte dele no total; embaixo do preço, uma barra divide os R$ 249 em
+custo (cheio) e margem (listrada, lida sem cor). Os valores ficam no texto.
+
+### HUD do modo pitch
+Faixa fixa embaixo, em Grafite com texto Nuvem: relógio (`hud-clock`), "Fala
+agora" (`hud-label`), o setor em Sol (`hud-sector`), a parada (`hud-stop`), a
+barra de progresso em Sol e os botões em pílula contornada (`hud-button`). O
+tipo cresce com a tela, para ler a 3 m na TV; no celular, em duas linhas.
+
+### Cursor
+Só com `pointer: fine` e sem reduced motion: um anel no tom do texto
+(`--fg`) que acompanha a seta do sistema (ela continua: respeita o tamanho
+de cursor que a pessoa escolheu) e cresce sobre o que é clicável.
 
 ## Do's and Don'ts
 

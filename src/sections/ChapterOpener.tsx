@@ -13,7 +13,9 @@ export function ChapterOpener({ part }: { part: Part }) {
   const ref = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   useScrubFrom(ref, ".chapter__numeral-inner", { yPercent: 100 });
-  useLineReveal(titleRef, { aria: "hidden" });
+  // "none": o SplitText não mexe na acessibilidade; o nome do título é o
+  // `aria-label` nosso. ("hidden" esconderia o h2 inteiro do leitor de tela.)
+  useLineReveal(titleRef, { aria: "none" });
 
   return (
     <header ref={ref} className="chapter col-text" data-anchor={`${part.id}-abertura`}>

@@ -499,4 +499,6 @@ export const REST_AT: Partial<Record<SectionId, number>> = {
   "por-dentro": 0.98,
   "como-funciona": 0.98,
   "energia-fica": 0.68,
+  // A Parte 6 descansa na pose final (no meio da volta, o painel mostra as costas).
+  jovem: 1,
 };

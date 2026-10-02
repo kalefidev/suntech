@@ -23,9 +23,10 @@ const fragmentShader = /* glsl */ `
     // A cabeça do pulso vai na frente (u maior) e a cauda fica para trás.
     float t = fract(uTime * uSpeed - vFlowUv.x * uDensity);
     float pulse = smoothstep(0.0, 0.1, t) * (1.0 - smoothstep(0.1, 0.42, t));
-    // Aceso, o fio inteiro tem a cor da etapa; os pulsos correm por cima.
-    float glow = mix(0.25 + 0.75 * pulse, 0.6, uStatic);
-    csm_Emissive = uColor * glow * uIntensity * 2.2;
+    // Aceso, o fio inteiro tem a cor da etapa (abaixo do limiar do Bloom); a
+    // cabeça dos pulsos passa dele e brilha (Effects.tsx).
+    float glow = mix(0.5 + 3.6 * pulse, 1.3, uStatic);
+    csm_Emissive = uColor * glow * uIntensity;
   }
 `;
 

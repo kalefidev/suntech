@@ -12,8 +12,8 @@ está em `docs/fase-0.md`; o brief, em `BRIEF.md`.
   começou na branch `v2`.
 - **01/10:** Fase 0 revisada (M1 a M8) e aprovada; a Fase 1 avançou.
 - **02/10:** Fases 1, 2 e 3 fechadas.
-- **02/10 (tarde e noite):** Fases 4 (Parte 3), 5 (Parte 4) e 6 (Partes 5
-  e 6) fechadas.
+- **02/10 (tarde e noite):** Fases 4 (Parte 3), 5 (Parte 4), 6 (Partes 5
+  e 6) e 7 (polimento) fechadas. O site está pronto para publicar.
 
 ## Respostas do usuário (valem daqui para a frente)
 
@@ -287,8 +287,10 @@ Feito:
 
 - **SplitText e acessibilidade:** `aria: "auto"` só em elementos que aceitam
   `aria-label` (títulos); em `span` o rótulo é ignorado. Nos títulos de
-  capítulo, o `aria-label` é nosso e o SplitText só esconde as linhas
-  (`aria: "hidden"`); nas citações longas, `aria: "none"`.
+  capítulo, o `aria-label` é nosso e o SplitText não mexe (`aria: "none"`;
+  **corrigido na Fase 7**: o `"hidden"` punha `aria-hidden` no h2 inteiro, e
+  os títulos dos capítulos sumiam do leitor de tela; o axe achou). Nas
+  citações longas, `aria: "none"`.
 - **Linha reta cresce em `scaleX`, não com DrawSVG:** o DrawSVG com
   `non-scaling-stroke` e `preserveAspectRatio="none"` desenhou a linha em
   pedaços. O DrawSVG fica para as linhas curvas (callouts da Fase 4 e a linha
@@ -494,6 +496,82 @@ As seis passadas sem erro e sem violação de contraste, WebGL em todas menos
 `?nowebgl`: LCP de 188 a 336 ms, CLS 0. JS gzip: inicial 137,5 KB (teto
 150), total 409,6 KB (teto 500), CSS 8,9 KB. Crítica: 24/28 (86%).
 `npm run test:pitch`: tudo certo.
+
+## Fase 7: polimento (02/10/2026)
+
+Feito:
+- **Pós-processamento por tier** (`scene/Effects.tsx`): Bloom no que emite
+  luz (o sol, o LED, a cabeça dos pulsos e dos fótons, que passaram a ir além
+  de 1 em HDR; o fio aceso e o céu ficam abaixo do limiar) e grão de filme
+  leve no tier alto. O tone mapping Neutral virou o último efeito: o visual
+  não mudou (comparado quadro a quadro com a Fase 6).
+- **Autocrítica:** saiu a vinheta, o efeito que menos contribuía. Não tinha
+  papel na história, quase não se via e escurecia os cantos onde ficam o
+  header e o começo das colunas de texto.
+- **Cursor** (`sections/Cursor.tsx`): um anel no tom do texto que acompanha a
+  seta do sistema e cresce sobre o que é clicável; só com `pointer: fine` e
+  sem reduced motion. A seta continua (respeita o tamanho de cursor que a
+  pessoa configurou no sistema).
+- **LCP protegido:** o chunk 3D baixa desde o começo, mas o canvas só monta
+  depois de a fonte chegar e de o texto pintar. No Chrome do Windows, a
+  primeira compilação dos shaders ocupa o processo da GPU, que também compõe
+  a página, e tinha atrasado o título do hero em segundos (o 4,1 s da Fase
+  4). Medido: LCP 308 ms; 968 ms com a CPU 4× mais lenta (teto de 2 s).
+- **SEO e Open Graph:** imagem 1200×630 gerada do hero (`npm run og`, em
+  `public/og.png`) e as tags com URL absoluta (`og:image`, `og:url`,
+  canônico, card grande do Twitter/X) quando há `SITE_URL` ou, na Vercel, o
+  domínio de produção. O título, a descrição e o favicon (um sol) já
+  existiam.
+- **Acessibilidade:** auditoria com o axe-core (`scripts/dev/axe.mjs`): 0
+  violações no desktop, no celular, com reduced motion e com o HUD do pitch
+  no ar. O axe achou que os títulos dos capítulos sumiam do leitor de tela
+  (o `aria: "hidden"` do SplitText escondia o h2 inteiro); corrigido. Teclado
+  (`scripts/dev/tab-order.mjs`): 21 paradas de foco em ordem, todas com
+  contorno visível.
+- **Detector da `impeccable`:** 0 achados depois de documentar no DESIGN.md
+  os materiais do produto (cores físicas, só na cena), a tipografia do HUD,
+  das etiquetas e do menu, e os componentes novos (etiquetas do esquema,
+  barras de custo, HUD e cursor); o sidecar `.impeccable/design.json` foi
+  refeito.
+- **Snap com o tablet em pé** (768×1024), que a seção 10 do brief pede.
+- **README** com como rodar, publicar na Vercel, editar os textos e medir o
+  FPS com `?debug` (no PC e no celular).
+
+### Decisões técnicas da Fase 7
+
+- **O composer fica montado em todos os tiers** (no baixo, só com o tone
+  mapping): o EffectComposer troca o tone mapping do renderer, o que muda o
+  programa de todos os materiais. Montado desde o começo (primeiro da
+  árvore), os materiais compilam uma vez só.
+- **Bloom com limiar alto (0,92) e emissão HDR onde importa:** baixar o
+  limiar faria o céu claro do meio-dia brilhar inteiro.
+- **O `snap` na GPU é um desvio da seção 12 do brief** (que pede o
+  SwiftShader): com a cena completa, o SwiftShader levava de 25 a 55 s por
+  foto e estourava o tempo na TV, e ainda baixava o tier (as fotos não
+  mostravam o visual real). `SNAP_GL=swiftshader` volta ao que o brief pede.
+  A espera em cada ponto passou de ~900 ms para 1.500 ms: com quadros de
+  verdade, o damping da câmera leva esse tempo para assentar.
+- **Contador conta assim que aparece** (`top bottom`): com o gatilho mais
+  abaixo, o dado da d.light ficava lendo "0 milhões" na borda de baixo da
+  tela do celular (achado na revisão do snap final).
+- **Reduced motion na Parte 6 descansa na pose final** (no meio da volta, o
+  painel mostrava as costas).
+
+### `snap` final (`.snapshots/fase-7-final/`)
+
+| Passada | Erros | Contraste | WebGL | LCP | CLS |
+|---|---|---|---|---|---|
+| 1440×900 | 0 | 0 | sim | 576 ms | 0 |
+| 390×844 | 0 | 0 | sim | 232 ms | 0 |
+| 1440×900 reduced motion | 0 | 0 | sim | 196 ms | 0 |
+| 390×844 reduced motion | 0 | 0 | sim | 188 ms | 0 |
+| TV 1920×1080 | 0 | 0 | sim | 232 ms | 0 |
+| Tablet 768×1024 | 0 | 0 | sim | 228 ms | 0 |
+| 1440×900 `?nowebgl` | 0 | 0 | não (esperado) | 216 ms | 0 |
+
+JS gzip: inicial 137,7 KB (teto 150); cena 286,4 KB; total 432,5 KB (teto
+500); CSS 9,0 KB. Revisado imagem por imagem (as 231 fotos, em grades por
+passada). Relatório final: `docs/relatorio-final.md`.
 
 ## Pendências do usuário (nenhuma bloqueia)
 

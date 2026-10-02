@@ -1595,6 +1595,41 @@ a {
     margin-top: 2.25rem;
   }
 
+  /* Cursor (seção 9 do brief): acompanha a seta do sistema e cresce sobre o
+     que é clicável. `scale` (não `transform`): o GSAP move o x e o y. */
+  .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 70;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -1.375rem 0 0 -1.375rem;
+    border: 1.5px solid var(--fg);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    scale: 0.3;
+    transition:
+      scale 220ms var(--ease-out-quart),
+      opacity 160ms linear;
+  }
+
+  .cursor[data-visible="1"] {
+    opacity: 0.6;
+  }
+
+  .cursor[data-visible="1"][data-hot="1"] {
+    opacity: 0.9;
+    scale: 1;
+  }
+
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .cursor {
+      display: none;
+    }
+  }
+
   /* HUD do modo pitch: fixo embaixo, em Grafite, legível a 3 m na TV. */
   .pitch-hud {
     position: fixed;

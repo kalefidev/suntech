@@ -28,8 +28,9 @@ export function useLineReveal(
     stagger?: number;
     /**
      * "auto": o SplitText põe o texto no `aria-label` e esconde as linhas
-     * (bom para títulos). "hidden": só esconde as linhas; o elemento já tem o
-     * próprio `aria-label`. "none": não mexe em nada (citações longas).
+     * (bom para títulos sem rótulo próprio). "hidden": esconde o elemento
+     * INTEIRO do leitor de tela (só serve com o texto repetido em outro lugar).
+     * "none": não mexe em nada (títulos com `aria-label` próprio e citações).
      */
     aria?: "auto" | "hidden" | "none";
   } = {},
@@ -125,7 +126,9 @@ export function useCountUp(ref: RefObject<HTMLElement | null>, value: number) {
         });
         el.setAttribute("data-counting", "");
         show();
-        ScrollTrigger.create({ trigger: el, start: ENTER, once: true, onEnter: () => tween.play() });
+        // Conta assim que o número aparece na tela: com o gatilho mais abaixo
+        // (ENTER), o dado ficava lendo "0" na borda de baixo até disparar.
+        ScrollTrigger.create({ trigger: el, start: "top bottom", once: true, onEnter: () => tween.play() });
         return () => el.removeAttribute("data-counting");
       });
     },

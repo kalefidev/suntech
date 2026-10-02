@@ -3,10 +3,11 @@
 // Faz o build, mede o JS (gzip) contra o orçamento da seção 11, sobe o preview
 // e fotografa cada seção de `window.__sections` no início, no meio e no fim
 // (nas cenas presas, 0%, 50% e 100% do pin). Passadas: 1440×900 e 390×844
-// (toque), normal e com reduced motion, mais 1920×1080 (a TV do estande) e
-// `?nowebgl` (fallback). Em cada ponto, mede o contraste nos pixels reais: tira
-// uma segunda foto com o texto transparente e compara a cor de cada texto com
-// o fundo logo atrás dele (10º percentil, WCAG AA).
+// (toque), normal e com reduced motion, mais 1920×1080 (a TV do estande),
+// 768×1024 (tablet em pé) e `?nowebgl` (fallback). Em cada ponto, mede o
+// contraste nos pixels reais: tira uma segunda foto com o texto transparente
+// e compara a cor de cada texto com o fundo logo atrás dele (10º percentil,
+// WCAG AA).
 //
 // Falha com: erro no console, contraste abaixo de AA ou WebGL ausente.
 //
@@ -45,6 +46,8 @@ const PASSES = [
   { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false, reduced: true },
   { name: "390x844", viewport: { width: 390, height: 844 }, touch: true, reduced: true },
   { name: "1920x1080", viewport: { width: 1920, height: 1080 }, touch: false, dir: "tv" },
+  // Tablet em pé (seção 10 do brief): o layout empilhado, mais largo que o celular.
+  { name: "768x1024", viewport: { width: 768, height: 1024 }, touch: true, dir: "tablet" },
   { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false, nowebgl: true },
 ]
   .filter((p) => !QUICK || (!p.reduced && !p.dir && !p.nowebgl))
