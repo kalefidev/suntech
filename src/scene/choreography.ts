@@ -128,6 +128,25 @@ const pose = (x: number, y: number, z: number, ry: number, s = 1, rx = 0, rz = 0
  * direita; no celular, fica em cima, acima do texto.
  */
 const HERO_TARGET = [0.25, 0.62, 0.15] as const;
+/** Centro da caixa e meio da bancada, já com o produto girado −35°. */
+const CASE_FOCUS = [-1.07, 0.34, 0.84] as const;
+const BENCH_TARGET = [-0.85, 0.55, 0.6] as const;
+/** Entre a caixa e o celular, com o produto na pose de bancada. */
+const NIGHT_TARGET = [-0.57, 0.25, 1.46] as const;
+/**
+ * O esquema de "Como funciona" fica no espaço do mundo, de frente para a
+ * câmera dele: no desktop, uma linha horizontal à direita do texto; no
+ * celular, uma coluna em cima do texto. A linha é centrada no alvo; `gaps` é
+ * o vão entre duas peças (unidades da cena): maior entre etapas, menor dentro
+ * de uma etapa, para as peças de cada etapa lerem como um grupo.
+ */
+export const SCHEMATIC = {
+  target: [0, 0.7, 0.6] as const,
+  azimuth: -8,
+  elevation: 9,
+  wide: { distance: 17.5, fov: 30, sx: 0.21, sy: 0.03, gaps: { step: 0.45, inner: 0.26 } },
+  narrow: { distance: 13.7, fov: 34, sx: 0.09, sy: 0.12, gaps: { step: 0.3, inner: 0.16 } },
+} as const;
 const CAMERA = {
   hero: orbit(HERO_TARGET, -16, 13, 11.5, 30, 0.32, -0.28),
   heroOut: orbit(HERO_TARGET, -16, 13, 12.2, 30, 0.32, -0.28),
@@ -135,6 +154,22 @@ const CAMERA = {
   // No celular o texto rola por cima do canvas: o produto sobe junto com o
   // hero (uma tela inteira de deslocamento de lente) e sai por cima dele.
   heroOutNarrow: orbit(HERO_TARGET, -16, 13, 15.5, 34, 0.06, 1.12),
+  // "Por dentro": a câmera chega perto da caixa e recua conforme as peças se
+  // separam. O produto vira para o outro lado (pose de bancada): o painel fica
+  // atrás e à direita da caixa na tela, nunca embaixo da coluna de texto.
+  benchWide: orbit(BENCH_TARGET, -27, 28, 8, 30, 0.24, -0.06),
+  caseClose: orbit(CASE_FOCUS, -28, 30, 6.2, 30, 0.2, -0.04),
+  benchWideNarrow: orbit(BENCH_TARGET, -26, 27, 16.5, 34, 0.04, 0.19),
+  schematic: orbit(SCHEMATIC.target, SCHEMATIC.azimuth, SCHEMATIC.elevation, SCHEMATIC.wide.distance, SCHEMATIC.wide.fov, SCHEMATIC.wide.sx, SCHEMATIC.wide.sy),
+  schematicNarrow: orbit(SCHEMATIC.target, SCHEMATIC.azimuth, SCHEMATIC.elevation, SCHEMATIC.narrow.distance, SCHEMATIC.narrow.fov, SCHEMATIC.narrow.sx, SCHEMATIC.narrow.sy),
+  caseCloseNarrow: orbit(CASE_FOCUS, -28, 30, 10.5, 34, 0.02, 0.21),
+  // "A energia fica": de noite, perto da caixa fechada e do celular ligado
+  // nela (o painel dobrado fica atrás, fora da coluna de texto).
+  night: orbit(NIGHT_TARGET, -22, 26, 7.2, 30, 0.24, -0.04),
+  nightNarrow: orbit(NIGHT_TARGET, -22, 26, 12.5, 34, 0.04, 0.05),
+  // 3c: a pose do hero, um pouco mais alta (o texto do diferencial é longo e
+  // o produto não pode ficar espremido no canto de baixo).
+  diff: orbit(HERO_TARGET, -16, 13, 12, 30, 0.3, -0.12),
 };
 
 const PRODUCT = {
@@ -143,7 +178,49 @@ const PRODUCT = {
   heroOut: pose(0, 0, 0, 48),
   /** Parte 1: o produto vai para o fundo, à direita, enquanto a tempestade o apaga. */
   away: pose(1.4, 0, -3.2, 70),
+  /** Parte 3: a bancada de "Por dentro", "Como funciona" e da noite. */
+  bench: pose(0, 0, 0, -35),
+  /** 3c: de volta à pose de herói, girando com o scroll. */
+  diffOut: pose(0, 0, 0, 88),
 };
+
+/**
+ * "A energia fica" (docs/fase-0.md, item 5): de 0 a 30% do pin, no pôr do
+ * sol, o esquema se recolhe, a caixa fecha e o painel dobra; o cabo 3 em 1
+ * liga a caixa ao celular, que carrega enquanto o texto da noite está na tela
+ * (34–66%); de 84% a 100%, o dia seguinte nasce, o celular sai e o painel
+ * abre de novo.
+ */
+export const NIGHT_IN_PIN = { cable: [0.26, 0.36], charge: [0.36, 0.66], morning: [0.84, 1] } as const;
+
+/** Em "Por dentro", a explosão vai de 30% a 90% do pin (docs/fase-0.md, item 5). */
+export const EXPLODE_IN_PIN = [0.3, 0.9] as const;
+
+/** Posição no pin de "Por dentro" em que a explosão vale `explode`. */
+export function explodeToPin(explode: number): number {
+  return EXPLODE_IN_PIN[0] + (EXPLODE_IN_PIN[1] - EXPLODE_IN_PIN[0]) * explode;
+}
+
+// ---------------------------------------------------------- esquema
+
+/**
+ * "Como funciona" (docs/fase-0.md, M3): o esquema se forma de 0 a 10% do pin;
+ * as 4 etapas acendem em sequência até 70% (`flow` de 0 a 4); de 70% a 100%,
+ * o circuito inteiro funciona junto.
+ */
+export const SCHEMATIC_IN_PIN = [0, 0.1] as const;
+export const FLOW_IN_PIN = [0.1, 0.7] as const;
+
+/** Posição no pin de "Como funciona" em que `flow` vale `value` (0 a 4). */
+export function flowToPin(value: number): number {
+  return FLOW_IN_PIN[0] + ((FLOW_IN_PIN[1] - FLOW_IN_PIN[0]) * value) / 4;
+}
+
+/** Nós do esquema, na ordem do caminho da energia (seção 7 do brief). */
+export const SCHEMATIC_NODES = ["panel", "diode", "charger", "battery", "boost", "output", "phone"] as const;
+export type SchematicNode = (typeof SCHEMATIC_NODES)[number];
+
+
 
 // Tom: 1 = texto Nuvem, −1 = texto Noite, 0 = travessia (sem texto na tela).
 const LIGHT = 1;
@@ -224,16 +301,93 @@ export const TRACKS: Track[] = [
       hero: [[0, 1]],
       // Sai cedo: as oportunidades se abrem em colunas logo depois.
       problema: [[0, 1], [0.12, 0]],
+      // Volta da névoa no fim de "A nossa solução", já na bancada.
+      solucao: [[0, 0], [0.86, 0], [1, 1]],
+      // Some na névoa da manhã quando a tabela do diferencial passa, antes
+      // de a Parte 4 entrar.
+      diferencial: [[0, 1], [0.4, 1], [0.55, 0]],
     },
     // No celular, o produto já saiu da tela com o hero.
     narrow: {
       hero: [[0, 1], [0.85, 1], [1, 0]],
       problema: [[0, 0]],
+      solucao: [[0, 0], [0.86, 0], [1, 1]],
+      // Sai por cima no fim da noite, antes de o texto do diferencial subir.
+      "energia-fica": [[0, 1], [0.98, 1], [1, 0]],
+      diferencial: [[0, 0]],
     },
   },
   {
     path: "panelOpen",
-    keys: { hero: [[0, 1]] },
+    keys: {
+      hero: [[0, 1]],
+      "energia-fica": [[0, 1], [0.14, 1], [0.28, 0], [0.86, 0], [0.96, 1]],
+    },
+  },
+  // "Por dentro": a tampa abre (18–35%) e as peças se separam (30–90%), cada
+  // uma no seu trecho (Product/motion.ts). O LED acende na vez da luz
+  // indicadora; "Como funciona" apaga e acende de novo na etapa 4.
+  {
+    path: "lidOpen",
+    keys: {
+      "por-dentro": [[0, 0], [0.18, 0], [0.35, 1]],
+      "energia-fica": [[0, 1], [0.2, 1], [0.3, 0]],
+    },
+  },
+  {
+    path: "explode",
+    keys: {
+      "por-dentro": [[0, 0], [EXPLODE_IN_PIN[0], 0], [EXPLODE_IN_PIN[1], 1]],
+      "como-funciona": [[0, 1]],
+      "energia-fica": [[0, 1], [0.08, 1], [0.24, 0]],
+    },
+  },
+  {
+    path: "ledOn",
+    keys: {
+      "por-dentro": [[0, 0], [explodeToPin(0.72), 0], [explodeToPin(0.76), 1]],
+      // Apaga no esquema e acende de novo na etapa 4 (a saída ligada). Fica
+      // acesa a noite toda e apaga quando o celular é desligado, de manhã.
+      "como-funciona": [[0, 1], [0.06, 0], [flowToPin(3), 0], [flowToPin(3.2), 1]],
+      "energia-fica": [[0, 1], [NIGHT_IN_PIN.morning[0], 1], [0.88, 0]],
+    },
+  },
+  // "Como funciona": as peças viram esquema (0–10%), as etapas acendem
+  // (10–70%), a bateria enche na etapa 3 e o celular chega na 4.
+  {
+    path: "schematic",
+    keys: { "como-funciona": [[0, 0], [SCHEMATIC_IN_PIN[1], 1]], "energia-fica": [[0, 1], [0.16, 0]] },
+  },
+  {
+    path: "flow",
+    keys: { "como-funciona": [[0, 0], [FLOW_IN_PIN[0], 0], [FLOW_IN_PIN[1], 4]] },
+  },
+  // A bateria enche de dia, passa a carga para o celular à noite e recomeça
+  // a encher com o sol da manhã (3c).
+  {
+    path: "batteryCharge",
+    keys: {
+      "como-funciona": [[0, 0.15], [flowToPin(2), 0.15], [flowToPin(3), 1]],
+      "energia-fica": [[0, 1], [NIGHT_IN_PIN.charge[0], 1], [NIGHT_IN_PIN.charge[1], 0.15]],
+      diferencial: [[0, 0.15], [1, 0.3]],
+    },
+  },
+  {
+    path: "phoneVisible",
+    keys: {
+      "como-funciona": [[0, 0], [flowToPin(2.9), 0], [flowToPin(3.1), 1]],
+      "energia-fica": [[0, 1], [0.86, 1], [0.92, 0]],
+    },
+  },
+  {
+    path: "cable",
+    keys: {
+      "energia-fica": [[0, 0], [NIGHT_IN_PIN.cable[0], 0], [NIGHT_IN_PIN.cable[1], 1], [NIGHT_IN_PIN.morning[0], 1], [0.88, 0]],
+    },
+  },
+  {
+    path: "phoneCharge",
+    keys: { "energia-fica": [[0, 0], [NIGHT_IN_PIN.charge[0], 0], [NIGHT_IN_PIN.charge[1], 1]] },
   },
   {
     path: "tilt",
@@ -251,6 +405,18 @@ export const TRACKS: Track[] = [
       [0, PRODUCT.heroOut],
       [0.12, PRODUCT.away],
     ],
+    // Invisível no meio do caminho; chega à bancada antes de aparecer.
+    solucao: [[0.8, PRODUCT.bench]],
+    "por-dentro": [[0, PRODUCT.bench]],
+    "como-funciona": [[0, PRODUCT.bench]],
+    "energia-fica": [
+      [NIGHT_IN_PIN.morning[0], PRODUCT.bench],
+      [1, PRODUCT.hero],
+    ],
+    diferencial: [
+      [0, PRODUCT.hero],
+      [0.55, PRODUCT.diffOut],
+    ],
   }),
   ...poseTracks<CameraKey>(
     "camera",
@@ -259,10 +425,47 @@ export const TRACKS: Track[] = [
         [0, CAMERA.hero],
         [1, CAMERA.heroOut],
       ],
+      solucao: [[0.8, CAMERA.benchWide]],
+      "por-dentro": [
+        [0, CAMERA.benchWide],
+        [0.18, CAMERA.caseClose],
+        [EXPLODE_IN_PIN[0], CAMERA.caseClose],
+        [EXPLODE_IN_PIN[1], CAMERA.benchWide],
+      ],
+      "como-funciona": [
+        [0, CAMERA.benchWide],
+        [SCHEMATIC_IN_PIN[1], CAMERA.schematic],
+      ],
+      "energia-fica": [
+        [0, CAMERA.schematic],
+        [0.3, CAMERA.night],
+        [NIGHT_IN_PIN.morning[0], CAMERA.night],
+        [1, CAMERA.diff],
+      ],
+      diferencial: [[0, CAMERA.diff]],
     },
     {
       hero: [
         [0, CAMERA.heroNarrow],
+        [1, CAMERA.heroOutNarrow],
+      ],
+      solucao: [[0.8, CAMERA.benchWideNarrow]],
+      "por-dentro": [
+        [0, CAMERA.benchWideNarrow],
+        [0.18, CAMERA.caseCloseNarrow],
+        [EXPLODE_IN_PIN[0], CAMERA.caseCloseNarrow],
+        [EXPLODE_IN_PIN[1], CAMERA.benchWideNarrow],
+      ],
+      "como-funciona": [
+        [0, CAMERA.benchWideNarrow],
+        [SCHEMATIC_IN_PIN[1], CAMERA.schematicNarrow],
+      ],
+      // De manhã, o produto volta à pose do hero e sobe para fora da tela.
+      "energia-fica": [
+        [0, CAMERA.schematicNarrow],
+        [0.3, CAMERA.nightNarrow],
+        [NIGHT_IN_PIN.morning[0], CAMERA.nightNarrow],
+        [0.94, CAMERA.heroNarrow],
         [1, CAMERA.heroOutNarrow],
       ],
     },
@@ -276,7 +479,9 @@ export const TRACKS: Track[] = [
  */
 export const REST_AT: Partial<Record<SectionId, number>> = {
   hero: 0,
-  "por-dentro": 1,
-  "como-funciona": 1,
+  // Sem pin, o fim de uma seção é o começo da próxima: o repouso fica um
+  // pouco antes, para as chaves da seguinte (o tom, por exemplo) não valerem.
+  "por-dentro": 0.98,
+  "como-funciona": 0.98,
   "energia-fica": 0.68,
 };

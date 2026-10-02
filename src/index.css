@@ -935,6 +935,234 @@ a {
     line-height: 1.45;
   }
 
+  /* A peça que acabou de se separar (a cena 3D marca): o número vira uma
+     pastilha, sem mudar o tamanho do texto. */
+  .parts-list li .parts-list__n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    transition:
+      background-color 200ms var(--ease-out-quart),
+      color 200ms var(--ease-out-quart);
+  }
+
+  /* Pastilha no tom do texto, com o número na cor oposta. */
+  .parts-list li[data-active="1"] .parts-list__n {
+    background: var(--fg);
+    color: var(--color-noite);
+  }
+
+  :root[data-tone="dark"] .parts-list li[data-active="1"] .parts-list__n {
+    color: var(--color-nuvem);
+  }
+
+  /* Callouts de "Por dentro": camada fixa acima do canvas, abaixo do header.
+     Cada callout vai até a peça (transform escrito pela cena 3D). */
+  .callouts {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 240ms var(--ease-out-quart);
+  }
+
+  .callouts[data-visible="1"] {
+    opacity: 1;
+  }
+
+  .callout {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+  }
+
+  .callout__dot {
+    position: absolute;
+    left: -0.7rem;
+    top: -0.7rem;
+    display: grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    background: var(--color-noite);
+    color: var(--color-nuvem);
+    box-shadow: 0 0 0 2px var(--color-nuvem);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    transform: scale(0.6);
+    opacity: 0;
+    transition:
+      transform 220ms var(--ease-out-quart),
+      opacity 160ms linear;
+  }
+
+  /* A linha se desenha (pathLength 1) e a etiqueta aparece na ponta dela. */
+  .callout__line {
+    position: absolute;
+    left: 0.55rem;
+    bottom: 0.4rem;
+    width: 3.2rem;
+    height: 1.9rem;
+    overflow: visible;
+  }
+
+  .callout__line path {
+    fill: none;
+    stroke: var(--color-nuvem);
+    stroke-width: 1.5;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 260ms var(--ease-out-quart) 80ms;
+  }
+
+  .callout__label {
+    position: absolute;
+    left: 3.6rem;
+    bottom: 2rem;
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    background: var(--color-nuvem);
+    color: var(--color-noite);
+    font-size: 0.875rem;
+    font-stretch: 108%;
+    font-weight: 650;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px -10px rgb(20 33 61 / 0.6);
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 200ms linear 200ms,
+      transform 260ms var(--ease-out-quart) 200ms;
+  }
+
+  .callout[data-side="left"] .callout__line {
+    left: auto;
+    right: 0.55rem;
+    transform: scaleX(-1);
+  }
+
+  .callout[data-side="left"] .callout__label {
+    left: auto;
+    right: 3.6rem;
+  }
+
+  .callout[data-on="1"] .callout__dot {
+    transform: none;
+    opacity: 1;
+  }
+
+  .callout[data-current="1"] .callout__line path {
+    stroke-dashoffset: 0;
+  }
+
+  .callout[data-current="1"] .callout__label {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Etiquetas das etapas no esquema de "Como funciona" (a cena 3D escreve a
+     posição e o estado). A cor da etapa é luz dentro de uma pastilha escura:
+     apagada, o número fica Grafite; acesa, na cor da etapa. */
+  .steps-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 240ms var(--ease-out-quart);
+  }
+
+  .steps-layer[data-visible="1"] {
+    opacity: 1;
+  }
+
+  .step-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.28rem 0.75rem 0.28rem 0.3rem;
+    border-radius: 999px;
+    background: var(--color-noite);
+    color: var(--color-nuvem);
+    font-size: 0.875rem;
+    font-stretch: 108%;
+    font-weight: 650;
+    white-space: nowrap;
+    translate: -50% calc(-100% - 0.4rem);
+    will-change: transform;
+    box-shadow: 0 0 0 1.5px transparent;
+    transition: box-shadow 220ms var(--ease-out-quart);
+  }
+
+  .step-tag__n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    background: var(--color-grafite);
+    color: var(--color-nuvem);
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition:
+      background-color 220ms var(--ease-out-quart),
+      color 220ms var(--ease-out-quart);
+  }
+
+  .step-tag__title {
+    opacity: 0.72;
+    transition: opacity 220ms linear;
+  }
+
+  .step-tag:not([data-state="off"]) .step-tag__n {
+    background: var(--step-color);
+    color: var(--color-noite);
+  }
+
+  .step-tag:not([data-state="off"]) .step-tag__title {
+    opacity: 1;
+  }
+
+  /* A etapa em curso ganha o anel na cor dela. */
+  .step-tag[data-state="active"] {
+    box-shadow: 0 0 0 1.5px var(--step-color);
+  }
+
+  /* "3,7 V → 5 V" embaixo do conversor: só aparece na etapa 4. */
+  .step-tag--volts {
+    gap: 0.35rem;
+    padding: 0.28rem 0.7rem;
+    font-variant-numeric: tabular-nums;
+    translate: -50% 0.4rem;
+    opacity: 0;
+    transition: opacity 220ms linear;
+  }
+
+  .step-tag--volts[data-state="lit"] {
+    opacity: 1;
+  }
+
+  .step-tag__arrow {
+    width: 1.1rem;
+    height: 0.55rem;
+    fill: none;
+    stroke: var(--color-energia-saida);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   .steps {
     gap: 1.4rem;
   }
@@ -943,8 +1171,27 @@ a {
     margin: 0;
   }
 
+  /* A etapa em curso no esquema (a cena 3D marca): o número vira pastilha,
+     como na lista de peças. */
   .steps__title .num {
-    margin-right: 0.3em;
+    display: inline-grid;
+    place-items: center;
+    width: 1.3em;
+    height: 1.3em;
+    margin-right: 0.2em;
+    border-radius: 999px;
+    transition:
+      background-color 200ms var(--ease-out-quart),
+      color 200ms var(--ease-out-quart);
+  }
+
+  .steps__item[data-active="1"] .steps__title .num {
+    background: var(--fg);
+    color: var(--color-noite);
+  }
+
+  :root[data-tone="dark"] .steps__item[data-active="1"] .steps__title .num {
+    color: var(--color-nuvem);
   }
 
   .steps__text {
@@ -1276,8 +1523,53 @@ a {
   }
 
   /* No celular, a lista de peças mostra só os nomes (as funções continuam
-     para o leitor de tela; a Fase 4 põe a legenda numerada). */
+     para o leitor de tela), e os callouts mostram só o número: a lista é a
+     legenda numerada. */
   @media not all and (min-width: 768px) and (min-aspect-ratio: 1/1) {
+    .callout__line,
+    .callout__label {
+      display: none;
+    }
+
+    /* Na coluna do esquema, as etiquetas ficam à esquerda dos nós. */
+    .step-tag {
+      translate: calc(-100% - 0.4rem) -50%;
+    }
+
+    .step-tag--volts {
+      translate: 0.4rem -50%;
+    }
+
+    /* "Como funciona" no celular, com a cena: o esquema ocupa a tela de cima
+       e o texto mostra só a etapa em curso (as quatro empilhadas no mesmo
+       lugar, para a altura não pular). O leitor de tela lê a lista inteira;
+       as cores ficam nas etiquetas do esquema. */
+    @media (prefers-reduced-motion: no-preference) {
+      :root[data-scene="on"] .steps__item {
+        grid-area: 1 / 1;
+        opacity: 0;
+        transition: opacity 120ms linear;
+      }
+
+      :root[data-scene="on"] .steps__item[data-active="1"] {
+        opacity: 1;
+        transition: opacity 220ms linear 100ms;
+      }
+
+      :root[data-scene="on"] .steps__text {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
+      }
+
+      :root[data-scene="on"] .legend {
+        display: none;
+      }
+    }
+
     .parts-list__role,
     .steps__text {
       position: absolute;
@@ -1537,5 +1829,38 @@ a {
     height: auto;
     min-height: 100svh;
     padding-block: 18svh;
+  }
+
+  /* No celular, o produto rola junto com a cena (lib/tracks.ts), no alto
+     dela: o texto começa abaixo da figura. */
+  @media not all and (min-width: 768px) and (min-aspect-ratio: 1/1) {
+    :root[data-scene="on"] .stage {
+      justify-content: flex-start;
+      padding-top: var(--figure, 50svh);
+    }
+
+    :root[data-scene="on"] #por-dentro {
+      --figure: 46svh;
+    }
+
+    :root[data-scene="on"] #como-funciona {
+      --figure: 68svh;
+    }
+
+    :root[data-scene="on"] #energia-fica {
+      --figure: 62svh;
+    }
+
+    /* Sem pin, o texto tem lugar: as funções das peças e o texto das etapas
+       voltam a aparecer. */
+    .parts-list__role,
+    .steps__text {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+    }
   }
 }

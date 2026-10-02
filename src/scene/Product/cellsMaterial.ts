@@ -11,11 +11,13 @@ const vertexShader = /* glsl */ `
 
 // Reflexo da abertura: uma faixa quente que corre pelas duas placas em
 // diagonal (uGlint de 0 a 1). Com sol, as células ganham um brilho azulado
-// leve, como a camada antirreflexo do silício (uIrradiance).
+// leve, como a camada antirreflexo do silício (uIrradiance). No esquema, as
+// células brilham onde os fótons batem (uLight).
 const fragmentShader = /* glsl */ `
   uniform sampler2D uSurface;
   uniform float uGlint;
   uniform float uIrradiance;
+  uniform float uLight;
   uniform float uPlate;
   varying vec2 vCellUv;
   void main() {
@@ -27,7 +29,8 @@ const fragmentShader = /* glsl */ `
     float band = exp(-d * d) * live;
     vec3 glint = vec3(1.0, 0.84, 0.56) * band * 1.1;
     vec3 sheen = vec3(0.10, 0.16, 0.42) * uIrradiance * 0.08;
-    csm_Emissive = (glint + sheen) * cell;
+    vec3 lit = vec3(1.0, 0.82, 0.4) * uLight * 0.12;
+    csm_Emissive = (glint + sheen + lit) * cell;
   }
 `;
 
@@ -46,6 +49,7 @@ export function createCellsMaterial(color: Texture, surface: Texture, plate: 0 |
       uSurface: { value: surface },
       uGlint: productUniforms.uGlint,
       uIrradiance: productUniforms.uIrradiance,
+      uLight: productUniforms.uLight,
       uPlate: { value: plate },
     },
     map: color,

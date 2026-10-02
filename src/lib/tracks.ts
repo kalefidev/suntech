@@ -24,6 +24,8 @@ let held = false;
 let reduced = false;
 let cssSkyActive = false;
 let restSection: string | null = null;
+/** Deslocamento vertical de lente da pose de repouso (reduced motion). */
+let restSy = 0;
 
 /** Faixa de uma seção em px de scroll: o pin, ou do topo dela no topo da tela até a base no topo. */
 function rangeOf(b: SectionBounds, max: number): [number, number] {
@@ -94,15 +96,21 @@ function seek(y: number): void {
 /**
  * Reduced motion: quando muda a seção no meio da tela, a timeline salta para o
  * ponto de repouso dela. O céu chega lá com um crossfade curto (scene/Sky.tsx),
- * e o produto pula sem animar.
+ * e o produto pula sem animar. No layout empilhado, o produto ainda rola junto
+ * com a seção, como uma figura no meio do texto (o deslocamento de lente anda
+ * uma tela por tela de scroll): sem pin, o texto nunca passa por cima dele.
  */
 function updateReduced(): void {
   const probe = window.scrollY + window.innerHeight * 0.5;
   const section = getSections().find((s) => tracked.has(s.id) && probe >= s.start && probe < s.end);
-  if (!section || section.id === restSection) return;
-  restSection = section.id;
-  const [a, z] = rangeOf(section, ScrollTrigger.maxScroll(window));
-  seek(a + (z - a) * (REST_AT[section.id as SectionId] ?? 0.5));
+  if (!section) return;
+  if (section.id !== restSection) {
+    restSection = section.id;
+    const [a, z] = rangeOf(section, ScrollTrigger.maxScroll(window));
+    seek(a + (z - a) * (REST_AT[section.id as SectionId] ?? 0.5));
+    restSy = sceneState.camera.sy;
+  }
+  if (!window.matchMedia(WIDE).matches) sceneState.camera.sy = restSy + (window.scrollY - section.start) / window.innerHeight;
 }
 
 function update(): void {

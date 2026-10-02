@@ -23,6 +23,8 @@ import { Company } from "./sections/Company";
 import { Pitch } from "./sections/Pitch";
 import { Youth } from "./sections/Youth";
 import { Footer } from "./sections/Footer";
+import { CalloutLayer } from "./sections/CalloutLayer";
+import { StepLayer } from "./sections/StepLayer";
 import { copy } from "./content/copy";
 
 const SceneCanvas = lazy(() => track("scene", import("./scene/SceneCanvas")));
@@ -92,6 +94,12 @@ export default function App() {
       </main>
 
       <Footer />
+      {!flags.noWebgl && (
+        <>
+          <CalloutLayer />
+          <StepLayer />
+        </>
+      )}
 
       {flags.debug && (
         <Suspense fallback={null}>

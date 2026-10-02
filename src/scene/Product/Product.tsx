@@ -11,6 +11,10 @@ import { productDimensions } from "./dimensions";
 import { Panel, PANEL_LIFT } from "./Panel";
 import { Case } from "./Case";
 import { PanelCable } from "./PanelCable";
+import { Phone } from "./Phone";
+import { PhoneCable } from "./PhoneCable";
+import { productLive } from "./motion";
+import { productUniforms } from "../uniforms";
 
 const POSE_KEYS = ["x", "y", "z", "rx", "ry", "rz", "s"] as const satisfies ReadonlyArray<keyof Pose>;
 
@@ -21,6 +25,24 @@ const CASE_TURN = 0.3;
 
 /** Inclinação máxima pelo ponteiro, em graus. */
 const TILT = { x: 5, y: 9 };
+
+/**
+ * Amortece uma vez por quadro os valores que as peças leem (explosão, esquema,
+ * tampa, painel e carga). É o primeiro filho do produto: o `useFrame` dele
+ * roda antes do das peças. Com reduced motion, os valores pulam.
+ */
+function ProductDriver({ reduced }: { reduced: boolean }) {
+  useFrame((_, delta) => {
+    const keys = ["explode", "schematic", "lidOpen", "panelOpen", "batteryCharge"] as const;
+    for (const key of keys) {
+      if (reduced) productLive[key] = sceneState[key];
+      // A abertura do painel já vem com a curva da timeline: damping curto.
+      else easing.damp(productLive, key, sceneState[key], key === "panelOpen" ? 0.06 : 0.18, delta);
+    }
+    productUniforms.uCharge.value = productLive.batteryCharge;
+  });
+  return null;
+}
 
 /**
  * O Carregador Solar SunTech (seção 8 do brief): painel dobrável, caixa e o
@@ -37,12 +59,15 @@ export function Product() {
   const group = useRef<Group>(null);
   const panelAnchor = useRef<Object3D>(null);
   const caseAnchor = useRef<Object3D>(null);
+  const outputAnchor = useRef<Object3D>(null);
+  const phoneConnector = useRef<Object3D>(null);
   const live = useRef({ ...sceneState.product, visible: sceneState.productVisible, tiltX: 0, tiltY: 0 });
 
   useFrame((_, delta) => {
     const g = group.current;
     if (!g) return;
     const pose = sceneState.product;
+    // (os valores das peças são amortecidos no ProductDriver, que roda antes)
     const l = live.current;
     for (const key of POSE_KEYS) {
       if (reduced) l[key] = pose[key];
@@ -62,13 +87,16 @@ export function Product() {
 
   return (
     <group ref={group}>
+      <ProductDriver reduced={reduced} />
       <group position={PANEL_AT}>
         <Panel dims={dims} materials={materials} textures={textures} cableAnchor={panelAnchor} />
       </group>
       <group position={CASE_AT} rotation-y={CASE_TURN}>
-        <Case dims={dims} materials={materials} cableAnchor={caseAnchor} />
+        <Case dims={dims} materials={materials} textures={textures} cableAnchor={caseAnchor} outputAnchor={outputAnchor} />
       </group>
       <PanelCable root={group} from={panelAnchor} to={caseAnchor} material={materials.cable} />
+      <Phone connector={phoneConnector} />
+      <PhoneCable root={group} from={outputAnchor} to={phoneConnector} cableMaterial={materials.cable} plugMaterial={materials.plastic} />
       <group position={[-0.2, 0, 0.6]}>
         <ContactShadow subject={group} width={5.4} depth={3.6} />
       </group>

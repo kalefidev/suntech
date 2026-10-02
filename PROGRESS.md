@@ -11,7 +11,8 @@ está em `docs/fase-0.md`; o brief, em `BRIEF.md`.
 - **28/09:** prompt novo (o `BRIEF.md` atual). Fase 0 da v2 aprovada; a Fase 1
   começou na branch `v2`.
 - **01/10:** Fase 0 revisada (M1 a M8) e aprovada; a Fase 1 avançou.
-- **02/10:** Fase 1 fechada.
+- **02/10:** Fases 1, 2 e 3 fechadas.
+- **02/10 (tarde):** Fase 4 (Parte 3) fechada.
 
 ## Respostas do usuário (valem daqui para a frente)
 
@@ -295,6 +296,114 @@ Feito:
   `max-width: none`, senão as colunas ficam estreitas.
 - Ação de teclado não anima: o link "Pular" e o header com foco aparecem na
   hora.
+
+### `snap` da Fase 3 (`.snapshots/fase-3/`)
+
+As seis passadas sem erro e sem violação de contraste: LCP de 176 a 280 ms,
+CLS 0, WebGL em todas menos `?nowebgl` (esperado). JS gzip: inicial 133,9 KB,
+total 397,3 KB.
+
+## Fase 4: Parte 3, a solução (02/10/2026)
+
+Feito:
+- **"Por dentro":** a tampa abre e o interior se separa por peça
+  (`Product/motion.ts`: janela, deslocamento e giro de cada uma), com a
+  bateria (2× 18650, carga em verde no CSM), as placas do controlador e do
+  boost, o diodo, a fiação e as camadas do painel (vidro, células e base).
+  Callouts no DOM (`CalloutLayer` + projetor na cena): o número acende quando
+  a peça se separa, e só a última ganha o nome; a lista da seção marca a mesma
+  peça. No celular, só os números (a lista é a legenda).
+- **"Como funciona":** as peças viram um esquema limpo (`scene/schematic.ts`),
+  agrupadas por etapa: no desktop, uma linha à direita do texto; no celular,
+  uma coluna em cima. Fios em curva com pulsos na cor da etapa
+  (`Energy/Energy.tsx`), crescendo do painel para o celular; fótons em risco
+  de luz descendo do sol (sempre de cima) e as células brilhando onde a luz
+  bate; a bateria enche de verde na etapa 3; o celular chega na 4, com o
+  "3,7 V → 5 V" no conversor e o LED aceso. Etiquetas das 4 etapas numeradas
+  e legendadas desde que o esquema se forma (M3), apagadas, acesas ou em curso;
+  a lista marca a etapa em curso. No celular, o texto mostra só a etapa em
+  curso (as quatro empilhadas no mesmo lugar; o leitor de tela lê todas).
+- **"A energia fica":** no pôr do sol, o esquema se recolhe, a caixa fecha e o
+  painel dobra; o cabo 3 em 1 (`Product/PhoneCable.tsx`) sai da USB-A, deita
+  no chão e abre nas três pontas perto do celular; o LED fica aceso (com halo)
+  e a tela sobe de 0 a 100% com o texto da noite. De manhã, o cabo recolhe, o
+  celular sai em fade, o painel abre e o produto volta à pose de herói.
+- **3c (diferencial):** o produto gira com o scroll ao lado do texto, na luz
+  da manhã, e some antes da Parte 4. No celular, ele sobe para fora da tela
+  no fim da noite (o texto do diferencial ocupa a largura toda).
+- Câmera: telas mais estreitas que 16:10 (ou que 390×844, no celular) abrem o
+  campo de visão na mesma proporção, para o produto não sair pela lateral.
+- Ferramentas: `scripts/dev/nodes.mjs` (mede onde cada nó, etiqueta e texto
+  caem na tela), `scripts/dev/pins.mjs` (várias frações de um pin numa sessão)
+  e o `probe.mjs` com `at=` e `orbit=`.
+
+### Decisões técnicas da Fase 4
+
+- **O esquema vem das medidas das peças:** `EXTENT` (meia largura e meia
+  altura de cada peça no esquema, medidas com o `nodes.mjs`) e os vãos de
+  `SCHEMATIC.gaps` dão a posição de cada nó; a linha toda é centrada no alvo
+  da câmera. Trocar a escala de uma peça pede medir de novo.
+- **`blendToNode` trabalha em espaço de mundo** (lerp/slerp e volta ao espaço
+  do pai): a cadeia de grupos acima da peça não importa. O nó guarda o
+  `center` (o meio da peça, na linha) separado da `position` (a origem): o
+  painel e a frente da caixa têm a origem no chão.
+- **A frente da caixa ganha um espelho só no esquema** (some com a caixa
+  montada), e o painel volta a ser um só (sem as camadas da explosão) a
+  caminho do nó.
+- **Pulsos com a cabeça na frente:** `fract(uTime * uSpeed - u * uDensity)`; a
+  densidade sai do comprimento de cada fio, para pulsos iguais em fios curtos
+  e longos. O fio aceso tem 25% de base na cor da etapa.
+- **Fótons em risco:** cada ponto desenha um traço na direção em que anda (a
+  direção projetada sai do vértice); mistura normal, não aditiva (no céu claro,
+  a aditiva vira branco).
+- **Callouts só em "Por dentro":** a vista explodida volta em "A energia
+  fica", mas com `flow` em 4 a camada não aparece.
+- **Repouso do reduced motion fora da borda:** sem pin, o fim de uma seção é
+  o começo da próxima; o repouso fica em 0,98 para as chaves da seguinte (o
+  tom do texto) não valerem.
+- **Sombra de contato refeita quando qualquer peça mexe** (painel, tampa,
+  explosão, esquema, cabos e celular, já amortecidos), não só a pose do grupo;
+  some no esquema.
+- **Nada troca o programa de um shader em runtime:** ligar e desligar
+  `transparent` (o fade do celular) muda o `#define OPAQUE` e compila um
+  programa novo no meio da cena; no SwiftShader, a foto da TV estourava 30 s.
+  Material que faz fade nasce transparente (celular, espelho da caixa).
+- **O `snap` usa a GPU da máquina** (ANGLE sobre D3D11 no Windows,
+  `scripts/gl.mjs`): ~15 ms por quadro em 1080p, contra ~1 s no SwiftShader,
+  que levava 25 a 55 s por foto e estourava o tempo na passada da TV. E as
+  fotos passam a mostrar o tier alto: no SwiftShader, o `PerformanceMonitor`
+  descia para o baixo (sombra falsa). `SNAP_GL=swiftshader` volta ao
+  software.
+- **Reduced motion no celular:** sem pin, o texto passava por cima do produto.
+  O produto agora rola junto com a seção (o deslocamento de lente anda uma
+  tela por tela de scroll, em `lib/tracks.ts`), como uma figura no alto da
+  cena (`--figure` no CSS), e o texto começa abaixo dela. Sem pin há lugar: as
+  funções das peças e o texto das etapas voltam a aparecer.
+
+### `snap` da Fase 4 (`.snapshots/fase-4/`, já na GPU)
+
+| Passada | Erros | Contraste | WebGL | LCP | CLS |
+|---|---|---|---|---|---|
+| 1440×900 | 0 | 0 | sim | 4.112 ms* | 0 |
+| 390×844 | 0 | 0 | sim | 1.504 ms* | 0 |
+| 1440×900 reduced motion | 0 | 0 | sim | 228 ms | 0 |
+| 390×844 reduced motion | 0 | 0 | sim | 192 ms | 0 |
+| TV 1920×1080 | 0 | 0 | sim | 248 ms | 0 |
+| 1440×900 `?nowebgl` | 0 | 0 | não (esperado) | 252 ms | 0 |
+
+\* **Achado para a Fase 7:** a abertura (e o nome do hero) espera o
+`Warmup` compilar os shaders. No D3D11 (o Chrome no Windows), a primeira
+compilação, com o cache frio, leva uns 4 s; com o cache do processo da GPU
+quente (as passadas seguintes, no mesmo navegador), o LCP cai para ~250 ms.
+O SwiftShader escondia isso. Caminho provável: mostrar o texto do hero sem
+esperar a cena, e a cena entrar quando estiver pronta.
+
+JS gzip: inicial 135,2 KB (teto 150); cena 263,8 KB; total 407,4 KB (teto
+500); CSS 8,1 KB. A Parte 3 inteira custou ~9 KB no chunk da cena.
+
+Crítica (`.impeccable/critique/`): 22/28 (79%, bom). Aceite cumprido: no meio
+de "Como funciona", as 4 etapas estão visíveis e legendadas, e o caminho se
+lê sem o texto.
 
 ## Pendências do usuário (nenhuma bloqueia)
 

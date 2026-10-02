@@ -19,6 +19,7 @@ import { VerticalBlurShader } from "three/addons/shaders/VerticalBlurShader.js";
 import { quality } from "./quality";
 import { sceneState } from "./state";
 import { makeCanvas } from "./textures/canvas";
+import { productLive } from "./Product/motion";
 
 interface ContactShadowProps {
   /** O grupo do produto: a sombra só é refeita quando ele se mexe. */
@@ -42,6 +43,17 @@ export function ContactShadow(props: ContactShadowProps) {
   const settings = useSyncExternalStore(quality.subscribe, quality.get);
   return settings.shadowSize > 0 ? <RenderedShadow {...props} resolution={settings.shadowSize} /> : <FakeShadow {...props} />;
 }
+
+/** O que muda a silhueta do produto além da pose do grupo (valores já amortecidos onde há). */
+const silhouette = () => [
+  productLive.panelOpen,
+  productLive.lidOpen,
+  productLive.explode,
+  productLive.schematic,
+  sceneState.panelCable,
+  sceneState.cable,
+  sceneState.phoneVisible,
+];
 
 function RenderedShadow({ subject, width, depth, far = 1.2, blur = 3.5, opacity = 0.9, resolution }: ContactShadowProps & { resolution: number }) {
   const gl = useThree((state) => state.gl);
@@ -96,7 +108,7 @@ function RenderedShadow({ subject, width, depth, far = 1.2, blur = 3.5, opacity 
 
   const last = useMemo(() => new Matrix4(), []);
   const clearColor = useMemo(() => new Color(), []);
-  const state = useRef({ panelOpen: -1, lidOpen: -1, panelCable: -1, frames: 0 });
+  const state = useRef({ shape: [] as number[], frames: 0 });
 
   const blurPass = (amount: number) => {
     const { blurPlane, horizontal, vertical, target, blurTarget, camera } = kit;
@@ -119,24 +131,20 @@ function RenderedShadow({ subject, width, depth, far = 1.2, blur = 3.5, opacity 
     const material = planeMaterialRef.current;
     const object = subject.current;
     if (!group || !material || !object) return;
-    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5);
-    group.visible = object.visible;
-    if (!object.visible) return;
+    // No esquema, as peças flutuam: sem sombra no chão.
+    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5) * (1 - productLive.schematic);
+    group.visible = object.visible && material.opacity > 0.001;
+    if (!group.visible) return;
 
     // Refaz só quando o produto (ou uma peça dele) se mexeu.
     const s = state.current;
-    const moved =
-      !last.equals(object.matrixWorld) ||
-      Math.abs(s.panelOpen - sceneState.panelOpen) > 1e-4 ||
-      Math.abs(s.lidOpen - sceneState.lidOpen) > 1e-4 ||
-      Math.abs(s.panelCable - sceneState.panelCable) > 1e-3;
+    const shape = silhouette();
+    const moved = !last.equals(object.matrixWorld) || shape.some((value, i) => Math.abs(value - (s.shape[i] ?? -1)) > 1e-4);
     if (moved) s.frames = 2;
     if (s.frames <= 0) return;
     s.frames--;
     last.copy(object.matrixWorld);
-    s.panelOpen = sceneState.panelOpen;
-    s.lidOpen = sceneState.lidOpen;
-    s.panelCable = sceneState.panelCable;
+    s.shape = shape;
 
     const background = scene.background;
     const override = scene.overrideMaterial;
@@ -189,8 +197,9 @@ function FakeShadow({ subject, width, depth, opacity = 0.7 }: ContactShadowProps
     const mesh = meshRef.current;
     const material = materialRef.current;
     if (!mesh || !material) return;
-    mesh.visible = subject.current?.visible ?? false;
-    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5);
+    // No esquema, as peças flutuam: sem sombra no chão.
+    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5) * (1 - productLive.schematic);
+    mesh.visible = (subject.current?.visible ?? false) && material.opacity > 0.001;
   });
 
   return (

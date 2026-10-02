@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { copy } from "../content/copy";
 import { energyPath } from "../content/product";
 import { usePinnedStage } from "../lib/stage";
+import { registerStep } from "../lib/steps";
 import { EnergyDiagram } from "./EnergyDiagram";
 
 /**
@@ -28,7 +29,13 @@ export function HowItWorks() {
         </h3>
         <ol className="steps">
           {energyPath.map((s) => (
-            <li key={s.id} className="steps__item" data-step={s.id}>
+            <li
+              key={s.id}
+              className="steps__item"
+              data-step={s.id}
+              data-active="0"
+              ref={(element) => registerStep(s.id, "item", element)}
+            >
               <h4 className="type-h3 steps__title">
                 <span className="num">{s.n}</span> {s.title}
               </h4>

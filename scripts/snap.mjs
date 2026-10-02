@@ -18,6 +18,7 @@
 //   --url=http://localhost:5180  fotografa um servidor já no ar (sem build,
 //                 sem preview e sem medir o JS)
 import { chromium } from "playwright";
+import { GL_ARGS } from "./gl.mjs";
 import { spawn } from "node:child_process";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
@@ -35,7 +36,7 @@ const PORT = 4173;
 const BASE = URL_ARG ?? `http://localhost:${PORT}`;
 const ROOT = path.resolve(".");
 const OUT_DIR = path.join(ROOT, ".snapshots", PHASE);
-const WAIT_MS = 900;
+const WAIT_MS = 1500;
 const BUDGET = { initial: 150, total: 500 };
 
 const PASSES = [
@@ -359,7 +360,7 @@ async function main() {
   }
 
   const preview = URL_ARG ? null : await startPreview();
-  const browser = await chromium.launch({ headless: true, args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+  const browser = await chromium.launch({ headless: true, args: GL_ARGS });
   let failed = false;
   try {
     for (const pass of PASSES) failed = (await runPass(browser, pass, report)) || failed;

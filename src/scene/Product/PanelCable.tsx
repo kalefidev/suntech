@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CatmullRomCurve3, type Material, type Mesh, type Object3D, TubeGeometry, Vector3 } from "three";
 import { sceneState } from "../state";
+import { productLive } from "./motion";
 
 const RADIUS = 0.017;
 const SEGMENTS = 72;
@@ -45,7 +46,8 @@ export function PanelCable({ root, from, to, material }: PanelCableProps) {
     if (!group || !start || !end || !mesh) return;
 
     const drawn = sceneState.panelCable;
-    mesh.visible = drawn > 0.001;
+    // No esquema, o cabo do painel vira o primeiro fio de fluxo.
+    mesh.visible = drawn > 0.001 && productLive.schematic < 0.02;
     if (!mesh.visible) return;
 
     group.updateWorldMatrix(true, true);

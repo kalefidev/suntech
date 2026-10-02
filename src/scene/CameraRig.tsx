@@ -4,7 +4,8 @@ import { type PerspectiveCamera, Vector3 } from "three";
 import { easing } from "maath";
 import { sceneState, type CameraPose } from "./state";
 import { LAYER_BACKDROP } from "./layers";
-import { useReducedMotion } from "../lib/useReducedMotion";
+import { useMedia, useReducedMotion } from "../lib/useReducedMotion";
+import { WIDE } from "../lib/env";
 
 const KEYS = ["x", "y", "z", "tx", "ty", "tz", "fov", "sx", "sy"] as const satisfies ReadonlyArray<keyof CameraPose>;
 
@@ -17,6 +18,7 @@ const KEYS = ["x", "y", "z", "tx", "ty", "tz", "fov", "sx", "sy"] as const satis
 export function CameraRig() {
   const camera = useThree((state) => state.camera) as PerspectiveCamera;
   const reduced = useReducedMotion();
+  const wide = useMedia(WIDE);
   const live = useRef<CameraPose>({ ...sceneState.camera });
   const target = useMemo(() => new Vector3(), []);
 
@@ -34,10 +36,14 @@ export function CameraRig() {
     camera.position.set(l.x, l.y, l.z);
     target.set(l.tx, l.ty, l.tz);
     camera.lookAt(target);
-    camera.fov = l.fov;
+    const { width, height } = size;
+    // As poses foram enquadradas em 16:10 (desktop) e 390×844 (celular). Numa
+    // tela mais estreita que essas, o campo de visão abre na mesma proporção:
+    // o que o layout pôs nas laterais continua na tela.
+    const fit = Math.max(1, (wide ? 1.6 : 0.46) / (width / height));
+    camera.fov = fit === 1 ? l.fov : (360 / Math.PI) * Math.atan(Math.tan((l.fov * Math.PI) / 360) * fit);
     // O three tira o aspecto da câmera da "tela cheia" do deslocamento: passa
     // a tela real. Já atualiza a projeção.
-    const { width, height } = size;
     camera.setViewOffset(width, height, -l.sx * width, l.sy * height, width, height);
   });
 

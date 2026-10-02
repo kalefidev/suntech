@@ -2,12 +2,14 @@ import { useRef } from "react";
 import { copy } from "../content/copy";
 import { parts } from "../content/product";
 import { usePinnedStage } from "../lib/stage";
+import { registerCallout } from "../lib/callouts";
 
 /**
  * Cena "Por dentro" (pin; do nascer ao meio-dia). 0–18%: travessia sem texto,
  * enquanto o sol nasce e a câmera chega à caixa. Depois, o título e a lista das
- * peças, que é também a versão acessível dos callouts do 3D. Só opacidade: o
- * leitor de tela continua lendo tudo.
+ * peças, que é também a versão acessível dos callouts do 3D: a cena marca a
+ * peça que acabou de se separar. Só opacidade: o leitor de tela continua
+ * lendo tudo.
  */
 export function Inside() {
   const ref = useRef<HTMLElement>(null);
@@ -33,7 +35,7 @@ export function Inside() {
         </h3>
         <ol className="parts-list">
           {parts.map((p, i) => (
-            <li key={p.id} data-part-id={p.id}>
+            <li key={p.id} data-part-id={p.id} data-active="0" ref={(element) => registerCallout(p.id, "item", element)}>
               <span className="num parts-list__n">{i + 1}</span>
               <span>
                 <strong className="parts-list__name">{p.name}</strong>

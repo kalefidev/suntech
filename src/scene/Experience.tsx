@@ -1,13 +1,15 @@
 import { Suspense, useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
-import type { Object3D, Scene } from "three";
+import type { Camera, Object3D, Scene } from "three";
 import { Sky } from "./Sky";
 import { CameraRig } from "./CameraRig";
 import { Lights } from "./Lights";
 import { StudioEnvironment } from "./StudioEnvironment";
 import { LightShaft } from "./LightShaft";
 import { Product } from "./Product/Product";
+import { CalloutProjector } from "./Callouts";
+import { Energy } from "./Energy/Energy";
 import { loadProductTextures } from "./textures";
 import { DebugPerf } from "./DebugPerf";
 import { quality } from "./quality";
@@ -41,17 +43,18 @@ function Warmup() {
 declare global {
   interface Window {
     /** Só em dev ou com `?snap`: a cena do three, para testes. */
-    __three?: { scene: Scene };
+    __three?: { scene: Scene; camera: Camera };
   }
 }
 
 /** Conteúdo do `<Canvas>` único da página. */
 export function Experience() {
   const scene = useThree((state) => state.scene);
+  const camera = useThree((state) => state.camera);
   useEffect(() => {
     track("textures", loadProductTextures());
-    if (testHooks) window.__three = { scene };
-  }, [scene]);
+    if (testHooks) window.__three = { scene, camera };
+  }, [scene, camera]);
 
   return (
     <PerformanceMonitor onIncline={quality.incline} onDecline={quality.decline} onFallback={quality.fallback} flipflops={3}>
@@ -61,6 +64,8 @@ export function Experience() {
       <StudioEnvironment />
       <Suspense fallback={null}>
         <Product />
+        <CalloutProjector />
+        <Energy />
         <Warmup />
       </Suspense>
       <LightShaft />

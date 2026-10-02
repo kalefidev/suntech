@@ -30,8 +30,11 @@ texturas em canvas 2D em runtime e shaders em `.glsl?raw`.
   do pin) em 1440×900 e 390×844, normal e com reduced motion, mais TV
   1920×1080 e `?nowebgl`. Mede o contraste nos pixels reais e falha com erro
   de console, contraste abaixo de AA ou WebGL ausente. Saída em
-  `.snapshots/<fase>/` (fora do git), com `report.json`. **Demora** (uns 30
-  min completo): rode em segundo plano. Para iterar:
+  `.snapshots/<fase>/` (fora do git), com `report.json`. No Windows, o
+  Chromium usa a GPU da máquina (`scripts/gl.mjs`: ~15 ms por quadro em
+  1080p, e as fotos mostram o tier real); `SNAP_GL=swiftshader` força o
+  renderizador por software (~1 s por quadro, ~30 s por foto: rode em segundo
+  plano). Para iterar:
   `node scripts/snap.mjs <nome> --quick --only=390x844 --no-build`.
 
 Flags de URL: `?debug` (leva + r3f-perf), `?snap` (expõe `window.__ready`,
@@ -41,10 +44,13 @@ DPR 1), `?goto=<id>` (pula para uma seção), `?nowebgl` (força o fallback) e
 
 Ferramentas de depuração em `scripts/dev/` (com o preview no ar em :4173):
 `frame.mjs` (enquadramento da câmera sem build), `probe.mjs` (foto com campos
-do `sceneState` forçados), `opening.mjs` (a abertura quadro a quadro),
-`crop.mjs` e `montage.mjs` (recorte ampliado e grade de imagens). O SwiftShader
-leva segundos por quadro: no Windows, pare o preview pelo PID (não há
-`pkill`), senão a porta 4173 fica presa e o `snap` falha.
+do `sceneState` forçados; `at=<seção>:<fração>` rola antes, `orbit=...` monta a
+câmera), `pins.mjs` (várias frações de um pin numa sessão), `nodes.mjs` (onde
+os nós do esquema, as etiquetas e o texto caem na tela), `frametime.mjs`
+(tempo de quadro por ponto), `opening.mjs` (a abertura quadro a quadro),
+`crop.mjs` e `montage.mjs` (recorte ampliado e grade de imagens). No
+Windows, pare o preview pelo PID (não há `pkill`), senão a porta 4173 fica
+presa e o `snap` falha.
 
 ## Regras de arquitetura (seção 5 do brief)
 
@@ -79,6 +85,9 @@ leva segundos por quadro: no Windows, pare o preview pelo PID (não há
   `lib/sections.ts` mede as faixas a cada refresh do ScrollTrigger.
 - `ScrollControls` do drei é proibido.
 - Objetos 3D fora da sua cena ficam com `visible = false`.
+- Nada troca o programa de um shader depois do aquecimento (`Warmup`): não
+  ligue e desligue `transparent`, a névoa ou defines em runtime. Material que
+  faz fade nasce transparente.
 
 ## Fontes de fatos
 
