@@ -64,6 +64,7 @@ export function Sky() {
     dayTime: sceneState.dayTime,
     cloudCover: sceneState.cloudCover,
     guard: 1,
+    wide: sceneState.guardWide,
     mode: 1,
     fade: 1,
     fadeFrom: null as SkyUniforms | null,
@@ -93,8 +94,9 @@ export function Sky() {
     // Tom 0 (travessia) solta a guarda; ao sair da travessia, ela volta aos poucos.
     if (sceneState.tone !== 0) s.mode = Math.sign(sceneState.tone);
     easing.damp(s, "guard", sceneState.tone !== 0 ? 1 : 0, 0.2, delta);
+    easing.damp(s, "wide", sceneState.guardWide, 0.25, delta);
 
-    let sky = computeSky(s.dayTime, s.cloudCover, size.width / size.height, s.mode, s.guard);
+    let sky = computeSky(s.dayTime, s.cloudCover, size.width / size.height, s.mode, s.guard, s.wide);
     if (s.fade < 1 && s.fadeFrom) {
       s.fade = Math.min(1, s.fade + delta / FADE_SECONDS);
       const t = 1 - (1 - s.fade) ** 3;

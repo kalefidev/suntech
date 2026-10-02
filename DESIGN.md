@@ -47,6 +47,25 @@ typography:
     fontWeight: 560
     lineHeight: 1.2
     fontVariation: "'wdth' 108"
+  highlight:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.6rem, 3.3vw, 3.15rem)"
+    fontWeight: 560
+    lineHeight: 1.2
+    fontVariation: "'wdth' 108"
+  persona:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2rem, 4.2vw, 3.75rem)"
+    fontWeight: 720
+    lineHeight: 1
+    fontVariation: "'wdth' 115"
+  monogram:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(4rem, 11vw, 10rem)"
+    fontWeight: 800
+    lineHeight: 0.8
+    letterSpacing: "-0.04em"
+    fontVariation: "'wdth' 125"
   lead:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.1875rem, 1.6vw, 1.375rem)"
@@ -210,8 +229,14 @@ calma. Subset latin, eixos `wdth` e `wght`, com preload.
 - **Title** (650, `clamp(1.375rem, 2.2vw, 1.75rem)`, 1,15; largura 110%):
   subtítulos dentro das partes.
 - **Quote** (560, `clamp(1.5rem, 3vw, 2.5rem)`, 1,2; largura 108%; até 30ch):
-  os destaques, como a situação-problema, a frase-síntese e a pergunta
-  norteadora.
+  a pergunta norteadora e as citações.
+- **Highlight** (560, `clamp(1.6rem, 3.3vw, 3.15rem)`, 1,2; até 30ch): os dois
+  destaques da página (situação-problema e frase-síntese), depois da pausa
+  longa.
+- **Persona** (720, `clamp(2rem, 4.2vw, 3.75rem)`, 1,0; largura 115%): o nome
+  da persona, um degrau abaixo do título da parte.
+- **Monogram** (800, `clamp(4rem, 11vw, 10rem)`, 0,8; largura 125%): as
+  iniciais da persona, o retrato tipográfico.
 - **Lead** (420, `clamp(1.1875rem, 1.6vw, 1.375rem)`, 1,45; até 42ch):
   aberturas e o texto do hero.
 - **Body** (400, 17px, 1,5; até 65ch): o texto corrido.
@@ -245,8 +270,14 @@ tudo empilha: o 3D em cima, o texto embaixo, e o horizonte do céu sobe para
 - **Margem lateral:** `clamp(1.25rem, 4vw, 2.5rem)` em toda a página.
 - **Partes:** começam com uma abertura de capítulo (numeral, título e aula) e
   32svh de respiro acima. O espaço entre os blocos vem do conteúdo: blocos do
-  mesmo raciocínio ficam perto, e a pausa longa vem só antes dos destaques
-  (situação-problema, frase-síntese, plano de voo e slogan final).
+  mesmo raciocínio ficam a `clamp(4.5rem, 12svh, 8rem)`, e a pausa longa
+  (`clamp(7rem, 22svh, 13rem)`) vem só antes dos destaques (situação-problema,
+  frase-síntese, plano de voo e slogan final).
+- **Coluna larga:** nas partes em que o produto não está na tela (1, 2 e 3a),
+  os blocos que pedem largura usam até `88vw` (as oportunidades e as três
+  respostas em colunas, o destaque, os dados com fonte à direita do porquê, a
+  persona com o monograma à direita e os 40 km cruzando a tela). O texto
+  corrido continua na coluna de leitura.
 - **Cenas presas:** um palco de 100svh, presas por 250, 350 e 200vh no
   desktop (cerca de 30% menos no celular). Com reduced motion, viram blocos
   normais no estado final.
@@ -311,7 +342,15 @@ origem abaixo, como legenda. No celular, o numeral fica em cima.
 ### Dado com fonte (assinatura)
 O número fica dentro da frase, maior (1,85em, peso 720, largura 112%), com
 contagem até o valor final quando entra na tela, e a fonte logo abaixo, com
-link. Nunca um bloco de métrica isolado.
+link. Nunca um bloco de métrica isolado. O valor final fica no DOM o tempo
+todo (o leitor de tela lê ele, e ele segura a largura); a contagem corre por
+cima.
+
+### Revelações
+Só os numerais de capítulo (sobem da máscara com o scroll, ease linear), os
+títulos e destaques (linhas sobem da máscara ao entrar na tela, com a curva
+de revelação), os contadores, as linhas desenhadas (DrawSVG) e o manifesto.
+Os parágrafos só rolam. Com reduced motion, nada se mexe.
 
 ### Cartão de embarque (assinatura)
 O plano de voo da Aula 5 (Propósito, Destino, Trajeto e Operações) num

@@ -2,11 +2,17 @@ import { copy } from "../content/copy";
 import { facts, partsOfFair } from "../content/feira";
 import { ChapterOpener } from "./ChapterOpener";
 import { Fact } from "./Fact";
+import { Highlight } from "./Highlight";
 
 const part = partsOfFair[0];
 const t = copy.problema;
 
-/** Parte 1: O problema (Aula 2). O céu fecha e escurece até a noite. */
+/**
+ * Parte 1: O problema (Aula 2). O céu fecha e escurece até a noite. Depois que
+ * o produto some na tempestade, o texto usa a largura toda no desktop: as
+ * oportunidades e as três respostas se abrem em colunas, a situação-problema
+ * vira o destaque, e os dados com fonte ficam à direita do porquê.
+ */
 export function Problem() {
   return (
     <section
@@ -19,7 +25,7 @@ export function Problem() {
       <ChapterOpener part={part} />
       <p className="type-lead part__intro col-text">{t.opening}</p>
 
-      <div className="part-block col-text">
+      <div className="part-block col-wide">
         <h3 className="type-h3">{t.opportunitiesTitle}</h3>
         <div className="groups">
           {t.opportunities.map((group, i) => (
@@ -35,8 +41,8 @@ export function Problem() {
         </div>
       </div>
 
-      <div className="part-block col-text">
-        <h3 className="type-quote">{t.question}</h3>
+      <div className="part-block col-wide">
+        <h3 className="type-quote question">{t.question}</h3>
         <p className="type-caption mt-3">{t.questionCaption}</p>
         <ol className="triad">
           {t.problems.map((problem, i) => (
@@ -48,17 +54,18 @@ export function Problem() {
         </ol>
       </div>
 
-      <figure id="situacao-problema" className="part-block highlight col-text">
-        <blockquote className="type-quote">{t.situation}</blockquote>
-        <figcaption className="type-caption highlight__caption">{t.situationCaption}</figcaption>
-      </figure>
+      <Highlight id="situacao-problema" text={t.situation} caption={t.situationCaption} />
 
-      <div className="part-block col-text">
-        <h3 className="type-h3">{t.whyTitle}</h3>
-        <p className="type-body mt-6">{t.whyAccess}</p>
-        <Fact fact={facts.semEnergia} className="mt-12" />
-        <Fact fact={facts.apagaoAmapa} className="mt-10" />
-        <p className="type-body mt-12">{t.whyClean}</p>
+      {/* A ordem do brief fica no DOM (acesso, dados, energia limpa); no
+          desktop, os dados vão para a coluna da direita. */}
+      <div className="part-block part-block--last col-wide why">
+        <h3 className="type-h3 why__title">{t.whyTitle}</h3>
+        <p className="type-body why__access">{t.whyAccess}</p>
+        <div className="why__facts">
+          <Fact fact={facts.semEnergia} />
+          <Fact fact={facts.apagaoAmapa} />
+        </div>
+        <p className="type-body why__clean">{t.whyClean}</p>
       </div>
     </section>
   );

@@ -282,6 +282,33 @@ a {
     opacity: 1;
   }
 
+  /* Pular para o conteúdo: aparece só com o foco do teclado, na hora (ação de
+     teclado não anima). Tem fundo próprio (Noite), então não depende da hora
+     do céu. */
+  .skip-link {
+    position: fixed;
+    left: var(--gutter);
+    top: 0.75rem;
+    z-index: 60;
+    padding: 0.65rem 1.1rem;
+    border-radius: 999px;
+    background: var(--color-noite);
+    color: var(--color-nuvem);
+    font-stretch: 110%;
+    font-weight: 650;
+    text-decoration: none;
+    transform: translateY(-160%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+    outline-color: var(--color-nuvem);
+  }
+
+  main:focus {
+    outline: none;
+  }
+
   /* Header: só texto, sem fundo. Sai de cena nas travessias (o céu cruzando a
      zona morta) e ao rolar para baixo, para nunca ficar por cima do texto que
      passa embaixo dele; volta ao rolar para cima e com o foco do teclado. */
@@ -305,9 +332,11 @@ a {
     opacity: 0;
   }
 
+  /* O foco do teclado traz o header de volta na hora, sem animar. */
   :root .site-header:focus-within {
     transform: none;
     opacity: 1;
+    transition: none;
   }
 
   .site-header__brand {
@@ -545,8 +574,14 @@ a {
     margin-top: 2.75rem;
   }
 
+  /* O espaço vem do conteúdo: blocos do mesmo raciocínio ficam perto, e a
+     pausa longa vem só antes dos destaques (docs/fase-0.md, item 9). */
   .part-block {
-    margin-top: 18svh;
+    margin-top: clamp(4.5rem, 12svh, 8rem);
+  }
+
+  .part-block--pause {
+    margin-top: clamp(7rem, 22svh, 13rem);
   }
 
   .part-block--first {
@@ -562,7 +597,14 @@ a {
     gap: 1rem 1.75rem;
   }
 
+  /* O numeral sobe de dentro da máscara com o scroll (lib/reveal.ts). */
   .chapter__numeral {
+    display: block;
+    overflow: clip;
+    padding-top: 0.06em;
+  }
+
+  .chapter__numeral-inner {
     display: block;
   }
 
@@ -648,6 +690,12 @@ a {
     margin: 0;
   }
 
+  /* O destaque é a pausa da parte: maior que as outras citações. */
+  .highlight__quote {
+    font-size: clamp(1.6rem, 3.3vw, 3.15rem);
+    max-width: 30ch;
+  }
+
   .highlight__caption {
     margin-top: 1.1rem;
   }
@@ -657,6 +705,8 @@ a {
   }
 
   .fact__number {
+    position: relative;
+    display: inline-block;
     font-size: 1.85em;
     font-stretch: 112%;
     font-weight: 720;
@@ -664,58 +714,126 @@ a {
     letter-spacing: -0.01em;
   }
 
+  /* Contador: o valor final segura a largura (e é o que o leitor de tela lê);
+     a contagem corre por cima dele. */
+  .fact__live {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+  }
+
+  .fact__number:not([data-counting]) .fact__live {
+    display: none;
+  }
+
+  .fact__number[data-counting] .fact__final {
+    color: transparent;
+  }
+
   .fact__source {
     margin-top: 0.6rem;
   }
 
-  .persona {
+  .why {
     display: grid;
     gap: 1.5rem;
   }
 
+  .why__title,
+  .why__access,
+  .why__clean {
+    margin: 0;
+  }
+
+  .why__facts {
+    display: grid;
+    gap: 2.5rem;
+    margin-block: 1.5rem;
+  }
+
+  .persona {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .persona__name {
+    margin: 0;
+    font-size: clamp(2rem, 4.2vw, 3.75rem);
+    font-stretch: 115%;
+    font-weight: 720;
+    line-height: 1;
+  }
+
+  .persona__label {
+    margin: 0.75rem 0 0;
+  }
+
+  .persona__role {
+    margin: 0.5rem 0 0;
+  }
+
+  /* Retrato tipográfico: as iniciais, nunca foto nem caricatura. No celular,
+     vem antes do nome; no desktop, a grade põe à direita. */
   .persona__monogram {
-    font-size: clamp(4rem, 9vw, 7.5rem);
+    order: -1;
+    font-size: clamp(4rem, 11vw, 10rem);
     font-stretch: 125%;
     font-weight: 800;
     line-height: 0.8;
     letter-spacing: -0.04em;
   }
 
-  .persona__body h3 {
-    margin: 0;
+  .distance {
+    margin: 1.5rem 0 0;
   }
 
-  .distance {
-    max-width: 26rem;
-    margin: 1.75rem 0 0;
+  /* A linha estica com a largura; os pontos das pontas são do HTML. */
+  .distance__track {
+    position: relative;
+    height: 12px;
+  }
+
+  .distance__track::before,
+  .distance__track::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translateY(-50%);
+  }
+
+  .distance__track::before {
+    left: 0;
+  }
+
+  .distance__track::after {
+    right: 0;
   }
 
   .distance__line {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-
-  .distance__line circle {
-    fill: currentColor;
-  }
-
-  .distance__line line {
-    stroke: currentColor;
-    stroke-width: 1.5;
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: calc(50% - 0.75px);
+    height: 1.5px;
+    background: currentColor;
+    transform-origin: left center;
   }
 
   .distance__labels {
     display: flex;
     justify-content: space-between;
-    margin-top: 0.4rem;
+    margin-top: 0.5rem;
   }
 
   .persona__facts {
     display: grid;
     gap: 0.6rem;
-    margin-top: 1.75rem;
+    margin-top: 1.25rem;
   }
 
   .qa {
@@ -1180,6 +1298,84 @@ a {
       max-width: min(34rem, calc(44vw - var(--gutter)));
     }
 
+    /* Coluna larga: nas partes sem produto na tela, o texto usa a largura
+       toda (sem a metade direita vazia). */
+    .col-wide {
+      max-width: calc(88vw - var(--gutter));
+    }
+
+    /* As listas em colunas usam a largura toda (sem o teto de 65ch do corpo:
+       cada coluna já fica curta). */
+    .groups__items {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 2.5rem;
+      max-width: none;
+    }
+
+    .why {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      grid-template-areas:
+        "title facts"
+        "access facts"
+        "clean facts";
+      column-gap: 7vw;
+      row-gap: 1.25rem;
+      align-items: start;
+    }
+
+    .why__title {
+      grid-area: title;
+    }
+
+    .why__access {
+      grid-area: access;
+    }
+
+    .why__clean {
+      grid-area: clean;
+    }
+
+    .why__facts {
+      grid-area: facts;
+      margin-block: 0;
+      gap: 3.5rem;
+    }
+
+    /* Persona: nome e legenda à esquerda, o monograma à direita, e os 40 km
+       atravessando a largura toda. */
+    .persona {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "head mono"
+        "dist dist"
+        "facts facts";
+      column-gap: 3rem;
+      align-items: end;
+    }
+
+    .persona__head {
+      grid-area: head;
+    }
+
+    .persona__monogram {
+      grid-area: mono;
+    }
+
+    .persona .distance {
+      grid-area: dist;
+    }
+
+    .persona__facts {
+      grid-area: facts;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 2.5rem;
+      max-width: none;
+    }
+
+    .others {
+      max-width: 65ch;
+    }
+
     .site-header__nav {
       display: block;
     }
@@ -1217,12 +1413,6 @@ a {
     .triad {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 2rem;
-    }
-
-    .persona {
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 2.5rem;
-      align-items: start;
     }
 
     .qa__row {

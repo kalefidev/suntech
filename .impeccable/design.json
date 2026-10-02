@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-02T12:38:52.857Z",
+  "generatedAt": "2026-10-02T14:49:30.156Z",
   "title": "Design System: SunTech",
   "extensions": {
     "colorMeta": {
@@ -173,8 +173,20 @@
         "purpose": "Subtítulos dentro das partes."
       },
       "quote": {
+        "displayName": "Citação",
+        "purpose": "Pergunta norteadora e citações; até 30ch."
+      },
+      "highlight": {
         "displayName": "Destaque",
-        "purpose": "Situação-problema, frase-síntese e pergunta norteadora; até 30ch."
+        "purpose": "Situação-problema e frase-síntese, depois da pausa longa; até 30ch."
+      },
+      "persona": {
+        "displayName": "Nome da persona",
+        "purpose": "Seu Antônio, um degrau abaixo do título da parte."
+      },
+      "monogram": {
+        "displayName": "Monograma",
+        "purpose": "As iniciais da persona: o retrato tipográfico."
       },
       "lead": {
         "displayName": "Lead",

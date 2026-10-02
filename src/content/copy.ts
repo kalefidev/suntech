@@ -5,6 +5,10 @@ import { company } from "./company";
 import { product } from "./product";
 
 export const copy = {
+  ui: {
+    skipLink: "Pular para o conteúdo",
+  },
+
   hero: {
     productName: product.name,
     title: "Carregue o celular com a luz do sol.",

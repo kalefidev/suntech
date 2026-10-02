@@ -203,6 +203,18 @@ export const TRACKS: Track[] = [
     },
   },
 
+  // A guarda de contraste cobre a tela toda nas partes com texto em coluna
+  // larga (1, 2 e 3a) e volta à coluna de texto nas cenas do produto. Abre
+  // no fim do hero, com a tempestade chegando, e fecha durante a travessia do
+  // nascer do sol.
+  {
+    path: "guardWide",
+    keys: {
+      hero: [[0, 0], [0.6, 0], [1, 1]],
+      "por-dentro": [[0, 1], [0.15, 0]],
+    },
+  },
+
   // ---------------------------------------------------------- produto
   // Hero: pose de herói, girando com o scroll e inclinando com o ponteiro.
   // Parte 1: vai para o fundo e some na névoa enquanto a tempestade fecha.
@@ -210,7 +222,8 @@ export const TRACKS: Track[] = [
     path: "productVisible",
     keys: {
       hero: [[0, 1]],
-      problema: [[0, 1], [0.24, 0]],
+      // Sai cedo: as oportunidades se abrem em colunas logo depois.
+      problema: [[0, 1], [0.12, 0]],
     },
     // No celular, o produto já saiu da tela com o hero.
     narrow: {
@@ -226,7 +239,7 @@ export const TRACKS: Track[] = [
     path: "tilt",
     keys: {
       hero: [[0, 1], [1, 0.6]],
-      problema: [[0, 0.6], [0.2, 0]],
+      problema: [[0, 0.6], [0.1, 0]],
     },
   },
   ...poseTracks<ProductKey>("product", {
@@ -236,7 +249,7 @@ export const TRACKS: Track[] = [
     ],
     problema: [
       [0, PRODUCT.heroOut],
-      [0.24, PRODUCT.away],
+      [0.12, PRODUCT.away],
     ],
   }),
   ...poseTracks<CameraKey>(

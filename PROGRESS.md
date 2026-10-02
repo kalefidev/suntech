@@ -212,6 +212,33 @@ Feito:
   foi para a Fase 4, junto com a explosão, onde aparece e é conferido. As
   texturas dele já existem.
 
+### `snap` da Fase 2 (`.snapshots/fase-2/`) e medições
+
+| Passada | Erros | Contraste | WebGL | LCP | CLS |
+|---|---|---|---|---|---|
+| 1440×900 | 0 | 0 | sim | 264 ms | 0 |
+| 390×844 | 0 | 0 | sim | 228 ms | 0 |
+| 1440×900 reduced motion | 0 | 0 | sim | 188 ms | 0 |
+| 390×844 reduced motion | 0 | 0 | sim | 176 ms | 0 |
+| TV 1920×1080 | 0 | 0 | sim | 228 ms | 0 |
+| 1440×900 `?nowebgl` | 0 | 0 | não (esperado) | 2.660 ms* | 0,017* |
+
+\* Rodou ao mesmo tempo que outras fotos (CPU disputada): a fonte chegou
+tarde, e o `font-display: block` segurou o texto e mexeu o layout na troca.
+Nas outras passadas, LCP < 300 ms e CLS 0. É o risco "fonte tardia no 4G" do
+plano (`docs/fase-0.md`, item 8): **rever na passada de performance da Fase 7**
+(plano B: `swap` com fallback de métricas ajustadas).
+
+JS gzip: inicial 133,1 KB (teto 150); cena 255,0 KB; total 388,1 KB (teto
+500). O produto inteiro custou 13 KB no chunk da cena.
+
+Crítica (`.impeccable/critique/`): 21/28 (75%, bom). Checklist da receita de
+estúdio cumprido no screenshot do hero (bordas com brilho, nenhuma face
+chapada, sombra de contato, sem serrilhado em DPR 1, preto lido como
+material). Revisão de motion da abertura: uma vez por visita, 2,4 s, pulável
+com qualquer gesto; eases coerentes (ease-out ao entrar, ease-in-out no que
+se move na tela); nada a corrigir.
+
 ### Fontes externas (F9), revalidadas no navegador em 02/10/2026
 
 Todas no ar e sustentando o texto do site: Poder360/IEMA (990.103, estudo
@@ -220,6 +247,54 @@ escuro"; o apagão no Amapá começou em 3 de novembro e passou de 20 dias),
 Earthshot e d.light (Stanford, querosene, pagamento pelo celular). **A d.light
 hoje fala em 215 milhões de vidas (e a Earthshot, em 175 milhões); o site diz
 "mais de 150 milhões", da seção 3, que continua verdadeiro.**
+
+## Fase 3: Partes 1 e 2 (02/10/2026)
+
+Feito:
+- **Aberturas de capítulo** (`ChapterOpener`): o numeral sobe da máscara com o
+  scroll (ease linear no scrub) e o título sobe por linhas ao entrar na tela
+  (SplitText por linha com máscara e `autoSplit`, depois das fontes). O título
+  tem o nome completo no `aria-label` ("Parte 1: O problema").
+- **Revelações** em `lib/reveal.ts` (`useLineReveal`, `useScrubFrom`,
+  `useCountUp`, `useDrawOnScroll`), todas com `gsap.matchMedia` (nada se
+  mexe com reduced motion).
+- **Contadores** (990.103 e 20 dias): o valor final fica no DOM o tempo todo e
+  segura a largura; a contagem corre por cima.
+- **Destaques** (`Highlight`): situação-problema e frase-síntese, depois da
+  pausa longa, com as linhas subindo da máscara.
+- **Composição sem metade vazia** no desktop (achado P2 da crítica da Fase 1):
+  coluna larga (`.col-wide`, até 88vw) nas oportunidades e nas três respostas
+  em colunas, no destaque, no porquê (os dados com fonte à direita, com a
+  ordem do brief no DOM), na persona (monograma à direita e os 40 km cruzando
+  a tela) e em persona × público-alvo.
+- **Espaço vindo do conteúdo:** blocos a `clamp(4.5rem, 12svh, 8rem)`, pausa
+  longa (`.part-block--pause`) só antes dos destaques.
+- **"Seu Antônio" como título** e "Persona" como legenda.
+- **Pular para o conteúdo** (link que aparece com o Tab).
+- A linha dos 40 km cresce com o scroll.
+- **Guarda de contraste com largura coreografada** (`guardWide`): cobre a tela
+  toda nas partes em coluna larga (1, 2 e 3a) e só a coluna de texto nas
+  cenas do produto. Abre no fim do hero e fecha na travessia do nascer do sol.
+  O `snap` achou a falta dela (2,7:1 na terceira coluna, sobre o brilho do
+  nascer do sol).
+- O produto sai mais cedo na Parte 1 (aos 12%).
+- `?snap` acelera 3× as animações por tempo (as fotos pegam o estado final);
+  o `snap` aceita `--url=` (fotografa um servidor já no ar).
+
+### Decisões técnicas da Fase 3
+
+- **SplitText e acessibilidade:** `aria: "auto"` só em elementos que aceitam
+  `aria-label` (títulos); em `span` o rótulo é ignorado. Nos títulos de
+  capítulo, o `aria-label` é nosso e o SplitText só esconde as linhas
+  (`aria: "hidden"`); nas citações longas, `aria: "none"`.
+- **Linha reta cresce em `scaleX`, não com DrawSVG:** o DrawSVG com
+  `non-scaling-stroke` e `preserveAspectRatio="none"` desenhou a linha em
+  pedaços. O DrawSVG fica para as linhas curvas (callouts da Fase 4 e a linha
+  do tempo do pitch).
+- **`type-body` tem teto de 65ch:** listas em colunas precisam de
+  `max-width: none`, senão as colunas ficam estreitas.
+- Ação de teclado não anima: o link "Pular" e o header com foco aparecem na
+  hora.
 
 ## Pendências do usuário (nenhuma bloqueia)
 

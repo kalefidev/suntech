@@ -23,6 +23,7 @@ import { Company } from "./sections/Company";
 import { Pitch } from "./sections/Pitch";
 import { Youth } from "./sections/Youth";
 import { Footer } from "./sections/Footer";
+import { copy } from "./content/copy";
 
 const SceneCanvas = lazy(() => track("scene", import("./scene/SceneCanvas")));
 const LevaPanel = lazy(() => import("leva").then((m) => ({ default: m.Leva })));
@@ -71,9 +72,12 @@ export default function App() {
         </CanvasErrorBoundary>
       )}
 
+      <a href="#conteudo" className="skip-link">
+        {copy.ui.skipLink}
+      </a>
       <Header />
 
-      <main>
+      <main id="conteudo" tabIndex={-1}>
         <Hero />
         <Problem />
         <Client />

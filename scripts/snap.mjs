@@ -15,6 +15,8 @@
 //   --no-build  usa o dist/ que já existe
 //   --only=390x844  só as passadas desse viewport
 //   --sections=hero,jovem  só essas seções (para conferir uma correção)
+//   --url=http://localhost:5180  fotografa um servidor já no ar (sem build,
+//                 sem preview e sem medir o JS)
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
@@ -28,7 +30,9 @@ const QUICK = args.includes("--quick");
 const BUILD = !args.includes("--no-build");
 const ONLY = args.find((a) => a.startsWith("--only="))?.slice(7);
 const SECTIONS = args.find((a) => a.startsWith("--sections="))?.slice(11).split(",");
+const URL_ARG = args.find((a) => a.startsWith("--url="))?.slice(6);
 const PORT = 4173;
+const BASE = URL_ARG ?? `http://localhost:${PORT}`;
 const ROOT = path.resolve(".");
 const OUT_DIR = path.join(ROOT, ".snapshots", PHASE);
 const WAIT_MS = 900;
@@ -306,7 +310,7 @@ async function runPass(browser, pass, report) {
   });
   page.on("pageerror", (err) => errors.push(err.message));
 
-  await page.goto(`http://localhost:${PORT}/?snap${pass.nowebgl ? "&nowebgl" : ""}`, { waitUntil: "load" });
+  await page.goto(`${BASE}/?snap${pass.nowebgl ? "&nowebgl" : ""}`, { waitUntil: "load" });
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
   const metrics = await page.evaluate(() => window.__metrics);
   const webgl = await page.evaluate(() => document.documentElement.dataset.scene === "on" && !!document.querySelector("canvas"));
@@ -342,24 +346,26 @@ async function runPass(browser, pass, report) {
 }
 
 async function main() {
-  if (BUILD) await run("npm", ["run", "build"]);
+  if (BUILD && !URL_ARG) await run("npm", ["run", "build"]);
   await mkdir(OUT_DIR, { recursive: true });
 
-  const bundle = await measureBundle();
+  const bundle = URL_ARG ? null : await measureBundle();
   const report = { phase: PHASE, date: new Date().toISOString(), bundle, passes: [] };
-  console.log(`\nJS gzip: inicial ${bundle.initialKb.toFixed(1)} KB (teto ${BUDGET.initial}) · total ${bundle.totalKb.toFixed(1)} KB (teto ${BUDGET.total}) · CSS ${bundle.cssKb.toFixed(1)} KB`);
-  for (const row of bundle.rows) console.log(`  ${row.kb.toFixed(1).padStart(7)} KB  ${row.chunk}`);
-  const overBudget = bundle.initialKb > BUDGET.initial || bundle.totalKb > BUDGET.total;
-  if (overBudget) console.warn("Aviso: orçamento de JS estourado. Explique o desvio no PROGRESS.md.");
+  if (bundle) {
+    console.log(`\nJS gzip: inicial ${bundle.initialKb.toFixed(1)} KB (teto ${BUDGET.initial}) · total ${bundle.totalKb.toFixed(1)} KB (teto ${BUDGET.total}) · CSS ${bundle.cssKb.toFixed(1)} KB`);
+    for (const row of bundle.rows) console.log(`  ${row.kb.toFixed(1).padStart(7)} KB  ${row.chunk}`);
+    const overBudget = bundle.initialKb > BUDGET.initial || bundle.totalKb > BUDGET.total;
+    if (overBudget) console.warn("Aviso: orçamento de JS estourado. Explique o desvio no PROGRESS.md.");
+  }
 
-  const preview = await startPreview();
+  const preview = URL_ARG ? null : await startPreview();
   const browser = await chromium.launch({ headless: true, args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
   let failed = false;
   try {
     for (const pass of PASSES) failed = (await runPass(browser, pass, report)) || failed;
   } finally {
     await browser.close();
-    preview.kill();
+    preview?.kill();
   }
 
   await writeFile(path.join(OUT_DIR, "report.json"), JSON.stringify(report, null, 2));

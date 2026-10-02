@@ -202,6 +202,7 @@ export function computeSky(
   aspect: number,
   guardMode: number,
   guardAmount: number,
+  guardWide = 0,
 ): SkyUniforms {
   const hour = hourOf(dayTime);
   const k = keyAt(hour);
@@ -230,10 +231,11 @@ export function computeSky(
     cloudShift: dayTime * 0.035,
     guardMode,
     guardAmount,
-    // No desktop o texto vive nos 60% da esquerda; no celular, na tela toda. A
+    // No desktop o texto vive nos 60% da esquerda (guardWide 0) ou na largura
+    // toda (guardWide 1, partes em coluna larga); no celular, na tela toda. A
     // rampa é larga de propósito: uma rampa curta desenha uma faixa escura no céu.
-    guardX0: desktop ? 0.5 : 2,
-    guardX1: desktop ? 0.85 : 3,
+    guardX0: desktop ? mix(0.5, 1.05, guardWide) : 2,
+    guardX1: desktop ? mix(0.85, 1.4, guardWide) : 3,
   };
 }
 

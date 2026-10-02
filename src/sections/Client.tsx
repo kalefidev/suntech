@@ -1,21 +1,28 @@
+import { useRef } from "react";
 import { copy } from "../content/copy";
 import { num } from "../content/format";
 import { partsOfFair } from "../content/feira";
+import { useScrubFrom } from "../lib/reveal";
 import { ChapterOpener } from "./ChapterOpener";
+import { Highlight } from "./Highlight";
 
 const part = partsOfFair[1];
 const t = copy.cliente;
 const p = t.persona;
 
-/** Distância sítio–cidade: informação da persona, desenhada (DrawSVG na Fase 3). */
+/**
+ * Distância sítio–cidade: informação da persona, desenhada com o scroll, do
+ * sítio até a cidade. A linha é reta, então cresce em `scaleX` (o mesmo que o
+ * DrawSVG faria, sem depender de como o SVG estica na largura toda).
+ */
 function Distance() {
+  const ref = useRef<HTMLElement>(null);
+  useScrubFrom(ref, ".distance__line", { scaleX: 0 }, { start: "top 88%", end: "top 46%" });
   return (
-    <figure className="distance" aria-label={`${p.farm} a ${num(p.distanceKm)} km da ${p.city.toLowerCase()}`}>
-      <svg viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true" className="distance__line">
-        <circle cx="6" cy="12" r="5" />
-        <line x1="14" y1="12" x2="386" y2="12" />
-        <circle cx="394" cy="12" r="5" />
-      </svg>
+    <figure ref={ref} className="distance" aria-label={`${p.farm} a ${num(p.distanceKm)} km da ${p.city.toLowerCase()}`}>
+      <div className="distance__track" aria-hidden="true">
+        <span className="distance__line" />
+      </div>
       <figcaption className="type-caption distance__labels" aria-hidden="true">
         <span>{p.farm}</span>
         <span className="num">{num(p.distanceKm)}&nbsp;km</span>
@@ -25,7 +32,11 @@ function Distance() {
   );
 }
 
-/** Parte 2: O cliente (Aula 3). Noite depois da tempestade. */
+/**
+ * Parte 2: O cliente (Aula 3). Noite depois da tempestade. O título da persona
+ * é o nome; "Persona" é a legenda, no mesmo padrão do "Aula N". O monograma é
+ * o retrato (nada de foto ou caricatura), e os 40 km cruzam a largura toda.
+ */
 export function Client() {
   return (
     <section
@@ -37,30 +48,26 @@ export function Client() {
     >
       <ChapterOpener part={part} />
 
-      <div id="persona" className="part-block persona col-text">
+      <div id="persona" className="part-block persona col-wide">
+        <div className="persona__head">
+          <h3 className="type-h2 persona__name">{p.name}</h3>
+          <p className="type-caption persona__label">{t.personaTitle}</p>
+          <p className="type-lead persona__role">
+            {p.age}, {p.role}.
+          </p>
+        </div>
         <span className="persona__monogram" aria-hidden="true">
           {p.initials}
         </span>
-        <div className="persona__body">
-          <h3 className="type-quote">
-            {t.personaTitle}: {p.name}
-          </h3>
-          <p className="type-lead mt-3">
-            {p.age}, {p.role}.
-          </p>
-          <Distance />
-          <ul className="type-body persona__facts">
-            {p.facts.map((fact) => (
-              <li key={fact}>{fact}</li>
-            ))}
-          </ul>
-        </div>
+        <Distance />
+        <ul className="type-body persona__facts">
+          {p.facts.map((fact) => (
+            <li key={fact}>{fact}</li>
+          ))}
+        </ul>
       </div>
 
-      <figure className="part-block highlight col-text">
-        <blockquote className="type-quote">{t.synthesis}</blockquote>
-        <figcaption className="type-caption highlight__caption">{t.synthesisCaption}</figcaption>
-      </figure>
+      <Highlight text={t.synthesis} caption={t.synthesisCaption} />
 
       <div className="part-block col-text">
         <h3 className="type-h3">{t.reflectionTitle}</h3>
@@ -76,7 +83,7 @@ export function Client() {
         </ol>
       </div>
 
-      <div className="part-block col-text">
+      <div className="part-block part-block--last col-wide">
         <div className="split">
           <div className="split__col">
             <h3 className="type-h3">{t.personaLabel}</h3>
@@ -87,7 +94,7 @@ export function Client() {
             <p className="type-body mt-4">{t.audience}</p>
           </div>
         </div>
-        <p className="type-body mt-10">
+        <p className="type-body mt-10 others">
           <strong className="font-semibold">{t.othersLabel}:</strong> {t.others}
         </p>
       </div>

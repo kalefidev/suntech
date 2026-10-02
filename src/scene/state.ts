@@ -47,6 +47,12 @@ export interface SceneState {
   cloudCover: number;
   /** Tom agendado do texto: 1 Nuvem, −1 Noite, 0 travessia (sem texto na tela). */
   tone: number;
+  /**
+   * Largura da guarda de contraste no desktop: 0 cobre só a coluna de texto
+   * (o produto e o sol ficam livres à direita); 1 cobre a tela toda (partes
+   * com texto em coluna larga).
+   */
+  guardWide: number;
   /** 0 painel dobrado → 1 aberto (livro). */
   panelOpen: number;
   /** 0 tampa fechada → 1 aberta. */
@@ -87,6 +93,7 @@ export const sceneState: SceneState = {
   dayTime: 4.5,
   cloudCover: 0.1,
   tone: 1,
+  guardWide: 0,
   panelOpen: 0,
   lidOpen: 0,
   explode: 0,
