@@ -181,6 +181,8 @@ export const copy = {
       lead: "Cuida dos custos e do preço.",
       costsTitle: "Custos",
       priceLabel: "Preço de venda",
+      costLabel: "Custo",
+      marginLabel: "Margem",
       strategy:
         "Estratégia: destacar o painel maior que o dos concorrentes, oferecer parcelamento (inspirado na d.light) e comprar peças em quantidade para baixar o custo.",
     },

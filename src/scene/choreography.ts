@@ -170,6 +170,9 @@ const CAMERA = {
   // 3c: a pose do hero, um pouco mais alta (o texto do diferencial é longo e
   // o produto não pode ficar espremido no canto de baixo).
   diff: orbit(HERO_TARGET, -16, 13, 12, 30, 0.3, -0.12),
+  // Parte 4: um pouco mais longe, para o produto ficar quieto ao lado do
+  // texto longo, sem disputar com ele.
+  quiet: orbit(HERO_TARGET, -14, 12, 13.5, 30, 0.31, -0.1),
 };
 
 const PRODUCT = {
@@ -181,7 +184,9 @@ const PRODUCT = {
   /** Parte 3: a bancada de "Por dentro", "Como funciona" e da noite. */
   bench: pose(0, 0, 0, -35),
   /** 3c: de volta à pose de herói, girando com o scroll. */
-  diffOut: pose(0, 0, 0, 88),
+  diffOut: pose(0, 0, 0, 64),
+  /** Parte 4: quieto ao lado do texto, em 3/4. */
+  quiet: pose(0, 0, 0, 40),
 };
 
 /**
@@ -303,9 +308,6 @@ export const TRACKS: Track[] = [
       problema: [[0, 1], [0.12, 0]],
       // Volta da névoa no fim de "A nossa solução", já na bancada.
       solucao: [[0, 0], [0.86, 0], [1, 1]],
-      // Some na névoa da manhã quando a tabela do diferencial passa, antes
-      // de a Parte 4 entrar.
-      diferencial: [[0, 1], [0.4, 1], [0.55, 0]],
     },
     // No celular, o produto já saiu da tela com o hero.
     narrow: {
@@ -415,8 +417,9 @@ export const TRACKS: Track[] = [
     ],
     diferencial: [
       [0, PRODUCT.hero],
-      [0.55, PRODUCT.diffOut],
+      [1, PRODUCT.diffOut],
     ],
+    empresa: [[0.12, PRODUCT.quiet]],
   }),
   ...poseTracks<CameraKey>(
     "camera",
@@ -443,6 +446,7 @@ export const TRACKS: Track[] = [
         [1, CAMERA.diff],
       ],
       diferencial: [[0, CAMERA.diff]],
+      empresa: [[0.12, CAMERA.quiet]],
     },
     {
       hero: [

@@ -1,9 +1,11 @@
+import { useRef } from "react";
 import { copy } from "../content/copy";
 import { company } from "../content/company";
 import { brl } from "../content/format";
 import { partsOfFair } from "../content/feira";
 import { product, specSheet } from "../content/product";
 import { ChapterOpener } from "./ChapterOpener";
+import { useScrubFrom } from "../lib/reveal";
 
 const part = partsOfFair[3];
 const t = copy.empresa;
@@ -14,8 +16,11 @@ const t = copy.empresa;
  * texto Noite), então não depende da hora do céu.
  */
 function BoardingPass() {
+  const ref = useRef<HTMLDivElement>(null);
+  // O picote se desenha quando o cartão entra na tela.
+  useScrubFrom(ref, ".ticket__stub", { "--tear": 0 }, { start: "top 92%", end: "top 55%" });
   return (
-    <div className="ticket-wrap">
+    <div ref={ref} className="ticket-wrap">
       <figure className="ticket" aria-labelledby="plano-de-voo">
       <div className="ticket__main">
         <dl className="ticket__fields">
@@ -39,9 +44,17 @@ function BoardingPass() {
   );
 }
 
+/**
+ * Custos (seção 3, estimativa): cada linha leva uma barra com a parte dela no
+ * total, para ver de relance para onde vai o dinheiro (as placas e as
+ * baterias são mais da metade). As barras crescem com o scroll.
+ */
 function CostsTable() {
+  const ref = useRef<HTMLDivElement>(null);
+  useScrubFrom(ref, ".cost-bar", { scaleX: 0 }, { start: "top 90%", end: "top 40%" });
+  const share = (brl: number) => ({ "--share": brl / product.costTotalBRL }) as React.CSSProperties;
   return (
-    <div className="table-scroll" role="region" aria-labelledby="custos-titulo" tabIndex={0}>
+    <div ref={ref} className="table-scroll" role="region" aria-labelledby="custos-titulo" tabIndex={0}>
       <table id="custos" className="data-table data-table--costs">
         <caption id="custos-titulo" className="type-label">
           {t.finance.costsTitle} <span className="estimate">({t.estimateLabel})</span>
@@ -57,18 +70,49 @@ function CostsTable() {
         <tbody>
           {product.costs.map((row) => (
             <tr key={row.item}>
-              <th scope="row">{row.item}</th>
+              <th scope="row">
+                {row.item}
+                <span className="cost-bar" style={share(row.brl)} aria-hidden="true" />
+              </th>
               <td className="num num-col">{brl(row.brl)}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr>
-            <th scope="row">Total</th>
+            <th scope="row">
+              Total
+              <span className="cost-bar" style={share(product.costTotalBRL)} aria-hidden="true" />
+            </th>
             <td className="num num-col">{brl(product.costTotalBRL)}</td>
           </tr>
         </tfoot>
       </table>
+    </div>
+  );
+}
+
+/**
+ * O preço em duas partes: o custo (a soma da tabela) e a margem, listrada
+ * para ler sem cor. Os valores ficam na frase acima; a barra só mostra a
+ * proporção.
+ */
+function PriceSplit() {
+  const ref = useRef<HTMLDivElement>(null);
+  // A barra e os rótulos se revelam juntos, da esquerda para a direita (sem
+  // esticar o texto).
+  useScrubFrom(ref, ".price-split__bar, .price-split__labels", { clipPath: "inset(0% 100% 0% 0%)" }, { start: "top 92%", end: "top 60%" });
+  const margin = product.priceBRL - product.costTotalBRL;
+  return (
+    <div ref={ref} className="price-split" aria-hidden="true">
+      <div className="price-split__bar">
+        <span className="price-split__cost" style={{ flexGrow: product.costTotalBRL }} />
+        <span className="price-split__margin" style={{ flexGrow: margin }} />
+      </div>
+      <div className="price-split__labels type-caption">
+        <span style={{ flexGrow: product.costTotalBRL }}>{t.finance.costLabel}</span>
+        <span style={{ flexGrow: margin }}>{t.finance.marginLabel}</span>
+      </div>
     </div>
   );
 }
@@ -96,6 +140,7 @@ function Sectors() {
               {t.finance.priceLabel}: <strong className="fact__number num">{brl(product.priceBRL)}</strong>, com
               margem de {product.margin} sobre o preço.
             </p>
+            <PriceSplit />
             <p className="type-body mt-4">{t.finance.strategy}</p>
           </div>
         </article>
@@ -130,6 +175,9 @@ function Sectors() {
 }
 
 function Prototype() {
+  const ref = useRef<HTMLOListElement>(null);
+  // A linha das três etapas se desenha uma depois da outra.
+  useScrubFrom(ref, ".history__step", { "--drawn": 0, stagger: 0.35 }, { start: "top 90%", end: "top 50%" });
   return (
     <div className="part-block part-block--last col-text">
       <h3 className="type-h2">{t.prototypeTitle}</h3>
@@ -151,7 +199,7 @@ function Prototype() {
       </dl>
 
       <h4 className="type-h3 mt-16">{t.historyTitle}</h4>
-      <ol className="history">
+      <ol ref={ref} className="history">
         {company.history.map((step, i) => (
           <li key={step.title} className="history__step">
             <span className="type-label num">{i + 1}</span>

@@ -12,7 +12,7 @@ está em `docs/fase-0.md`; o brief, em `BRIEF.md`.
   começou na branch `v2`.
 - **01/10:** Fase 0 revisada (M1 a M8) e aprovada; a Fase 1 avançou.
 - **02/10:** Fases 1, 2 e 3 fechadas.
-- **02/10 (tarde):** Fase 4 (Parte 3) fechada.
+- **02/10 (tarde):** Fases 4 (Parte 3) e 5 (Parte 4) fechadas.
 
 ## Respostas do usuário (valem daqui para a frente)
 
@@ -329,8 +329,9 @@ Feito:
   e a tela sobe de 0 a 100% com o texto da noite. De manhã, o cabo recolhe, o
   celular sai em fade, o painel abre e o produto volta à pose de herói.
 - **3c (diferencial):** o produto gira com o scroll ao lado do texto, na luz
-  da manhã, e some antes da Parte 4. No celular, ele sobe para fora da tela
-  no fim da noite (o texto do diferencial ocupa a largura toda).
+  da manhã, e assenta na pose quieta da Parte 4 (Fase 5). No celular, ele
+  sobe para fora da tela no fim da noite (o texto do diferencial ocupa a
+  largura toda).
 - Câmera: telas mais estreitas que 16:10 (ou que 390×844, no celular) abrem o
   campo de visão na mesma proporção, para o produto não sair pela lateral.
 - Ferramentas: `scripts/dev/nodes.mjs` (mede onde cada nó, etiqueta e texto
@@ -404,6 +405,41 @@ JS gzip: inicial 135,2 KB (teto 150); cena 263,8 KB; total 407,4 KB (teto
 Crítica (`.impeccable/critique/`): 22/28 (79%, bom). Aceite cumprido: no meio
 de "Como funciona", as 4 etapas estão visíveis e legendadas, e o caminho se
 lê sem o texto.
+
+## Fase 5: Parte 4, a empresa (02/10/2026)
+
+Feito:
+- **Produto quieto à direita no desktop** (pose em 3/4, câmera um pouco mais
+  longe), do fim do diferencial até a Parte 4; no celular, segue oculto.
+- **Custos com barras:** cada linha da tabela ganha uma barra com a parte do
+  item no total (as placas e as baterias são mais da metade), crescendo com o
+  scroll. Embaixo do preço, uma barra divide os R$ 249 em custo e margem
+  (listrada, lida sem cor). Os valores ficam no texto; as barras só mostram a
+  proporção.
+- **Picote do cartão de embarque** se desenha quando o cartão entra.
+- **História em 3 etapas:** a linha de cada etapa se desenha depois da
+  anterior.
+- **Aceite automático:** `npm run check:numbers` lê o JSX de `src/sections`
+  com o compilador do TypeScript e procura dígitos no texto visível (texto
+  entre tags, strings filhas e `aria-label`, `title` e `alt`). Nenhum: todos
+  os números vêm de `src/content`.
+
+### Decisões técnicas da Fase 5
+
+- **Revelação com `clip-path` quando há texto junto** (a barra do preço e os
+  rótulos "Custo" e "Margem"): `scaleX` esticaria as letras.
+- **Linhas desenhadas por variável CSS** (`--tear` no picote, `--drawn` na
+  história) em pseudo-elementos: o GSAP anima a variável no elemento.
+- **Nenhum número novo:** a diferença entre preço e custo só entra como
+  proporção da barra; o site não mostra um valor de margem em reais, que não
+  está na seção 3.
+
+### `snap` da Fase 5 (`.snapshots/fase-5/`)
+
+As seis passadas sem erro e sem violação de contraste, WebGL em todas menos
+`?nowebgl`: LCP de 196 a 336 ms (o cache de shaders do driver já estava
+quente), CLS 0. JS gzip: inicial 135,5 KB, total 407,7 KB, CSS 8,4 KB.
+Crítica: 22/28 (79%, bom).
 
 ## Pendências do usuário (nenhuma bloqueia)
 

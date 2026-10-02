@@ -1322,6 +1322,59 @@ a {
     white-space: nowrap;
   }
 
+  /* A parte de cada item no total, embaixo do nome (cresce com o scroll). */
+  .cost-bar {
+    display: block;
+    width: calc(var(--share) * 100%);
+    height: 5px;
+    margin-top: 0.45rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.8;
+    transform-origin: left;
+  }
+
+  /* O preço em custo e margem; a margem é listrada (lida sem cor). */
+  .price-split {
+    margin-top: 1rem;
+  }
+
+  .price-split__bar {
+    display: flex;
+    gap: 3px;
+    height: 12px;
+  }
+
+  .price-split__bar,
+  .price-split__labels {
+    clip-path: inset(0% 0% 0% 0%);
+  }
+
+  .price-split__cost,
+  .price-split__margin {
+    flex-basis: 0;
+    border-radius: 999px;
+  }
+
+  .price-split__cost {
+    background: currentColor;
+  }
+
+  .price-split__margin {
+    background: repeating-linear-gradient(-45deg, currentColor 0 2px, transparent 2px 6px);
+    box-shadow: inset 0 0 0 1.5px currentColor;
+  }
+
+  .price-split__labels {
+    display: flex;
+    gap: 3px;
+    margin-top: 0.4rem;
+  }
+
+  .price-split__labels span {
+    flex-basis: 0;
+  }
+
   .estimate {
     font-size: 0.875rem;
     font-weight: 500;
@@ -1364,11 +1417,23 @@ a {
   }
 
   .ticket__stub {
+    --tear: 1;
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     padding: 1.5rem 1.75rem;
+  }
+
+  /* O picote: uma linha tracejada que se desenha quando o cartão entra
+     (`--tear`, de 0 a 1, com o scroll). */
+  .ticket__stub::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
     border-top: 2px dashed rgb(20 33 61 / 0.25);
+    transform: scaleX(var(--tear));
+    transform-origin: left;
   }
 
   .ticket__brand {
@@ -1448,9 +1513,22 @@ a {
   }
 
   .history__step {
+    --drawn: 1;
+    position: relative;
     display: grid;
     grid-template-columns: 1.75rem minmax(0, 1fr);
     padding-top: 1rem;
+    border-top: 0;
+  }
+
+  /* A linha de cada etapa se desenha depois da anterior (`--drawn`). */
+  .history__step::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    border-top: 2px solid currentColor;
+    transform: scaleX(var(--drawn));
+    transform-origin: left;
   }
 
   .timeline {
@@ -1746,8 +1824,14 @@ a {
 
     .ticket__stub {
       justify-content: flex-end;
+    }
+
+    .ticket__stub::before {
+      inset: 0 auto 0 0;
       border-top: 0;
       border-left: 2px dashed rgb(20 33 61 / 0.25);
+      transform: scaleY(var(--tear));
+      transform-origin: top;
     }
 
     .sector {
