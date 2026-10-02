@@ -187,6 +187,8 @@ const PRODUCT = {
   diffOut: pose(0, 0, 0, 64),
   /** Parte 4: quieto ao lado do texto, em 3/4. */
   quiet: pose(0, 0, 0, 40),
+  /** Parte 6: o último giro (uma volta inteira) termina na pose de herói. */
+  finalTurn: pose(0, 0, 0, 28 + 360),
 };
 
 /**
@@ -396,6 +398,7 @@ export const TRACKS: Track[] = [
     keys: {
       hero: [[0, 1], [1, 0.6]],
       problema: [[0, 0.6], [0.1, 0]],
+      pitch: [[0, 0], [0.12, 0.6]],
     },
   },
   ...poseTracks<ProductKey>("product", {
@@ -420,6 +423,13 @@ export const TRACKS: Track[] = [
       [1, PRODUCT.diffOut],
     ],
     empresa: [[0.12, PRODUCT.quiet]],
+    // Parte 5: pose de herói, com a inclinação do ponteiro de volta.
+    pitch: [[0.12, PRODUCT.hero]],
+    // Parte 6: uma volta inteira com o scroll, até a pose final.
+    jovem: [
+      [0, PRODUCT.hero],
+      [1, PRODUCT.finalTurn],
+    ],
   }),
   ...poseTracks<CameraKey>(
     "camera",
@@ -447,6 +457,7 @@ export const TRACKS: Track[] = [
       ],
       diferencial: [[0, CAMERA.diff]],
       empresa: [[0.12, CAMERA.quiet]],
+      pitch: [[0.12, CAMERA.hero]],
     },
     {
       hero: [

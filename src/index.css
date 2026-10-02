@@ -234,7 +234,7 @@ a {
     transition:
       background-color 180ms var(--ease-out-quart),
       color 180ms var(--ease-out-quart),
-      transform 160ms var(--ease-out-quart);
+      scale 160ms var(--ease-out-quart);
   }
 
   .btn-cta:focus-visible {
@@ -249,8 +249,9 @@ a {
     }
   }
 
+  /* `scale`, não `transform`: o botão magnético do final mexe no transform. */
   .btn-cta:active {
-    transform: scale(0.97);
+    scale: 0.97;
   }
 
   .btn-cta:focus-visible {
@@ -608,9 +609,17 @@ a {
     display: block;
   }
 
+  /* O título nunca passa da coluna: a palavra mais longa da página
+     ("empreendedorismo", na Parte 6) cabe com folga a 9,2% da largura dela
+     (medido com scripts/dev/measure-title.mjs). Igual em todos os capítulos. */
+  .chapter__text {
+    container-type: inline-size;
+  }
+
   .chapter__title {
     margin: 0;
     outline-offset: 8px;
+    font-size: min(clamp(2rem, 5vw, 4.5rem), 9.2cqi);
   }
 
   .chapter__aula {
@@ -1540,20 +1549,165 @@ a {
   }
 
   .timeline__block {
+    --drawn: 1;
     position: relative;
     padding: 0 0 2rem 1.4rem;
-    border-left: 2px solid currentColor;
   }
 
+  /* O ponto de cada bloco aparece quando a linha dele começa a se desenhar. */
   .timeline__block::before {
     content: "";
     position: absolute;
-    left: -7px;
+    z-index: 1;
+    left: -5px;
     top: 0.2rem;
     width: 12px;
     height: 12px;
     border-radius: 50%;
     background: currentColor;
+    opacity: clamp(0, calc(var(--drawn) * 6), 1);
+    scale: clamp(0.6, calc(0.6 + var(--drawn) * 3), 1);
+  }
+
+  /* A linha do bloco (vertical no celular), desenhada com o scroll. */
+  .timeline__block::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-left: 2px solid currentColor;
+    transform: scaleY(var(--drawn));
+    transform-origin: top;
+  }
+
+  .pitch-start {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .pitch-start p {
+    margin: 0;
+  }
+
+  .final__cta {
+    margin-top: 2.25rem;
+  }
+
+  /* HUD do modo pitch: fixo embaixo, em Grafite, legível a 3 m na TV. */
+  .pitch-hud {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 55;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "clock now actions"
+      "track track track";
+    align-items: center;
+    gap: 0.6rem 1.5rem;
+    padding: 0.9rem var(--gutter) 1rem;
+    background: var(--color-grafite);
+    color: var(--color-nuvem);
+    animation: hud-in 260ms var(--ease-out-quart);
+  }
+
+  .pitch-hud p {
+    margin: 0;
+  }
+
+  .pitch-hud__clock {
+    grid-area: clock;
+    font-size: clamp(1.6rem, 2.2vw, 2.75rem);
+    font-weight: 700;
+    font-stretch: 112%;
+  }
+
+  .pitch-hud__total {
+    font-size: 0.6em;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  .pitch-hud__now {
+    grid-area: now;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+    min-width: 0;
+  }
+
+  .pitch-hud__label {
+    flex-basis: 100%;
+    font-size: clamp(0.8rem, 0.75vw, 1rem);
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .pitch-hud__sector {
+    color: var(--color-sol);
+    font-size: clamp(1.35rem, 1.75vw, 2.1rem);
+    font-weight: 700;
+    font-stretch: 112%;
+  }
+
+  .pitch-hud__stop {
+    font-size: clamp(1.2rem, 1.5vw, 1.85rem);
+    font-weight: 600;
+  }
+
+  .pitch-hud__track {
+    grid-area: track;
+    height: 3px;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 22%, transparent);
+    overflow: hidden;
+  }
+
+  .pitch-hud__bar {
+    display: block;
+    height: 100%;
+    background: var(--color-sol);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .pitch-hud__actions {
+    grid-area: actions;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pitch-hud__button {
+    min-height: 2.75rem;
+    padding: 0.55em 1.1em;
+    font-size: clamp(1rem, 0.95vw, 1.25rem);
+    border: 1.5px solid color-mix(in srgb, currentColor 55%, transparent);
+    border-radius: 999px;
+    color: inherit;
+    font-weight: 650;
+    font-stretch: 108%;
+    transition:
+      background-color 160ms var(--ease-out-quart),
+      color 160ms var(--ease-out-quart),
+      scale 140ms var(--ease-out-quart);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pitch-hud__button:hover {
+      background: var(--color-nuvem);
+      color: var(--color-grafite);
+    }
+  }
+
+  .pitch-hud__button:active {
+    scale: 0.97;
+  }
+
+  .pitch-hud__button:focus-visible {
+    outline-color: var(--color-sol);
   }
 
   .timeline__time,
@@ -1607,6 +1761,19 @@ a {
     .callout__line,
     .callout__label {
       display: none;
+    }
+
+    /* HUD do pitch em duas linhas: relógio e botões; depois, quem fala. */
+    .pitch-hud {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        "clock actions"
+        "now now"
+        "track track";
+    }
+
+    .pitch-hud__actions {
+      justify-self: end;
     }
 
     /* Na coluna do esquema, as etiquetas ficam à esquerda dos nós. */
@@ -1855,14 +2022,27 @@ a {
 
     .timeline__block {
       padding: 1.6rem 1.5rem 0 0;
-      border-left: 0;
-      border-top: 2px solid currentColor;
     }
 
     .timeline__block::before {
       left: 0;
-      top: -7px;
+      top: -5px;
     }
+
+    .timeline__block::after {
+      inset: 0 0 auto;
+      border-left: 0;
+      border-top: 2px solid currentColor;
+      transform: scaleX(var(--drawn));
+      transform-origin: left;
+    }
+  }
+}
+
+@keyframes hud-in {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
   }
 }
 

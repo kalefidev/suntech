@@ -10,7 +10,8 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "oxlint",
     "snap": "node scripts/snap.mjs",
-    "check:numbers": "node scripts/check-numbers.mjs"
+    "check:numbers": "node scripts/check-numbers.mjs",
+    "test:pitch": "node scripts/pitch-test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",

@@ -37,6 +37,12 @@ texturas em canvas 2D em runtime e shaders em `.glsl?raw`.
   plano). Para iterar:
   `node scripts/snap.mjs <nome> --quick --only=390x844 --no-build`.
 
+- `npm run check:numbers`: nenhum número escrito à mão no texto de
+  `src/sections` (todos vêm de `src/content`).
+- `npm run test:pitch`: o modo pitch com o relógio falso do Playwright (180 s
+  exatos, pausa no Espaço, saída no Esc), normal e com reduced motion. Usa o
+  `dist/` (rode o build antes).
+
 Flags de URL: `?debug` (leva + r3f-perf), `?snap` (expõe `window.__ready`,
 `window.__sections`, `window.__lenis`, `window.__scene` e `window.__three`;
 DPR 1), `?goto=<id>` (pula para uma seção), `?nowebgl` (força o fallback) e

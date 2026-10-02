@@ -12,7 +12,8 @@ está em `docs/fase-0.md`; o brief, em `BRIEF.md`.
   começou na branch `v2`.
 - **01/10:** Fase 0 revisada (M1 a M8) e aprovada; a Fase 1 avançou.
 - **02/10:** Fases 1, 2 e 3 fechadas.
-- **02/10 (tarde):** Fases 4 (Parte 3) e 5 (Parte 4) fechadas.
+- **02/10 (tarde e noite):** Fases 4 (Parte 3), 5 (Parte 4) e 6 (Partes 5
+  e 6) fechadas.
 
 ## Respostas do usuário (valem daqui para a frente)
 
@@ -440,6 +441,59 @@ As seis passadas sem erro e sem violação de contraste, WebGL em todas menos
 `?nowebgl`: LCP de 196 a 336 ms (o cache de shaders do driver já estava
 quente), CLS 0. JS gzip: inicial 135,5 KB, total 407,7 KB, CSS 8,4 KB.
 Crítica: 22/28 (79%, bom).
+
+## Fase 6: Partes 5 e 6, o pitch e o final (02/10/2026)
+
+Feito:
+- **Modo pitch** (`lib/pitch.ts` + `sections/PitchHud.tsx`): um tour de
+  exatamente 180 s pelas paradas do `feira.ts`, com o relógio numa timeline do
+  GSAP. Cada parada rola até o alvo; nas cenas presas ("Por dentro" e "Como
+  funciona"), percorre o trecho do pin em ritmo constante enquanto a equipe
+  fala. Espaço pausa e retoma, Esc sai (o foco volta ao botão que abriu),
+  rolar à mão pausa, o Wake Lock mantém a tela acesa e um `aria-live` anuncia
+  cada parada. Com reduced motion, pula de parada em parada nos mesmos tempos.
+- **HUD** fixo embaixo, em Grafite: relógio, "Fala agora", o setor (em Sol), a
+  parada, a barra de progresso (escrita pelo relógio, sem re-render) e os
+  botões. Legível a 3 m na TV (o tipo cresce com a tela); no celular, em duas
+  linhas.
+- **Dois botões iniciam o pitch:** o da Parte 5, junto da linha do tempo, e o
+  botão magnético do final ("Ver o pitch em 3 minutos"), que segue o
+  ponteiro de leve (só com `pointer: fine`, sem reduced motion).
+- **Linha do tempo** que se desenha bloco a bloco com o scroll (horizontal no
+  desktop, vertical no celular); o ponto de cada bloco aparece quando a linha
+  dele começa.
+- **Manifesto** revelado por linhas; slogan e botão no final.
+- **3D:** pose de herói com a inclinação do ponteiro na Parte 5 e o último
+  giro (uma volta inteira com o scroll) na Parte 6, até a pose final, no fim
+  de tarde dourado. No celular, o produto segue fora (o texto ocupa a largura
+  toda).
+- **Títulos de capítulo** limitados à largura da coluna (`9,2cqi`):
+  "empreendedorismo" estourava a coluna a 1440 px e era cortada pela máscara
+  das linhas (medido com `scripts/dev/measure-title.mjs`).
+- **Aceite (M8):** `npm run test:pitch` roda os 180 s com o relógio falso do
+  Playwright e confere as paradas nos tempos, a pausa no Espaço (o relógio
+  congela), o fim em exatamente 3:00 com o foco de volta e a saída no Esc,
+  normal e com reduced motion. Tudo certo.
+
+### Decisões técnicas da Fase 6
+
+- **O relógio do pitch é tempo real:** a timeline compensa a escala da
+  timeline global (`?snap` acelera 3× as animações por tempo, e o pitch
+  herdava isso; o teste com `page.clock` achou).
+- **O teste roda com `?nowebgl`:** o pitch não depende da cena, e 180 s de
+  quadros falsos ficam leves (uns 5 min de verdade nas duas passadas).
+- **Botão magnético e `:active`:** o GSAP mexe no `transform` (x e y); a
+  pressão usa a propriedade `scale`, que se soma a ele.
+- **Espaço num botão é o clique do botão:** o atalho de pausa ignora o Espaço
+  quando o foco está num botão ou link, para não pausar e retomar na mesma
+  tecla.
+
+### `snap` da Fase 6 (`.snapshots/fase-6/`)
+
+As seis passadas sem erro e sem violação de contraste, WebGL em todas menos
+`?nowebgl`: LCP de 188 a 336 ms, CLS 0. JS gzip: inicial 137,5 KB (teto
+150), total 409,6 KB (teto 500), CSS 8,9 KB. Crítica: 24/28 (86%).
+`npm run test:pitch`: tudo certo.
 
 ## Pendências do usuário (nenhuma bloqueia)
 

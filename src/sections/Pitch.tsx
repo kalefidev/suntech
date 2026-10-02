@@ -1,11 +1,21 @@
+import { useRef } from "react";
 import { copy } from "../content/copy";
 import { partsOfFair, pitchTimeline } from "../content/feira";
+import { startPitch } from "../lib/pitch";
+import { useScrubFrom } from "../lib/reveal";
 import { ChapterOpener } from "./ChapterOpener";
 
 const part = partsOfFair[4];
 
-/** Parte 5: O pitch (Aula 6). Linha do tempo de 0:00 a 3:00. */
+/**
+ * Parte 5: O pitch (Aula 6). Linha do tempo de 0:00 a 3:00 (horizontal no
+ * desktop, vertical no celular), que se desenha com o scroll, bloco a bloco, e
+ * o botão do modo pitch.
+ */
 export function Pitch() {
+  const timelineRef = useRef<HTMLOListElement>(null);
+  useScrubFrom(timelineRef, ".timeline__block", { "--drawn": 0, stagger: 0.4 }, { start: "top 88%", end: "top 38%" });
+
   return (
     <section
       id={part.id}
@@ -18,7 +28,7 @@ export function Pitch() {
 
       <div className="part-block part-block--last col-text">
         <h3 className="type-h3">{copy.pitch.title}</h3>
-        <ol className="timeline">
+        <ol ref={timelineRef} className="timeline">
           {pitchTimeline.map((block) => (
             <li key={block.from} className="timeline__block">
               <p className="type-label num timeline__time">
@@ -29,6 +39,12 @@ export function Pitch() {
             </li>
           ))}
         </ol>
+        <div className="pitch-start">
+          <button type="button" className="btn-cta" onClick={(event) => startPitch(event.currentTarget)}>
+            {copy.pitch.start}
+          </button>
+          <p className="type-caption">{copy.pitch.hint}</p>
+        </div>
       </div>
     </section>
   );

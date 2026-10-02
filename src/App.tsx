@@ -25,6 +25,7 @@ import { Youth } from "./sections/Youth";
 import { Footer } from "./sections/Footer";
 import { CalloutLayer } from "./sections/CalloutLayer";
 import { StepLayer } from "./sections/StepLayer";
+import { PitchHud } from "./sections/PitchHud";
 import { copy } from "./content/copy";
 
 const SceneCanvas = lazy(() => track("scene", import("./scene/SceneCanvas")));
@@ -94,6 +95,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <PitchHud />
       {!flags.noWebgl && (
         <>
           <CalloutLayer />

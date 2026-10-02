@@ -211,6 +211,7 @@ export const copy = {
     resume: "Continuar",
     exit: "Sair",
     speaking: "Fala agora",
+    hudLabel: "Modo pitch",
   },
 
   jovem: {
