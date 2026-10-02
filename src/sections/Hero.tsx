@@ -10,8 +10,11 @@ export function Hero() {
   return (
     <section id="hero" data-section="hero" aria-labelledby="hero-titulo" className="hero page-x">
       <div className="hero__text col-text">
-        <p className="type-label hero__name" data-hero-name>
-          {copy.hero.productName}
+        {/* O nome sobe de dentro da máscara na abertura (lib/opening.ts). */}
+        <p className="type-label hero__name">
+          <span className="hero__name-text" data-hero-name>
+            {copy.hero.productName}
+          </span>
         </p>
         <h1 id="hero-titulo" className="type-display hero__title">
           {copy.hero.title}

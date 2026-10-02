@@ -70,14 +70,16 @@ const measurements: {
 const weightGrams: number | null = null; // TODO: preencher
 
 const panel = { plates: 2, voltsEach: 6, wattsEach: 3, volts: 6, watts: 6 };
-const battery = { cells: 2, voltsEach: 3.7, mAhEach: 2600, mAh: 5200, whApprox: 19 };
+/** "18650" é o formato da célula (18 mm de diâmetro por 65 mm), não uma quantidade. */
+const battery = { format: "18650", cells: 2, voltsEach: 3.7, mAhEach: 2600, mAh: 5200, whApprox: 19 };
 const charger = { module: "TP4056", protection: "DW01", maxAmps: 1 };
 const converter = { fromVolts: 3.7, toVolts: 5, maxAmps: 1 };
 const output = { volts: 5 };
+const diode = { model: "1N5819", kind: "Schottky" };
 
 const costs: CostItem[] = [
   { item: `${num(panel.plates)} placas solares ${unit(panel.voltsEach, "V")} ${unit(panel.wattsEach, "W")}`, brl: 70 },
-  { item: `${num(battery.cells)} baterias 18650 + suporte`, brl: 45 },
+  { item: `${num(battery.cells)} baterias ${battery.format} + suporte`, brl: 45 },
   { item: `Módulo de carga ${charger.module}`, brl: 7 },
   { item: `Conversor ${unit(output.volts, "V")} com USB`, brl: 8 },
   { item: "Cabo 3 em 1", brl: 20 },
@@ -97,6 +99,7 @@ export const product = {
   charger,
   converter,
   output,
+  diode,
   priceBRL: 249,
   costs,
   /** Soma da tabela (R$ 185 na seção 3 do brief). */
@@ -132,7 +135,7 @@ export function specSheet(): SpecRow[] {
     },
     {
       label: "Bateria",
-      value: `${num(battery.cells)} células de lítio 18650 de ${v(battery.voltsEach)} e ${unit(battery.mAhEach, "mAh")} em paralelo: ${unit(battery.mAh, "mAh")}, cerca de ${unit(battery.whApprox, "Wh")}`,
+      value: `${num(battery.cells)} células de lítio ${battery.format} de ${v(battery.voltsEach)} e ${unit(battery.mAhEach, "mAh")} em paralelo: ${unit(battery.mAh, "mAh")}, cerca de ${unit(battery.whApprox, "Wh")}`,
     },
     {
       label: "Controle e proteção",
@@ -152,8 +155,7 @@ export function specSheet(): SpecRow[] {
     },
     {
       label: "Outros componentes",
-      value:
-        "Diodo Schottky 1N5819, chave liga/desliga da saída, LED azul de saída ligada e LEDs de carga do módulo (vermelho carregando, azul completo)",
+      value: `Diodo ${diode.kind} ${diode.model}, chave liga/desliga da saída, LED azul de saída ligada e LEDs de carga do módulo (vermelho carregando, azul completo)`,
     },
     {
       label: "Tempo de carga",

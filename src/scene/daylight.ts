@@ -281,10 +281,11 @@ export interface SceneLight {
 const GROUND = hex("#1A1714");
 
 /**
- * O sol vem sempre do lado direito, como no céu, e um pouco de trás do
- * produto, para desenhar as bordas. Sobe até uns 60° ao meio-dia. De noite e
- * na tempestade, o produto continua legível: o ambiente de estúdio nunca
- * apaga de vez (é uma página de produto, não uma simulação).
+ * O sol vem sempre do lado direito, como no céu, baixo e quente de manhã e no
+ * fim da tarde, e sobe até uns 60° ao meio-dia. Vem um pouco da frente, para
+ * acender as faces que a câmera vê. De noite e na tempestade, o produto
+ * continua legível: o ambiente de estúdio nunca apaga (é uma página de
+ * produto, fotografada em estúdio, não uma simulação).
  */
 export function sceneLight(dayTime: number, cloudCover: number): SceneLight {
   const hour = hourOf(dayTime);
@@ -293,16 +294,16 @@ export function sceneLight(dayTime: number, cloudCover: number): SceneLight {
   const storm = smoothstep(0.55, 0.9, cloudCover);
   const above = smoothstep(-0.04, 0.12, e);
   const dayF = smoothstep(-0.1, 0.4, e);
-  const elevation = Math.max(0.06, Math.asin(Math.min(1, Math.max(-1, e))) * 0.67);
+  const elevation = Math.max(0.1, Math.asin(Math.min(1, Math.max(-1, e))) * 0.67);
   const cos = Math.cos(elevation);
   return {
-    sunDir: [cos * 0.94, Math.sin(elevation), cos * -0.34],
+    sunDir: [cos * 0.96, Math.sin(elevation), cos * 0.28],
     sunColor: linear(mixRgb(k.sun, k.sunSide, 0.35)),
-    sunIntensity: 2.6 * k.sunI * above * (1 - 0.85 * storm),
-    skyColor: linear(mixRgb(k.zenith, TOKENS.nuvem, 0.25)),
+    sunIntensity: 3 * k.sunI * Math.max(above, 0.0) * (1 - 0.8 * storm),
+    skyColor: linear(mixRgb(k.zenith, TOKENS.nuvem, 0.35)),
     groundColor: linear(mixRgb(k.horizon, GROUND, 0.6)),
-    hemiIntensity: 0.25 + 0.5 * dayF,
-    envIntensity: (0.45 + 0.55 * dayF) * (1 - 0.3 * storm),
+    hemiIntensity: 0.45 + 0.45 * dayF,
+    envIntensity: (0.85 + 0.35 * dayF) * (1 - 0.25 * storm),
     irradiance: k.sunI * above * (1 - storm),
   };
 }

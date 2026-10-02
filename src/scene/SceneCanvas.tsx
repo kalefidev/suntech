@@ -9,10 +9,6 @@ interface SceneCanvasProps {
   eventSource: RefObject<HTMLElement | null>;
 }
 
-// O antialias do contexto não muda depois de criado: com pós-processamento,
-// quem suaviza as bordas é o MSAA do composer.
-const nativeAntialias = !quality.entry().post.bloom;
-
 /**
  * Carregado via `React.lazy` (App.tsx): é aqui que `three` e o R3F entram,
  * depois do texto do hero pintar. Um único `<Canvas>` fixo atrás do DOM.
@@ -28,8 +24,10 @@ export default function SceneCanvas({ eventSource }: SceneCanvasProps) {
       eventPrefix="client"
       // Com `?snap`, DPR 1: o SwiftShader renderiza na CPU.
       dpr={flags.snap ? 1 : settings.dpr}
-      gl={{ antialias: nativeAntialias, powerPreference: "high-performance", alpha: false }}
-      camera={{ position: [0, 0.4, 6], fov: 32, near: 0.1, far: 100 }}
+      // Antialias nativo: o produto não pode ter serrilhado em DPR 1 (receita
+      // de estúdio). O antialias do contexto não muda depois de criado.
+      gl={{ antialias: true, powerPreference: "high-performance", alpha: false }}
+      camera={{ position: [0, 2.3, 11], fov: 30, near: 0.1, far: 100 }}
       onCreated={({ gl }) => {
         // Khronos PBR Neutral: fiel à cor do produto. O modelo de contraste
         // (daylight.ts) aplica a mesma curva.

@@ -35,8 +35,16 @@ texturas em canvas 2D em runtime e shaders em `.glsl?raw`.
   `node scripts/snap.mjs <nome> --quick --only=390x844 --no-build`.
 
 Flags de URL: `?debug` (leva + r3f-perf), `?snap` (expõe `window.__ready`,
-`window.__sections` e `window.__lenis`; DPR 1), `?goto=<id>` (pula para uma
-seção) e `?nowebgl` (força o fallback).
+`window.__sections`, `window.__lenis`, `window.__scene` e `window.__three`;
+DPR 1), `?goto=<id>` (pula para uma seção), `?nowebgl` (força o fallback) e
+`?slowmo=N` (timelines N vezes mais lentas).
+
+Ferramentas de depuração em `scripts/dev/` (com o preview no ar em :4173):
+`frame.mjs` (enquadramento da câmera sem build), `probe.mjs` (foto com campos
+do `sceneState` forçados), `opening.mjs` (a abertura quadro a quadro),
+`crop.mjs` e `montage.mjs` (recorte ampliado e grade de imagens). O SwiftShader
+leva segundos por quadro: no Windows, pare o preview pelo PID (não há
+`pkill`), senão a porta 4173 fica presa e o `snap` falha.
 
 ## Regras de arquitetura (seção 5 do brief)
 

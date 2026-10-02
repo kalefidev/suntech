@@ -1,12 +1,14 @@
-import { useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { type ShaderMaterial, Vector2, Vector3 } from "three";
+import { type Mesh, type ShaderMaterial, Vector2, Vector3 } from "three";
 import { easing } from "maath";
 import vertexShader from "../shaders/sky.vert.glsl?raw";
 import fragmentShader from "../shaders/sky.frag.glsl?raw";
 import { sceneState } from "./state";
 import { computeSky, mixSky, type RGB, type SkyUniforms } from "./daylight";
 import { quality } from "./quality";
+import { LAYER_BACKDROP } from "./layers";
+import { skyLive } from "./skyLive";
 import { useReducedMotion } from "../lib/useReducedMotion";
 
 /**
@@ -55,6 +57,8 @@ const setVec = (target: Vector3, c: RGB) => target.set(c[0], c[1], c[2]);
 export function Sky() {
   const uniforms = useMemo(() => createUniforms(), []);
   const materialRef = useRef<ShaderMaterial>(null);
+  const meshRef = useRef<Mesh>(null);
+  useLayoutEffect(() => meshRef.current?.layers.set(LAYER_BACKDROP), []);
   const reduced = useReducedMotion();
   const live = useRef({
     dayTime: sceneState.dayTime,
@@ -98,6 +102,9 @@ export function Sky() {
       sky.guardAmount *= t;
     }
     s.last = sky;
+    skyLive.dayTime = s.dayTime;
+    skyLive.cloudCover = s.cloudCover;
+    skyLive.horizon = sky.horizon;
 
     const u = material.uniforms;
     setVec(u.uZenith.value, sky.zenith);
@@ -124,7 +131,7 @@ export function Sky() {
   });
 
   return (
-    <mesh renderOrder={-1} frustumCulled={false}>
+    <mesh ref={meshRef} renderOrder={-1} frustumCulled={false}>
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
         ref={materialRef}

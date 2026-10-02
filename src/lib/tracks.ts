@@ -1,4 +1,5 @@
 import { gsap, ScrollTrigger } from "./gsap";
+import { testHooks, WIDE } from "./env";
 import { getSections, onSectionsChange, type SectionBounds } from "./sections";
 import { sceneState } from "../scene/state";
 import { REST_AT, TRACKS, type SectionId } from "../scene/choreography";
@@ -43,10 +44,15 @@ function build(): void {
   const max = ScrollTrigger.maxScroll(window);
   const byId = new Map(getSections().map((b) => [b.id, b]));
   const timeline = gsap.timeline({ paused: true, defaults: { ease: "none", immediateRender: false } });
+  // Layout empilhado (celular, tablet em pé): as chaves `narrow` substituem as
+  // da seção. A timeline é refeita a cada refresh, inclusive ao girar a tela.
+  const narrow = !window.matchMedia(WIDE).matches;
 
   for (const track of TRACKS) {
     const points: Array<[number, number]> = [];
-    for (const [id, keys] of Object.entries(track.keys)) {
+    const ids = new Set([...Object.keys(track.keys), ...(narrow ? Object.keys(track.narrow ?? {}) : [])]);
+    for (const id of ids) {
+      const keys = (narrow ? track.narrow?.[id as SectionId] : undefined) ?? track.keys[id as SectionId];
       const b = byId.get(id);
       if (!b || !keys) continue;
       const [a, z] = rangeOf(b, max);
@@ -105,8 +111,16 @@ function update(): void {
   else seek(window.scrollY);
 }
 
+declare global {
+  interface Window {
+    /** Só em dev ou com `?snap`: o estado da cena, para testes. */
+    __scene?: typeof sceneState;
+  }
+}
+
 /** Liga o trilho. Devolve a limpeza. */
 export function initTracks(options: { reducedMotion: boolean }): () => void {
+  if (testHooks) window.__scene = sceneState;
   reduced = options.reducedMotion;
   restSection = null;
   const off = onSectionsChange(() => {
@@ -116,6 +130,9 @@ export function initTracks(options: { reducedMotion: boolean }): () => void {
   });
   const trigger = ScrollTrigger.create({ start: 0, end: "max", onUpdate: update });
   build();
+  // Prepara a cena para o ponto atual mesmo com o trilho segurado: a câmera e
+  // o produto já nascem na pose certa, e a abertura parte daí.
+  seek(window.scrollY);
   update();
   return () => {
     off();

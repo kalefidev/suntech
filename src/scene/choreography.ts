@@ -30,7 +30,120 @@ export interface Track {
   /** Degrau em vez de interpolação (tom do texto). */
   step?: boolean;
   keys: Partial<Record<SectionId, Keys>>;
+  /**
+   * Chaves do layout empilhado (celular e tablet em pé), seção por seção. A
+   * seção que não está aqui usa as de `keys`.
+   */
+  narrow?: Partial<Record<SectionId, Keys>>;
 }
+
+// ------------------------------------------------------------ poses
+
+/** Uma pose em pontos da faixa da seção: [posição de 0 a 1, pose]. */
+type PoseKeys<P> = ReadonlyArray<readonly [at: number, pose: P]>;
+
+/**
+ * Desmonta poses (câmera ou produto) em um trilho por campo, para a timeline
+ * mestre. `narrow` substitui as poses no layout empilhado.
+ */
+function poseTracks<P extends object>(
+  root: string,
+  keys: Partial<Record<SectionId, PoseKeys<P>>>,
+  narrow: Partial<Record<SectionId, PoseKeys<P>>> = {},
+): Track[] {
+  const fields = new Set<string>();
+  for (const list of [...Object.values(keys), ...Object.values(narrow)]) {
+    for (const [, pose] of list ?? []) Object.keys(pose).forEach((field) => fields.add(field));
+  }
+  const split = (source: Partial<Record<SectionId, PoseKeys<P>>>, field: string) =>
+    Object.fromEntries(
+      Object.entries(source).map(([id, list]) => [
+        id,
+        (list ?? []).map(([at, pose]) => [at, (pose as Record<string, number>)[field]] as const),
+      ]),
+    ) as Partial<Record<SectionId, Keys>>;
+  return [...fields].map((field) => ({
+    path: `${root}.${field}`,
+    keys: split(keys, field),
+    narrow: split(narrow, field),
+  }));
+}
+
+interface CameraKey {
+  x: number;
+  y: number;
+  z: number;
+  tx: number;
+  ty: number;
+  tz: number;
+  fov: number;
+  sx: number;
+  sy: number;
+}
+
+/**
+ * Câmera em órbita do alvo: azimute e elevação em graus (azimute 0 = de
+ * frente, negativo = da esquerda). `sx` e `sy` são o deslocamento de lente.
+ */
+function orbit(
+  target: readonly [number, number, number],
+  azimuth: number,
+  elevation: number,
+  distance: number,
+  fov: number,
+  sx: number,
+  sy: number,
+): CameraKey {
+  const az = (azimuth * Math.PI) / 180;
+  const el = (elevation * Math.PI) / 180;
+  const flat = distance * Math.cos(el);
+  return {
+    x: target[0] + flat * Math.sin(az),
+    y: target[1] + distance * Math.sin(el),
+    z: target[2] + flat * Math.cos(az),
+    tx: target[0],
+    ty: target[1],
+    tz: target[2],
+    fov,
+    sx,
+    sy,
+  };
+}
+
+interface ProductKey {
+  x: number;
+  y: number;
+  z: number;
+  rx: number;
+  ry: number;
+  rz: number;
+  s: number;
+}
+
+const pose = (x: number, y: number, z: number, ry: number, s = 1, rx = 0, rz = 0): ProductKey => ({ x, y, z, rx, ry, rz, s });
+
+/**
+ * Receita de estúdio (docs/fase-0.md, item 6): FOV de uns 30°, longe do
+ * produto e uns 12° acima. No desktop, o produto pousa no horizonte, à
+ * direita; no celular, fica em cima, acima do texto.
+ */
+const HERO_TARGET = [0.25, 0.62, 0.15] as const;
+const CAMERA = {
+  hero: orbit(HERO_TARGET, -16, 13, 11.5, 30, 0.32, -0.28),
+  heroOut: orbit(HERO_TARGET, -16, 13, 12.2, 30, 0.32, -0.28),
+  heroNarrow: orbit(HERO_TARGET, -16, 13, 15.5, 34, 0.06, 0.12),
+  // No celular o texto rola por cima do canvas: o produto sobe junto com o
+  // hero (uma tela inteira de deslocamento de lente) e sai por cima dele.
+  heroOutNarrow: orbit(HERO_TARGET, -16, 13, 15.5, 34, 0.06, 1.12),
+};
+
+const PRODUCT = {
+  /** 3/4: o painel vira para o sol, à direita, e a caixa fica na frente. */
+  hero: pose(0, 0, 0, 28),
+  heroOut: pose(0, 0, 0, 48),
+  /** Parte 1: o produto vai para o fundo, à direita, enquanto a tempestade o apaga. */
+  away: pose(1.4, 0, -3.2, 70),
+};
 
 // Tom: 1 = texto Nuvem, −1 = texto Noite, 0 = travessia (sem texto na tela).
 const LIGHT = 1;
@@ -89,6 +202,58 @@ export const TRACKS: Track[] = [
       "energia-fica": [[0, CROSSING], [0.3, LIGHT], [0.84, CROSSING], [1, DARK]],
     },
   },
+
+  // ---------------------------------------------------------- produto
+  // Hero: pose de herói, girando com o scroll e inclinando com o ponteiro.
+  // Parte 1: vai para o fundo e some na névoa enquanto a tempestade fecha.
+  {
+    path: "productVisible",
+    keys: {
+      hero: [[0, 1]],
+      problema: [[0, 1], [0.24, 0]],
+    },
+    // No celular, o produto já saiu da tela com o hero.
+    narrow: {
+      hero: [[0, 1], [0.85, 1], [1, 0]],
+      problema: [[0, 0]],
+    },
+  },
+  {
+    path: "panelOpen",
+    keys: { hero: [[0, 1]] },
+  },
+  {
+    path: "tilt",
+    keys: {
+      hero: [[0, 1], [1, 0.6]],
+      problema: [[0, 0.6], [0.2, 0]],
+    },
+  },
+  ...poseTracks<ProductKey>("product", {
+    hero: [
+      [0, PRODUCT.hero],
+      [1, PRODUCT.heroOut],
+    ],
+    problema: [
+      [0, PRODUCT.heroOut],
+      [0.24, PRODUCT.away],
+    ],
+  }),
+  ...poseTracks<CameraKey>(
+    "camera",
+    {
+      hero: [
+        [0, CAMERA.hero],
+        [1, CAMERA.heroOut],
+      ],
+    },
+    {
+      hero: [
+        [0, CAMERA.heroNarrow],
+        [1, CAMERA.heroOutNarrow],
+      ],
+    },
+  ),
 ];
 
 /**

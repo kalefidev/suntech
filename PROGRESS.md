@@ -147,7 +147,84 @@ Ficam para as fases seguintes (registrados na crítica):
 - Fase 6: a palavra "empreendedorismo" passa um pouco da coluna no título do
   capítulo 6, no desktop.
 
+## Fase 2: o produto, a abertura e o hero (02/10/2026)
+
+Feito:
+- **Produto procedural** (`scene/Product/`), parametrizado pelo `product.ts`
+  (`dimensions.ts`, 1 unidade = 100 mm):
+  - painel dobrável em pé, com a lombada na vertical: duas placas que abrem
+    como um livro (`panelOpen`), moldura de alumínio anodizado com bisel,
+    células em `CanvasTexture` com clearcoat fazendo o papel do vidro,
+    dobradiças, pezinhos de borracha e caixa de junção;
+  - caixa: corpo em aro (oco, para a Fase 4 abrir a tampa), tampa com
+    dobradiça atrás (`lidOpen`), fresta, pés, parafusos, USB-A e USB-C com
+    carcaça metálica, chave, LED com lente (`ledOn`) e "SunTech" em
+    baixo-relevo (mapa de normais gerado do texto);
+  - cabo do painel até a caixa (`TubeGeometry` sobre Catmull-Rom), refeito só
+    quando o painel se mexe e desenhado ao longo do comprimento
+    (`panelCable`).
+- **Texturas em canvas** (`scene/textures/`), geradas uma vez no tier de
+  entrada: células (cor + mapa com máscara, rugosidade e metal), logo, placas
+  TP4056/DW01 e boost, rótulo das 18650. Os nomes e números das texturas saem
+  do `product.ts` (`battery.format` e `diode` entraram lá).
+- **CSM** nas células: reflexo da abertura (`glint`) e brilho com o sol
+  (`irradiance`).
+- **Estúdio:** `StudioEnvironment` próprio em PMREM (softbox acima, faixa
+  baixa à frente para o vidro, softbox atrás para o tampo, tiras laterais e
+  preenchimento frio); sol direcional e hemisférica pela hora
+  (`daylight.sceneLight`); sombra de contato própria (`ContactShadow`).
+- **Câmera** (`CameraRig`) com deslocamento de lente (`sx`, `sy`): o produto
+  fica à direita no desktop e em cima no celular sem mudar a perspectiva.
+- **Abertura completa** (`lib/opening.ts`): madrugada com o produto em
+  silhueta, o primeiro raio de sol (`LightShaft`, feixe aditivo que nunca
+  entra na coluna de texto), o painel abrindo como um livro, o reflexo nas
+  células, o cabo ligando o painel à caixa e o nome subindo da máscara.
+  Pula para o fim com qualquer gesto.
+- **Coreografia do produto e da câmera** no mapa de scroll, com chaves
+  `narrow` para o layout empilhado. Hero: 3/4, girando com o scroll e
+  inclinando com o ponteiro (no toque, com a velocidade do scroll). Parte 1:
+  o produto vai para o fundo e some numa névoa da cor do horizonte. No
+  celular, o produto sobe junto com o hero (o texto rola por cima do canvas).
+
+### Decisões técnicas da Fase 2 (não repetir o caminho)
+
+- **`setViewOffset` muda o aspecto da câmera** para `fullWidth/fullHeight`:
+  passar a tela real (largura e altura), nunca (1, 1).
+- **O R3F copia o objeto `uniforms`** do `<shaderMaterial>`: escrever sempre
+  em `material.uniforms` pelo ref (valores reatribuídos no objeto original
+  não chegam ao material).
+- **Nunca `pow(x, 2.0)` em GLSL com `x` negativo** (indefinido; virava NaN no
+  SwiftShader): usar `x * x`.
+- **Sombra de contato:** o plano do desfoque fica dentro do campo da câmera da
+  sombra (no drei ele fica na origem do mundo e só funciona com a sombra
+  abaixo do chão), e o alvo é limpo com alfa 0 (o canvas é opaco). Só
+  re-renderiza quando o produto se mexe.
+- **Antialias nativo ligado:** sem ele, o produto serrilhava em DPR 1. Na Fase
+  7, o composer decide se precisa de MSAA próprio.
+- **Sumir com o produto é névoa, não transparência:** `productVisible` controla
+  uma `FogExp2` da cor do horizonte (sem problema de ordenação).
+- **`react/immutability` do oxlint desligada só em `src/scene`:** mutar
+  objetos do three no `useFrame` é o padrão do R3F.
+- **Ganchos de teste** (só em dev e com `?snap`): `window.__scene` (o
+  `sceneState`) e `window.__three` (a cena); `?slowmo=N` desacelera as
+  timelines (para fotografar a abertura no SwiftShader).
+- **Desvio do plano:** o interior da caixa (placas, bateria, fios e diodo)
+  foi para a Fase 4, junto com a explosão, onde aparece e é conferido. As
+  texturas dele já existem.
+
+### Fontes externas (F9), revalidadas no navegador em 02/10/2026
+
+Todas no ar e sustentando o texto do site: Poder360/IEMA (990.103, estudo
+divulgado em 26/11/2019), Idec (o endereço redireciona para "Amazônia Legal no
+escuro"; o apagão no Amapá começou em 3 de novembro e passou de 20 dias),
+Earthshot e d.light (Stanford, querosene, pagamento pelo celular). **A d.light
+hoje fala em 215 milhões de vidas (e a Earthshot, em 175 milhões); o site diz
+"mais de 150 milhões", da seção 3, que continua verdadeiro.**
+
 ## Pendências do usuário (nenhuma bloqueia)
+
+- **d.light:** quer atualizar o número da seção 3 (hoje "mais de 150
+  milhões") para o que as fontes dizem agora (175 ou 215 milhões)?
 
 - **F6:** confirmar no protótipo que o boost sai do OUT do módulo TP4056. Se
   der, medir o tempo de carga e quantas cargas de celular a bateria rende (F3

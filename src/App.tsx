@@ -3,6 +3,8 @@ import { ScrollTrigger } from "./lib/gsap";
 import { destroyLenis, startLenis } from "./lib/lenis";
 import { registerSections } from "./lib/sections";
 import { holdTracks, initTracks } from "./lib/tracks";
+import { prepareOpening } from "./lib/opening";
+import { startPointer } from "./lib/pointer";
 import { track } from "./lib/loading";
 import { flags } from "./lib/env";
 import { useReducedMotion } from "./lib/useReducedMotion";
@@ -39,16 +41,20 @@ export default function App() {
     );
   }, []);
 
-  // Lenis (fora do reduced motion), registro de seções e trilho de scroll.
-  // Roda depois dos efeitos das seções, quando os pins já existem.
+  // Lenis e ponteiro (fora do reduced motion), registro de seções e trilho de
+  // scroll. Roda depois dos efeitos das seções, quando os pins já existem. O
+  // trilho põe a cena na pose do ponto atual, e a abertura parte daí.
   useEffect(() => {
     if (!reducedMotion) startLenis();
+    const offPointer = reducedMotion ? () => undefined : startPointer();
     const offSections = registerSections();
     const offTracks = initTracks({ reducedMotion });
+    prepareOpening();
     ScrollTrigger.refresh();
     return () => {
       offTracks();
       offSections();
+      offPointer();
       destroyLenis();
     };
   }, [reducedMotion]);

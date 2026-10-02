@@ -65,6 +65,10 @@ export interface SceneState {
   ledOn: number;
   /** 0 → 1 cabo 3 em 1 ligando a caixa ao celular. */
   cable: number;
+  /** 0 → 1 cabo do painel até a caixa, desenhado ao longo do comprimento (abertura). */
+  panelCable: number;
+  /** 0 → 1 quanto o ponteiro (ou a velocidade do scroll, no toque) inclina o produto. */
+  tilt: number;
   /** 0 → 1 reflexo que corre pelas células (abertura). */
   glint: number;
   /** 0 → 1 → 0 primeiro raio de sol (abertura). */
@@ -92,6 +96,8 @@ export const sceneState: SceneState = {
   phoneCharge: 0,
   ledOn: 0,
   cable: 0,
+  panelCable: 0,
+  tilt: 0,
   glint: 0,
   shaft: 0,
   productVisible: 0,

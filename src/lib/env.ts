@@ -11,6 +11,8 @@ export const flags = {
   noWebgl: params.has("nowebgl"),
   /** `?goto=<id>`: pula direto para uma seção depois de pronto. */
   goto: params.get("goto"),
+  /** `?slowmo=10`: as timelines do GSAP andam 10× mais devagar (para fotografar a abertura). */
+  slowmo: Math.max(1, Number(params.get("slowmo")) || 1),
 };
 
 /** Ganchos de teste só em desenvolvimento ou com `?snap` (seção 5 do brief). */

@@ -1,36 +1,69 @@
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
+import type { Object3D, Scene } from "three";
 import { Sky } from "./Sky";
+import { CameraRig } from "./CameraRig";
+import { Lights } from "./Lights";
+import { StudioEnvironment } from "./StudioEnvironment";
+import { LightShaft } from "./LightShaft";
+import { Product } from "./Product/Product";
+import { loadProductTextures } from "./textures";
 import { DebugPerf } from "./DebugPerf";
 import { quality } from "./quality";
-import { flags } from "../lib/env";
-import { complete, track } from "../lib/loading";
+import { flags, testHooks } from "../lib/env";
+import { track } from "../lib/loading";
 
-/** Compila os shaders antes do primeiro quadro visível (tarefa real do loader). */
+/**
+ * Compila os shaders antes do primeiro quadro visível (tarefa real do loader).
+ * Fica depois do produto, no mesmo Suspense: só roda com o produto montado.
+ * O `compile` do three só olha o que está visível, então tudo fica visível
+ * enquanto compila (o canvas ainda está transparente nesse momento).
+ */
 function Warmup() {
   const { gl, scene, camera } = useThree();
   useEffect(() => {
-    // Fase 1: ainda não há texturas procedurais; a Fase 2 gera e conclui esta tarefa.
-    complete("textures");
+    const hidden: Object3D[] = [];
+    scene.traverse((object) => {
+      if (!object.visible) {
+        hidden.push(object);
+        object.visible = true;
+      }
+    });
     track("shaders", gl.compileAsync(scene, camera)).then(() => {
+      hidden.forEach((object) => (object.visible = false));
       document.documentElement.dataset.scene = "on";
     });
   }, [gl, scene, camera]);
   return null;
 }
 
+declare global {
+  interface Window {
+    /** Só em dev ou com `?snap`: a cena do three, para testes. */
+    __three?: { scene: Scene };
+  }
+}
+
 /** Conteúdo do `<Canvas>` único da página. */
 export function Experience() {
+  const scene = useThree((state) => state.scene);
+  useEffect(() => {
+    track("textures", loadProductTextures());
+    if (testHooks) window.__three = { scene };
+  }, [scene]);
+
   return (
-    <PerformanceMonitor
-      onIncline={quality.incline}
-      onDecline={quality.decline}
-      onFallback={quality.fallback}
-      flipflops={3}
-    >
+    <PerformanceMonitor onIncline={quality.incline} onDecline={quality.decline} onFallback={quality.fallback} flipflops={3}>
       <Sky />
-      <Warmup />
+      <CameraRig />
+      <Lights />
+      <StudioEnvironment />
+      <Suspense fallback={null}>
+        <Product />
+        <Warmup />
+      </Suspense>
+      <LightShaft />
       {flags.debug && <DebugPerf />}
     </PerformanceMonitor>
   );

@@ -498,6 +498,21 @@ a {
     padding-bottom: 11svh;
   }
 
+  /* Máscara do nome: ele fica escondido logo abaixo da linha até a abertura. */
+  .hero__name {
+    overflow: clip;
+    padding-block: 0.15em;
+    margin-block: -0.15em;
+  }
+
+  .hero__name-text {
+    display: inline-block;
+  }
+
+  :root:not([data-opened]) .hero__name-text {
+    transform: translateY(110%);
+  }
+
   .hero__title {
     margin-top: 1.1rem;
   }
@@ -1305,6 +1320,10 @@ a {
 
   .menu-sheet {
     animation: none;
+  }
+
+  :root:not([data-opened]) .hero__name-text {
+    transform: none;
   }
 
   /* O header some só com opacidade (sem subir), e não pega clique enquanto
