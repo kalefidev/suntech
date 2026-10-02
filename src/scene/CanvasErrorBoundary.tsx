@@ -10,9 +10,8 @@ interface State {
 }
 
 /**
- * Se o WebGL falhar ao criar o contexto (ou o navegador não suportar),
- * troca a cena 3D pelo fallback em CSS/SVG — o conteúdo continua 100%
- * navegável (seção 5 do brief).
+ * Se o WebGL falhar (contexto não criado, navegador sem suporte), troca a cena
+ * pelo fallback em CSS e SVG. O conteúdo continua navegável (seção 5 do brief).
  */
 export class CanvasErrorBoundary extends Component<Props, State> {
   state: State = { failed: false };
@@ -22,7 +21,9 @@ export class CanvasErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: unknown) {
-    console.error("Falha ao iniciar a cena 3D, usando fallback:", error);
+    // Aviso, não erro: o fallback é um caminho previsto, e o `snap` trata
+    // qualquer `console.error` como falha.
+    console.warn("Cena 3D indisponível, usando o fallback:", error);
   }
 
   render() {

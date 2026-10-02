@@ -6,128 +6,134 @@
 
 web
 
-## Stack
-
-Vite 8 + React 19 + TypeScript (strict), three.js + @react-three/fiber v9 +
-@react-three/drei v10, three-custom-shader-material, @react-three/postprocessing,
-gsap 3.15+ (ScrollTrigger, SplitText, CustomEase, DrawSVGPlugin) + Lenis,
-maath, Tailwind CSS v4, @fontsource-variable/archivo. Não é uma escolha
-delegada: é exigida explicitamente pelo brief do cliente (`BRIEF.md`, seção
-4), com justificativa por item (SPA estática sem backend; WebGL2 via three,
-não WebGPU; R3F v9 é a versão estável para React 19). Sem SSR — não há
-conteúdo dinâmico que justifique, e evita problemas de hidratação com WebGL.
-
 ## Users
 
-Dois públicos, ambos avaliando o mesmo site com objetivos diferentes:
+Em ordem de prioridade (confirmada pelo usuário em 01/10/2026):
 
-1. **Donos de negócio (clientes em potencial de Kaique Calefi):** avaliam o
-   site como amostra de trabalho de design/3D/motion para decidir se
-   contratam. Veem primeiro no celular ou desktop, sem contexto prévio.
-2. **Visitantes do portfólio:** recrutadores, colegas e curiosos navegando o
-   portfólio; querem entender rápido o que é o produto e a qualidade da
-   execução.
-
-Há também um público institucional secundário e explícito: quem avalia o
-trabalho escolar da equipe SunTech precisa encontrar, sem procurar, as
-respostas para "quem somos, o que fazemos, para que e para quem".
+1. **Professores e avaliadores da Feira de Empreendedorismo** do Colégio Ideal.
+   Avaliam o trabalho da equipe pelas aulas (Aulas 2 a 6 e a atividade AQ3) e
+   precisam achar cada resposta em segundos, na ordem das aulas. Leem no
+   notebook ou na TV do estande e, às vezes, no próprio celular.
+2. **Visitantes da feira pelo QR code**, quase todos no celular, em pé, no 4G
+   e com pouco tempo. Precisam entender o produto antes de o 3D terminar de
+   carregar.
+3. **Apresentadores do estande** (a equipe SunTech). Usam o modo pitch de 3
+   minutos no notebook ou na TV, com Espaço para pausar e Esc para sair, e o
+   site como apoio da fala.
+4. **Clientes do desenvolvedor do site** (Kaique Calefi). Veem a página como
+   peça de portfólio e procuram o crédito e o link no rodapé.
 
 ## Product Purpose
 
-Uma página de produto em 3D, no estilo de lançamento de hardware, para o
-**Carregador Solar SunTech** — um protótipo real de carregador portátil que
-se recarrega com luz do sol, criado por uma equipe de estudantes (SunTech)
-como projeto escolar. O site trata o protótipo como um produto de verdade,
-sem prometer o que ele não cumpre. Sucesso = duas coisas ao mesmo tempo: (a)
-prova de design/3D/motion/storytelling de produto para o portfólio de quem
-construiu o site; (b) resposta clara às perguntas do trabalho escolar. Sem
-backend, sem venda real.
+Site de uma página da **SunTech**, empresa criada por uma equipe de
+estudantes do Colégio Ideal para a Feira de Empreendedorismo do 2º semestre,
+e do seu produto, o **Carregador Solar SunTech**: um power bank com painel
+solar dobrável, que existe como protótipo funcional.
+
+Três funções, nesta ordem:
+
+1. apresentar a empresa e o produto no estande (notebook ou TV) e no celular
+   dos visitantes;
+2. responder, na ordem das aulas, tudo o que a feira pede;
+3. servir de peça de portfólio do desenvolvedor.
+
+Sucesso: o avaliador acha cada resposta das aulas sem procurar; o visitante
+entende o produto no celular em poucos segundos; o pitch de 3 minutos roda
+sozinho no estande.
 
 ## Positioning
 
-Diferente de um power bank convencional, ele se recarrega com a luz do sol —
-autonomia longe da tomada, não dependência de uma carga prévia na rede.
-Vendido honestamente como protótipo escolar idealizado em 3D, não como
-produto comercial pronto: sem certificações, sem depoimentos, sem promessa de
-economia na conta de luz (o argumento é autonomia e energia de graça pelo
-sol, não economia).
+Diferente dos power banks convencionais, o carregador se recarrega com a luz
+do sol, com um painel dobrável bem maior que o dos power banks "solares"
+comuns, e usa peças comuns, fáceis de trocar. O argumento é autonomia longe
+da tomada e carga de graça pelo sol, nunca economia na conta de luz. O 3D é a
+versão "produto final" idealizada do protótipo real, e é apresentado assim.
 
 ## Operating Context
 
-- Uso real do protótipo: quem vive em lugares remotos (público principal),
-  quem trabalha na rua, quem viaja/acampa, e situações de queda de energia.
-- Uso do site: celular e desktop, precisa impressionar nos primeiros 5
-  segundos e rodar liso em celular intermediário (≥30fps) e desktop com GPU
-  integrada (≥55fps).
-- O protótipo físico existente: painel solar dobrável (duas placas com
-  dobradiça) + caixa preta com bateria/eletrônica, tampa abrindo para cima,
-  módulos e fios visíveis por dentro, LED azul. Apresentado na escola em
-  novembro de 2025, com uma lâmpada no lugar do sol para a demonstração.
+- **Estande:** notebook ou TV de 1920×1080, vista a uns 3 m. A equipe
+  apresenta com o modo pitch (tour guiado de exatamente 3 minutos) e
+  demonstra o protótipo aberto, com uma lâmpada no lugar do sol.
+- **QR code** no banner do estande leva ao site no celular do visitante.
+- **Avaliação escolar:** a página segue a ordem das aulas (Aula 2: Kickoff
+  inspirador; Aula 3: Conhecendo o cliente; Aula 4: Diferenciais reais e
+  solução; Aula 5: Criação da empresa; Aula 6: Pitch; Atividade AQ3), com o
+  número e a aula de origem em cada parte. O checklist da seção 15 do
+  `BRIEF.md` é a lista do que precisa aparecer.
+- **O protótipo físico:** um painel solar dobrável (duas placas com
+  dobradiça) e uma caixa preta improvisada, com a tampa abrindo para cima e
+  módulos, fios e uma luz azul por dentro. Foi apresentado na escola em
+  novembro de 2025.
 
 ## Capabilities and Constraints
 
-- Todo número do site (tempo de carga, cargas de celular, capacidade,
-  tensão) vem só de `src/content/product.ts`, gerado a partir da seção 2 do
-  `BRIEF.md`; nada é medido ainda além do que está lá. Tempo de recarga e
-  número de cargas são estimativas calculadas, rotuladas como "estimativa"
-  até serem medidas de verdade.
-- Medidas físicas e peso do produto são placeholders (`null` tipado) — o 3D
-  usa proporções padrão até serem preenchidas; ficha técnica esconde esses
-  campos enquanto estiverem vazios.
-- Sem modelos 3D, HDRIs ou imagens externas: tudo é geometria procedural e
-  texturas em canvas 2D geradas em runtime.
-- Proibido (seção 14 do brief): números fora da ficha, certificações/selos,
-  depoimentos ou avaliações falsos, nome/foto/voz de colega sem autorização,
-  promessa de economia na conta de luz.
-- Terminologia real do circuito (não trocar por termos genéricos): módulo
-  TP4056 com proteção DW01, diodo Schottky 1N5819, conversor boost 3,7V→5V,
-  células monocristalinas, baterias 18650.
+- Site estático, sem backend e sem venda real.
+- **Fatos só de `src/content/`** (`company.ts`, `product.ts` e `feira.ts`),
+  que vêm da seção 3 do `BRIEF.md`. Estimativas (tempo de carga, cargas de
+  celular e custos) aparecem sempre com o rótulo "estimativa". Dados externos
+  (IEMA, apagão no Amapá e d.light) aparecem sempre com a fonte logo abaixo.
+- **Ainda não medidos:** medidas e peso do produto (`null` no `product.ts`;
+  o 3D usa proporções padrão e a ficha técnica esconde esses campos), tempo
+  real de carga e quantas cargas de celular a bateria rende.
+- **A confirmar no protótipo (F6):** se o conversor boost sai do OUT do
+  módulo TP4056, para a proteção contra descarga funcionar.
+- A margem de cerca de 25% é sobre o preço de venda. A frase sobre o que o
+  custo não inclui ficou de fora, por decisão do usuário (01/10/2026).
+- Terminologia real do circuito, sem trocar por termos genéricos: módulo
+  TP4056 com proteção DW01, diodo Schottky 1N5819, conversor boost de 3,7 V
+  para 5 V, células monocristalinas e baterias 18650.
+- Formato brasileiro de números: 3,7 V; 2.600 mAh; R$ 249.
+- Proibido: certificações ou selos, depoimentos e avaliações, promessa de
+  economia na conta de luz, nome, foto ou voz de integrantes sem autorização
+  e qualquer número fora da seção 3.
 
 ## Brand Commitments
 
-- Nome do produto: **Carregador Solar SunTech**. Empresa: **SunTech**, uma
-  equipe de estudantes.
-- Tom de voz: "produto real e honesto. Nada de promessa que o protótipo não
-  cumpre." Português do Brasil, formatação numérica BR (3,7 V; 2.600 mAh).
-- Crédito fixo no rodapé: "Conceito de produto criado a partir do protótipo
-  da equipe SunTech, num projeto escolar. Design e código do site: Kaique
-  Calefi", com link para o portfólio (`PORTFOLIO_URL`, pendente de
-  preenchimento).
-- Nomes de integrantes da equipe só aparecem com autorização individual; sem
-  autorização confirmada, o site usa apenas "Equipe SunTech".
+- Empresa: **SunTech**. Produto: **Carregador Solar SunTech**. Slogan:
+  "Energia do sol, onde você estiver."
+- Tom honesto: nada de promessa que o protótipo não cumpre. Padrão de página
+  de lançamento de hardware, com a clareza de um trabalho escolar bem
+  organizado. Português do Brasil.
+- A equipe aparece só como "Equipe SunTech" até cada integrante autorizar o
+  próprio nome.
+- Crédito no rodapé: "Conceito de produto criado a partir do protótipo da
+  equipe SunTech, num projeto escolar do Colégio Ideal. Design e código do
+  site: Kaique Calefi", com link para `https://site.kaiquecalefi.online`
+  (`src/config.ts`).
 
 ## Evidence on Hand
 
-Nenhuma foto do protótipo real está disponível hoje (pasta `referencias/` não
-existe no projeto). Se fotos forem adicionadas depois, com autorização de
-quem aparece, a seção institucional (Ato 7) passa a usá-las; até lá, essa
-seção é só texto — texto futuro não deve fabricar depoimentos, prêmios ou
-métricas de uso que não existem.
+- Protótipo funcional: o painel carrega a bateria de verdade, e a caixa
+  carrega o celular. Demonstrado na escola em novembro de 2025.
+- Três dados externos com fonte: IEMA (via Poder360), Idec e d.light (com o
+  Earthshot Prize).
+- Não existem: fotos do protótipo (não há pasta `referencias/`), medidas,
+  peso, medições de carga, depoimentos, clientes ou prêmios. Nada disso pode
+  ser inventado.
 
 ## Product Principles
 
-1. **Honestidade de protótipo escolar.** Trate o protótipo como produto real
-   sem inflar o que ele faz; toda estimativa é rotulada como estimativa.
-2. **Um número, uma fonte.** Todo dado técnico vem só de `product.ts`/
-   `company.ts`; nunca escrito solto em copy ou componente.
-3. **A vista explodida com o fluxo de energia é o elemento memorável.** Todo
-   o resto da página (layout, tipografia, movimento) fica quieto e
-   disciplinado para essa cena brilhar — não para competir com ela.
-4. **Autonomia e energia de graça, não economia.** O argumento de valor é
-   liberdade de estar longe da tomada e custo zero por carga solar depois da
-   compra — nunca economia na conta de luz.
-5. **Institucional sem parecer institucional.** As respostas "quem somos, o
-   que fazemos, para que e para quem" precisam existir de forma explícita e
-   fácil de achar, sem que a página vire uma página de "sobre nós" genérica.
+1. **A ordem das aulas é a navegação.** Cada parte tem o número e a aula de
+   origem, e o avaliador nunca precisa procurar uma resposta.
+2. **Um número, uma fonte.** Todo fato vem de `src/content/`; toda estimativa
+   é rotulada; todo dado externo tem a fonte logo abaixo.
+3. **O problema acontece no escuro, e a solução chega com o sol.** O ciclo do
+   dia conta a história da página, da madrugada da abertura ao fim de tarde
+   do final.
+4. **Legível antes de impressionante.** No celular e no 4G, o texto do hero
+   aparece antes do 3D; nada depende de hover; o modo pitch funciona no
+   estande só com o teclado.
+5. **Autonomia, não economia.** O valor é energia longe da tomada e carga de
+   graça pelo sol.
 
 ## Accessibility & Inclusion
 
-Contraste AA obrigatório em todas as horas do dia simuladas pelo céu (ver
-`scene/daylight.ts` — a troca de cor do texto segue uma regra de contraste
-medida, não "dia claro / noite escuro"). `prefers-reduced-motion: reduce`
-tem um caminho dedicado (seção 10 do brief): sem Lenis, pins só onde o
-conteúdo depende deles, vista explodida já aberta e parada, fluxo de energia
-como caminhos estáticos, crossfade curto entre horas do dia. O "como
-funciona" também existe como lista ordenada no DOM, pois o esquema 3D não é
-lido por leitor de tela. Nenhum efeito depende de hover (toque não tem
-hover).
+- Contraste WCAG AA em todas as horas do céu, medido nos pixels reais pelo
+  `snap` (`scripts/snap.mjs`).
+- `prefers-reduced-motion: reduce` tem caminho próprio: sem Lenis e sem pins,
+  cenas no estado final e céu trocando de hora com um crossfade curto.
+- "Como funciona" também existe como lista ordenada no DOM, e o canvas é
+  `aria-hidden`.
+- Alvos de toque de 44 px ou mais, foco visível em tudo que é clicável e
+  teclado no menu e no modo pitch (Espaço e Esc).
+- Sem WebGL, um fallback em CSS e SVG mantém todo o conteúdo navegável.

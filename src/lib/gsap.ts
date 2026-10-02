@@ -1,10 +1,12 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Só o núcleo + ScrollTrigger entram no bundle inicial: são usados desde a
-// Fase 1 (registro de atos, indicador de progresso, curva de dayTime).
-// SplitText, CustomEase e DrawSVGPlugin só existem em texto/callout — ver
-// `lib/gsapText.ts`, carregado sob demanda a partir da Fase 2.
+// No chunk inicial só entram o núcleo e o ScrollTrigger. SplitText,
+// CustomEase e DrawSVG carregam sob demanda em `lib/split.ts`.
 gsap.registerPlugin(ScrollTrigger);
+
+// A barra de endereço do celular muda a altura da janela ao rolar; sem isto,
+// cada mudança dispara um refresh e os pins pulam.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 export { gsap, ScrollTrigger };

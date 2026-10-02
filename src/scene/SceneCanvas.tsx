@@ -1,31 +1,42 @@
+import { useSyncExternalStore, type RefObject } from "react";
 import { Canvas } from "@react-three/fiber";
-import type { RefObject } from "react";
+import { NeutralToneMapping } from "three";
 import { Experience } from "./Experience";
-import { getQuality, type QualityTier } from "./quality";
+import { quality } from "./quality";
+import { flags } from "../lib/env";
 
 interface SceneCanvasProps {
-  eventSource: RefObject<HTMLDivElement | null>;
-  tier: QualityTier;
-  onTierChange: (updater: (tier: QualityTier) => QualityTier) => void;
+  eventSource: RefObject<HTMLElement | null>;
 }
 
+// O antialias do contexto não muda depois de criado: com pós-processamento,
+// quem suaviza as bordas é o MSAA do composer.
+const nativeAntialias = !quality.entry().post.bloom;
+
 /**
- * Módulo carregado via `React.lazy` (App.tsx) — é aqui que `three` e o
- * `@react-three/fiber` entram no bundle, depois do texto do hero pintar.
+ * Carregado via `React.lazy` (App.tsx): é aqui que `three` e o R3F entram,
+ * depois do texto do hero pintar. Um único `<Canvas>` fixo atrás do DOM.
  */
-export default function SceneCanvas({ eventSource, tier, onTierChange }: SceneCanvasProps) {
-  const quality = getQuality(tier);
+export default function SceneCanvas({ eventSource }: SceneCanvasProps) {
+  const settings = useSyncExternalStore(quality.subscribe, quality.get);
 
   return (
     <Canvas
       className="scene-canvas-wrap"
-      eventSource={eventSource}
+      aria-hidden="true"
+      eventSource={eventSource as RefObject<HTMLElement>}
       eventPrefix="client"
-      dpr={quality.maxDpr}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
-      camera={{ position: [0, 0, 5], fov: 40 }}
+      // Com `?snap`, DPR 1: o SwiftShader renderiza na CPU.
+      dpr={flags.snap ? 1 : settings.dpr}
+      gl={{ antialias: nativeAntialias, powerPreference: "high-performance", alpha: false }}
+      camera={{ position: [0, 0.4, 6], fov: 32, near: 0.1, far: 100 }}
+      onCreated={({ gl }) => {
+        // Khronos PBR Neutral: fiel à cor do produto. O modelo de contraste
+        // (daylight.ts) aplica a mesma curva.
+        gl.toneMapping = NeutralToneMapping;
+      }}
     >
-      <Experience onTierChange={onTierChange} />
+      <Experience />
     </Canvas>
   );
 }

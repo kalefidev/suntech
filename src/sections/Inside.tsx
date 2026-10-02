@@ -1,24 +1,47 @@
-import { product } from "../content/product";
+import { useRef } from "react";
+import { copy } from "../content/copy";
+import { parts } from "../content/product";
+import { usePinnedStage } from "../lib/stage";
 
 /**
- * Ato 2 — por dentro (meio-dia, pin de 300vh). A vista explodida, os
- * callouts e o pin de câmera entram na Fase 3. Aqui só a altura e o
- * `data-act` já existem, para o mapa de scroll e o `snap` funcionarem.
+ * Cena "Por dentro" (pin; do nascer ao meio-dia). 0–18%: travessia sem texto,
+ * enquanto o sol nasce e a câmera chega à caixa. Depois, o título e a lista das
+ * peças, que é também a versão acessível dos callouts do 3D. Só opacidade: o
+ * leitor de tela continua lendo tudo.
  */
 export function Inside() {
+  const ref = useRef<HTMLElement>(null);
+  usePinnedStage(ref, {
+    length: { wide: 250, narrow: 175 },
+    build: (tl) => {
+      tl.fromTo("[data-stage-text]", { opacity: 0 }, { opacity: 1, duration: 0.05 }, 0.19);
+    },
+  });
+
   return (
-    <section data-act="2" className="flex h-[300vh] flex-col justify-center px-6 md:px-10">
-      <div className="sticky top-1/3 max-w-xl">
-        <h2 className="text-[clamp(2rem,5vw,4.5rem)] leading-[1.05] font-bold">
-          Por dentro, cada peça tem uma função.
-        </h2>
-        <ul className="mt-6 space-y-2 text-[17px] opacity-80">
-          {product.components.map((c) => (
-            <li key={c.id}>
-              <strong className="font-semibold">{c.name}:</strong> {c.function}
+    <section
+      ref={ref}
+      id="por-dentro"
+      data-section="por-dentro"
+      data-part="3"
+      aria-labelledby="por-dentro-titulo"
+      className="stage page-x"
+    >
+      <div className="stage__text col-narrow" data-stage-text>
+        <h3 id="por-dentro-titulo" className="type-h2">
+          {copy.solucao.insideTitle}
+        </h3>
+        <ol className="parts-list">
+          {parts.map((p, i) => (
+            <li key={p.id} data-part-id={p.id}>
+              <span className="num parts-list__n">{i + 1}</span>
+              <span>
+                <strong className="parts-list__name">{p.name}</strong>
+                <span className="parts-list__role">{p.role}</span>
+              </span>
             </li>
           ))}
-        </ul>
+        </ol>
       </div>
     </section>
   );

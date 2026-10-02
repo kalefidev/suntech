@@ -1,86 +1,89 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { ScrollTrigger } from "./lib/gsap";
-import { setupLenis } from "./lib/lenis";
-import { registerActs } from "./lib/acts";
-import { prefersReducedMotion, isDebug } from "./lib/env";
-import { sceneState } from "./scene/state";
-import { applyTextColor } from "./scene/daylight";
-import { initialTier, type QualityTier } from "./scene/quality";
+import { destroyLenis, startLenis } from "./lib/lenis";
+import { registerSections } from "./lib/sections";
+import { holdTracks, initTracks } from "./lib/tracks";
+import { track } from "./lib/loading";
+import { flags } from "./lib/env";
+import { useReducedMotion } from "./lib/useReducedMotion";
 import { CanvasErrorBoundary } from "./scene/CanvasErrorBoundary";
 import { Fallback } from "./scene/Fallback";
-import { Opening } from "./sections/Opening";
 import { Header } from "./sections/Header";
 import { Hero } from "./sections/Hero";
+import { Problem } from "./sections/Problem";
+import { Client } from "./sections/Client";
+import { Solution } from "./sections/Solution";
 import { Inside } from "./sections/Inside";
 import { HowItWorks } from "./sections/HowItWorks";
-import { Night } from "./sections/Night";
-import { WhoFor } from "./sections/WhoFor";
-import { WhyWorth } from "./sections/WhyWorth";
-import { AboutUs } from "./sections/AboutUs";
-import { Final } from "./sections/Final";
+import { EnergyStays } from "./sections/EnergyStays";
+import { Differential } from "./sections/Differential";
+import { Company } from "./sections/Company";
+import { Pitch } from "./sections/Pitch";
+import { Youth } from "./sections/Youth";
 import { Footer } from "./sections/Footer";
 
-const SceneCanvas = lazy(() => import("./scene/SceneCanvas"));
+const SceneCanvas = lazy(() => track("scene", import("./scene/SceneCanvas")));
 const LevaPanel = lazy(() => import("leva").then((m) => ({ default: m.Leva })));
+
+// A abertura segura o trilho de scroll até o sol nascer (lib/opening.ts).
+holdTracks(true);
 
 export default function App() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [tier, setTier] = useState<QualityTier>(initialTier());
+  const reducedMotion = useReducedMotion();
 
+  // Fonte pronta: tarefa real do loader e refresh dos gatilhos (seção 5 do brief).
   useEffect(() => {
-    if (!prefersReducedMotion()) {
-      setupLenis();
-    }
-
-    registerActs();
-
-    // Curva provisória de `dayTime` cobrindo a página inteira (Fase 1). As
-    // timelines por ato, com os trechos exatos do mapa de scroll, entram
-    // conforme cada fase constrói seu conteúdo real (Fases 2–8).
-    const dayTimeTrigger = ScrollTrigger.create({
-      trigger: document.body,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: true,
-      onUpdate: (self) => {
-        sceneState.dayTime = self.progress;
-        applyTextColor(sceneState.dayTime);
-      },
-    });
-
-    return () => dayTimeTrigger.kill();
+    track("font", document.fonts.load('780 1rem "Archivo"').then(() => document.fonts.ready)).then(() =>
+      ScrollTrigger.refresh(),
+    );
   }, []);
+
+  // Lenis (fora do reduced motion), registro de seções e trilho de scroll.
+  // Roda depois dos efeitos das seções, quando os pins já existem.
+  useEffect(() => {
+    if (!reducedMotion) startLenis();
+    const offSections = registerSections();
+    const offTracks = initTracks({ reducedMotion });
+    ScrollTrigger.refresh();
+    return () => {
+      offTracks();
+      offSections();
+      destroyLenis();
+    };
+  }, [reducedMotion]);
 
   return (
     <div ref={rootRef}>
-      <CanvasErrorBoundary fallback={<Fallback />}>
-        <Suspense fallback={null}>
-          <SceneCanvas eventSource={rootRef} tier={tier} onTierChange={setTier} />
-        </Suspense>
-      </CanvasErrorBoundary>
+      {flags.noWebgl ? (
+        <Fallback />
+      ) : (
+        <CanvasErrorBoundary fallback={<Fallback />}>
+          <Suspense fallback={null}>
+            <SceneCanvas eventSource={rootRef} />
+          </Suspense>
+        </CanvasErrorBoundary>
+      )}
 
-      {/* Marcador permanente do Ato 0 (topo da página, sem altura própria).
-          Fica fora do `Opening` de propósito: o overlay do loader desmonta
-          depois de pronto, e um `[data-act]` teria que sobreviver a isso
-          para `window.__acts["0"]` continuar estável. */}
-      <div data-act="0" aria-hidden="true" />
-      <Opening />
       <Header />
 
       <main>
         <Hero />
+        <Problem />
+        <Client />
+        <Solution />
         <Inside />
         <HowItWorks />
-        <Night />
-        <WhoFor />
-        <WhyWorth />
-        <AboutUs />
-        <Final />
+        <EnergyStays />
+        <Differential />
+        <Company />
+        <Pitch />
+        <Youth />
       </main>
 
       <Footer />
 
-      {isDebug() && (
+      {flags.debug && (
         <Suspense fallback={null}>
           <LevaPanel collapsed />
         </Suspense>

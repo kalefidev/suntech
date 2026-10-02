@@ -1,42 +1,88 @@
 /**
- * Único objeto mutável com todos os parâmetros animáveis da cena 3D.
+ * Único objeto mutável com os parâmetros animáveis da cena.
  *
- * O GSAP (ScrollTrigger com scrub) é a única coisa que escreve aqui.
- * O `useFrame` só lê e aplica os valores com `easing.damp` do maath.
- * Nunca use `useState`/re-render para animação por frame (ver seção 5 do brief).
+ * Só o GSAP escreve aqui (o trilho de scroll em lib/tracks.ts, a abertura e o
+ * ponteiro via `gsap.quickTo`). O `useFrame` só lê e aplica com `easing.damp`.
+ * Nunca `useState` no loop de animação.
+ *
+ * Não importe `three` (nem nada do ecossistema R3F) neste arquivo: ele entra
+ * no chunk inicial, e uma dependência do three aqui já estourou o orçamento de
+ * JS uma vez (ver PROGRESS.md). Vetores e poses são objetos simples.
  */
-export interface SceneState {
-  /** 0–1: "um dia contado pela página" (ver Fase 0, item 2 — não é hora real). */
-  dayTime: number;
-  /** 0 fechado (livro fechado) → 1 aberto. */
-  panelOpen: number;
-  /** 0 fechada → 1 aberta (tampa da caixa). */
-  lidOpen: number;
-  /** 0 montado → 1 totalmente explodido (Ato 2). */
-  explode: number;
-  /** 0 montado/explodido → 1 rearranjado como esquema (Ato 3). */
-  schematic: number;
-  /** 0–1: progresso do fluxo de energia iluminado (Ato 3). */
-  flow: number;
-  /** 0–1: carga visível da bateria (emissivo verde). */
-  batteryCharge: number;
-  /** 0–1: carga visível na tela do celular (Ato 4). */
-  phoneCharge: number;
-  /** Se o LED de saída está aceso (Ato 4 em diante). */
-  ledOutputOn: boolean;
+
+export interface Pose {
+  x: number;
+  y: number;
+  z: number;
+  /** Rotação em graus (mais fácil de ler nas tabelas de coreografia). */
+  rx: number;
+  ry: number;
+  rz: number;
+  s: number;
+}
+
+export interface CameraPose {
+  x: number;
+  y: number;
+  z: number;
+  /** Alvo. */
+  tx: number;
+  ty: number;
+  tz: number;
+  /** Campo de visão vertical, em graus. */
+  fov: number;
   /**
-   * Alvo de câmera (posição). É um objeto simples de propósito — `state.ts`
-   * é importado fora do chunk 3D (App.tsx o usa para o scrub de `dayTime`),
-   * então não pode depender de `three` (ver Fase 1, nota de performance).
-   * O código da cena (Fase 2+) lê `x`/`y`/`z` e aplica num `THREE.Vector3` seu.
+   * Deslocamento de lente, em frações da tela (+0,25 leva a imagem 25% para a
+   * direita; +0,2 leva 20% para cima). A câmera continua mirando o produto, e
+   * o layout decide onde ele aparece, sem mudar a perspectiva.
    */
-  cameraTarget: { x: number; y: number; z: number };
-  /** Inclinação do produto por ponteiro (Ato 1), aplicada com damping. */
-  pointerTilt: { x: number; y: number };
+  sx: number;
+  sy: number;
+}
+
+export interface SceneState {
+  /** Horas contínuas ao longo da página (4,5 → 65,7). O céu usa `dayTime mod 24`. */
+  dayTime: number;
+  /** 0 céu limpo → 1 fechado (tempestade a partir de ~0,6). */
+  cloudCover: number;
+  /** Tom agendado do texto: 1 Nuvem, −1 Noite, 0 travessia (sem texto na tela). */
+  tone: number;
+  /** 0 painel dobrado → 1 aberto (livro). */
+  panelOpen: number;
+  /** 0 tampa fechada → 1 aberta. */
+  lidOpen: number;
+  /** 0 montado → 1 vista explodida. */
+  explode: number;
+  /** 0 → 1 peças reorganizadas como esquema. */
+  schematic: number;
+  /** 0 → 4: etapa do caminho da energia (parte inteira) e progresso dentro dela. */
+  flow: number;
+  /** 0 → 1 carga visível da bateria. */
+  batteryCharge: number;
+  /** 0 → 1 carga na tela do celular. */
+  phoneCharge: number;
+  /** 0 → 1 LED azul de saída. */
+  ledOn: number;
+  /** 0 → 1 cabo 3 em 1 ligando a caixa ao celular. */
+  cable: number;
+  /** 0 → 1 reflexo que corre pelas células (abertura). */
+  glint: number;
+  /** 0 → 1 → 0 primeiro raio de sol (abertura). */
+  shaft: number;
+  /** 0 → 1 presença do produto (0 = `visible = false`). */
+  productVisible: number;
+  /** 0 → 1 presença do celular. */
+  phoneVisible: number;
+  product: Pose;
+  camera: CameraPose;
+  /** Ponteiro normalizado (−1 a 1), escrito por `gsap.quickTo`. */
+  pointer: { x: number; y: number };
 }
 
 export const sceneState: SceneState = {
-  dayTime: 0,
+  dayTime: 4.5,
+  cloudCover: 0.1,
+  tone: 1,
   panelOpen: 0,
   lidOpen: 0,
   explode: 0,
@@ -44,7 +90,13 @@ export const sceneState: SceneState = {
   flow: 0,
   batteryCharge: 0.15,
   phoneCharge: 0,
-  ledOutputOn: false,
-  cameraTarget: { x: 0, y: 0, z: 0 },
-  pointerTilt: { x: 0, y: 0 },
+  ledOn: 0,
+  cable: 0,
+  glint: 0,
+  shaft: 0,
+  productVisible: 0,
+  phoneVisible: 0,
+  product: { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0, s: 1 },
+  camera: { x: 0, y: 2.3, z: 11, tx: 0, ty: 0.45, tz: 0, fov: 30, sx: 0, sy: 0 },
+  pointer: { x: 0, y: 0 },
 };

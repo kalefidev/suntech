@@ -1,201 +1,226 @@
-// Única fonte de fatos sobre o produto. Vem da seção 2 do BRIEF.md.
-//
-// Medidas e peso ficam null até serem medidos no protótipo real (ver seção 2,
-// regra 2). Enquanto null, o 3D usa DEFAULT_PROPORTIONS e a ficha técnica
-// esconde esses campos — nunca mostre um valor inventado no lugar.
+// Única fonte de fatos do produto: seção 3 do BRIEF.md ("Produto" e "Custos").
+// Nenhum número do produto aparece no site fora daqui. Textos que citam
+// números são montados aqui, com os formatadores pt-BR de `format.ts`.
 
-export interface Measurement3D {
+import { brl, mm, num, unit } from "./format";
+
+export interface Dimensions {
+  /** mm */
   length: number;
   width: number;
   height: number;
 }
 
-export interface ProductMeasurements {
-  panelOpen: Measurement3D | null; // TODO: preencher
-  panelClosed: Measurement3D | null; // TODO: preencher
-  case: Measurement3D | null; // TODO: preencher
+export interface CostItem {
+  item: string;
+  brl: number;
 }
 
-/** Proporções padrão do 3D enquanto as medidas reais não são preenchidas. */
-export const DEFAULT_PROPORTIONS = {
-  case: { length: 150, width: 100, height: 40 },
-  plate: { length: 200, width: 150, height: 6 },
-} as const;
+export interface SpecRow {
+  label: string;
+  value: string;
+  /** true = aparece com o rótulo "estimativa". */
+  estimate?: boolean;
+}
 
-export interface ProductComponent {
-  id: string;
+export interface PartInfo {
+  id: PartId;
   name: string;
-  /** Frase curta para o callout (Ato 2 / Ato 3). */
-  function: string;
+  role: string;
 }
 
-export type EnergyStepId = "capturar" | "proteger" | "guardar" | "entregar";
+export type PartId =
+  | "modulos"
+  | "fiacao"
+  | "bateria"
+  | "saidas"
+  | "luz"
+  | "vidro"
+  | "celulas"
+  | "base";
+
+export type EnergyStepId = "captar" | "proteger" | "guardar" | "entregar";
 
 export interface EnergyStep {
   id: EnergyStepId;
+  n: number;
   title: string;
   text: string;
-  /** Nós do esquema do Ato 3 que acendem juntos nesta etapa (ver Fase 0, item 1.3). */
-  schematicNodes: string[];
+  /** Token de cor da etapa (ver `@theme` em index.css). */
+  color: "energia-luz" | "energia-painel" | "energia-guardada" | "energia-saida";
+  legend: string;
 }
 
-export interface Product {
-  name: string;
-  format: string;
-  measurements: ProductMeasurements;
-  weightGrams: number | null; // TODO: preencher
-  color: string;
-  panel: {
-    description: string;
-    cellVoltage: number;
-    wattageEachCell: number;
-    totalVoltage: number;
-    totalWattage: number;
-  };
-  battery: {
-    cellCount: number;
-    chemistry: string;
-    cellVoltage: number;
-    cellCapacityMah: number;
-    totalCapacityMah: number;
-    totalWh: number;
-  };
-  chargeControl: {
-    module: string;
-    protection: string;
-    maxChargeAmp: number;
-  };
-  converter: {
-    module: string;
-    fromVoltage: number;
-    toVoltage: number;
-    maxAmp: number;
-  };
-  hasProtectionDiode: boolean;
-  inputs: string[];
-  outputs: string[];
-  /**
-   * Componentes com papel narrativo no 3D (callouts do Ato 2/3). Os LEDs do
-   * próprio módulo TP4056 (vermelho carregando / azul completo) não entram
-   * aqui de propósito — ver Fase 0, item 1.1: só o LED de saída tem callout,
-   * para não competir com ele na história do Ato 4.
-   */
-  components: ProductComponent[];
-  estimates: {
-    chargeTimeSun: string;
-    chargeTimeOutlet: string;
-    phoneCharges: string;
-  };
-  /** Opcional; null esconde o campo no site. */
-  priceBRL: number | null;
-  hasPhotos: boolean;
-  energyPath: EnergyStep[];
-}
+/** Proporções do 3D enquanto as medidas reais não forem preenchidas (seção 3). */
+export const DEFAULT_PROPORTIONS = {
+  case: { length: 150, width: 100, height: 40 },
+  plate: { length: 200, width: 150, height: 6 },
+} as const satisfies Record<string, Dimensions>;
 
-export const product: Product = {
+const measurements: {
+  panelOpen: Dimensions | null;
+  panelClosed: Dimensions | null;
+  case: Dimensions | null;
+} = {
+  panelOpen: null, // TODO: preencher
+  panelClosed: null, // TODO: preencher
+  case: null, // TODO: preencher
+};
+
+const weightGrams: number | null = null; // TODO: preencher
+
+const panel = { plates: 2, voltsEach: 6, wattsEach: 3, volts: 6, watts: 6 };
+const battery = { cells: 2, voltsEach: 3.7, mAhEach: 2600, mAh: 5200, whApprox: 19 };
+const charger = { module: "TP4056", protection: "DW01", maxAmps: 1 };
+const converter = { fromVolts: 3.7, toVolts: 5, maxAmps: 1 };
+const output = { volts: 5 };
+
+const costs: CostItem[] = [
+  { item: `${num(panel.plates)} placas solares ${unit(panel.voltsEach, "V")} ${unit(panel.wattsEach, "W")}`, brl: 70 },
+  { item: `${num(battery.cells)} baterias 18650 + suporte`, brl: 45 },
+  { item: `Módulo de carga ${charger.module}`, brl: 7 },
+  { item: `Conversor ${unit(output.volts, "V")} com USB`, brl: 8 },
+  { item: "Cabo 3 em 1", brl: 20 },
+  { item: "Caixa, dobradiças e moldura", brl: 25 },
+  { item: "Diodo, chave, LED, fios e solda", brl: 10 },
+];
+
+export const product = {
   name: "Carregador Solar SunTech",
   format:
-    "Duas partes: um painel solar dobrável (duas placas unidas por dobradiça, que abrem como um livro) e uma caixa com a bateria e a eletrônica, de onde saem os cabos de carga. A tampa da caixa abre para cima.",
-  measurements: {
-    panelOpen: null, // TODO: preencher
-    panelClosed: null, // TODO: preencher
-    case: null, // TODO: preencher
-  },
-  weightGrams: null, // TODO: preencher
-  color: "Caixa preta fosca; painel com moldura escura",
-  panel: {
-    description:
-      "Dobrável, com duas placas monocristalinas em paralelo, de cantos chanfrados.",
-    cellVoltage: 6,
-    wattageEachCell: 3,
-    totalVoltage: 6,
-    totalWattage: 6,
-  },
-  battery: {
-    cellCount: 2,
-    chemistry: "Lítio 18650",
-    cellVoltage: 3.7,
-    cellCapacityMah: 2600,
-    totalCapacityMah: 5200,
-    totalWh: 19.24,
-  },
-  chargeControl: {
-    module: "TP4056",
-    protection: "DW01 (sobrecarga, descarga profunda e curto-circuito)",
-    maxChargeAmp: 1,
-  },
-  converter: {
-    module: "Módulo boost",
-    fromVoltage: 3.7,
-    toVoltage: 5,
-    maxAmp: 1,
-  },
-  hasProtectionDiode: true,
-  inputs: ["Cabo do painel solar", "USB-C (tomada)"],
-  outputs: ["USB-A 5 V com cabo 3 em 1 (USB-C, Lightning e micro-USB)"],
-  components: [
-    {
-      id: "painel",
-      name: "Painel solar",
-      function: "Transforma luz em eletricidade.",
-    },
-    {
-      id: "diodo",
-      name: "Diodo Schottky",
-      function: "Impede que a bateria descarregue pelo painel à noite.",
-    },
-    {
-      id: "controlador",
-      name: "Controlador de carga",
-      function: "Carrega a bateria no ritmo certo e evita sobrecarga.",
-    },
-    {
-      id: "bateria",
-      name: "Bateria de lítio",
-      function: "Guarda a energia do dia para usar quando você precisar.",
-    },
-    {
-      id: "conversor",
-      name: "Conversor de tensão",
-      function: "Eleva os 3,7 V da bateria para os 5 V do USB.",
-    },
-    {
-      id: "saida",
-      name: "Saída USB",
-      function: "Entrega a energia guardada para o seu celular.",
-    },
-  ],
+    "Duas partes: um painel solar dobrável (duas placas unidas por dobradiça, que abrem como um livro) e uma caixa com a bateria e a eletrônica, cuja tampa abre para cima e de onde sai o cabo de carga.",
+  colorMaterial: "Caixa preta fosca; painel com moldura escura",
+  measurements,
+  weightGrams,
+  panel,
+  battery,
+  charger,
+  converter,
+  output,
+  priceBRL: 249,
+  costs,
+  /** Soma da tabela (R$ 185 na seção 3 do brief). */
+  costTotalBRL: costs.reduce((sum, row) => sum + row.brl, 0),
+  /** Margem sobre o preço de venda, como está no brief. */
+  margin: "cerca de 25%",
   estimates: {
-    chargeTimeSun: "6 a 8 horas de sol forte (estimativa)",
-    chargeTimeOutlet: "cerca de 6 horas na tomada (estimativa)",
-    phoneCharges: "cerca de 1 carga completa de um celular comum (estimativa)",
+    chargeSun: "de 6 a 8 horas de sol forte",
+    chargeOutlet: "cerca de 6 horas na tomada",
+    phoneCharges: "cerca de 1 carga completa de um celular comum",
   },
-  priceBRL: null,
-  hasPhotos: false,
-  energyPath: [
-    {
-      id: "capturar",
-      title: "Captar",
-      text: "O painel transforma luz em eletricidade: a luz movimenta elétrons no silício, e esse movimento vira corrente.",
-      schematicNodes: ["painel"],
-    },
-    {
-      id: "proteger",
-      title: "Proteger",
-      text: "O controlador carrega a bateria no ritmo certo e evita sobrecarga. O diodo impede que a energia volte para o painel à noite.",
-      schematicNodes: ["diodo", "controlador"],
-    },
-    {
-      id: "guardar",
-      title: "Guardar",
-      text: "A bateria de lítio armazena a energia até você precisar, de dia ou de noite.",
-      schematicNodes: ["bateria"],
-    },
-    {
-      id: "entregar",
-      title: "Entregar",
-      text: "O conversor eleva os 3,7 V da bateria para os 5 V do USB, e o celular carrega normalmente.",
-      schematicNodes: ["conversor", "saida"],
-    },
-  ],
 };
+
+/** Medidas usadas pelo 3D: as reais quando existirem, senão as proporções padrão. */
+export function caseDimensions(): Dimensions {
+  return product.measurements.case ?? DEFAULT_PROPORTIONS.case;
+}
+
+export function plateDimensions(): Dimensions {
+  const closed = product.measurements.panelClosed;
+  if (!closed) return DEFAULT_PROPORTIONS.plate;
+  return { length: closed.length, width: closed.width, height: closed.height / 2 };
+}
+
+const v = (value: number) => unit(value, "V");
+
+/** Ficha técnica: só os campos preenchidos, estimativas marcadas. */
+export function specSheet(): SpecRow[] {
+  const rows: SpecRow[] = [
+    {
+      label: "Painel solar",
+      value: `${num(panel.plates)} placas monocristalinas de ${v(panel.voltsEach)} e ${unit(panel.wattsEach, "W")} cada, em paralelo (${v(panel.volts)} e ${unit(panel.watts, "W")} no total)`,
+    },
+    {
+      label: "Bateria",
+      value: `${num(battery.cells)} células de lítio 18650 de ${v(battery.voltsEach)} e ${unit(battery.mAhEach, "mAh")} em paralelo: ${unit(battery.mAh, "mAh")}, cerca de ${unit(battery.whApprox, "Wh")}`,
+    },
+    {
+      label: "Controle e proteção",
+      value: `Módulo ${charger.module} com proteção ${charger.protection} (sobrecarga, descarga profunda e curto-circuito), carga de até ${unit(charger.maxAmps, "A")}`,
+    },
+    {
+      label: "Conversor de tensão",
+      value: `Módulo boost de ${v(converter.fromVolts)} para ${v(converter.toVolts)}, até ${unit(converter.maxAmps, "A")}`,
+    },
+    {
+      label: "Entradas",
+      value: "Cabo do painel e USB-C, para recarregar na tomada",
+    },
+    {
+      label: "Saída",
+      value: `USB-A de ${v(output.volts)} com cabo 3 em 1 (USB-C, Lightning e micro-USB)`,
+    },
+    {
+      label: "Outros componentes",
+      value:
+        "Diodo Schottky 1N5819, chave liga/desliga da saída, LED azul de saída ligada e LEDs de carga do módulo (vermelho carregando, azul completo)",
+    },
+    {
+      label: "Tempo de carga",
+      value: `${product.estimates.chargeSun}; ${product.estimates.chargeOutlet}`,
+      estimate: true,
+    },
+    { label: "Cargas de celular", value: product.estimates.phoneCharges, estimate: true },
+    { label: "Cor e material", value: product.colorMaterial },
+  ];
+
+  const m = product.measurements;
+  if (m.panelOpen) rows.push({ label: "Painel aberto", value: mm([m.panelOpen.length, m.panelOpen.width, m.panelOpen.height]) });
+  if (m.panelClosed) rows.push({ label: "Painel fechado", value: mm([m.panelClosed.length, m.panelClosed.width, m.panelClosed.height]) });
+  if (m.case) rows.push({ label: "Caixa", value: mm([m.case.length, m.case.width, m.case.height]) });
+  if (product.weightGrams !== null) rows.push({ label: "Peso", value: unit(product.weightGrams, "g") });
+
+  rows.push({ label: "Preço", value: brl(product.priceBRL) });
+  return rows;
+}
+
+/** Peças que aparecem na cena "Por dentro", na ordem em que se separam. */
+export const parts: PartInfo[] = [
+  { id: "modulos", name: "Módulos de carga", role: `O controlador ${charger.module} carrega a bateria no ritmo certo; o conversor eleva a tensão para o USB.` },
+  { id: "fiacao", name: "Fiação", role: "Leva a corrente entre as peças: vermelho é o positivo, preto é o negativo." },
+  { id: "bateria", name: "Bateria de lítio", role: "Guarda a energia do sol até você precisar." },
+  { id: "saidas", name: "Saídas e chave", role: `USB-A de ${v(output.volts)} para o cabo 3 em 1; a chave liga e desliga a saída.` },
+  { id: "luz", name: "Luz indicadora", role: "O LED azul acende quando a saída está ligada." },
+  { id: "vidro", name: "Vidro do painel", role: "Protege as células e deixa a luz passar." },
+  { id: "celulas", name: "Células solares", role: "Transformam luz em eletricidade." },
+  { id: "base", name: "Base e dobradiça", role: "Seguram as placas e deixam o painel abrir como um livro." },
+];
+
+/** "Como funciona": as quatro etapas do caminho da energia. */
+export const energyPath: EnergyStep[] = [
+  {
+    id: "captar",
+    n: 1,
+    title: "Captar",
+    text: "O painel transforma luz em eletricidade: a luz movimenta elétrons no silício, e esse movimento vira corrente.",
+    color: "energia-luz",
+    legend: "Luz",
+  },
+  {
+    id: "proteger",
+    n: 2,
+    title: "Proteger",
+    text: "O controlador carrega a bateria no ritmo certo e evita sobrecarga. O diodo impede que a energia volte para o painel à noite.",
+    color: "energia-painel",
+    legend: "Corrente do painel",
+  },
+  {
+    id: "guardar",
+    n: 3,
+    title: "Guardar",
+    text: "A bateria de lítio armazena a energia até você precisar, de dia ou de noite.",
+    color: "energia-guardada",
+    legend: "Energia guardada",
+  },
+  {
+    id: "entregar",
+    n: 4,
+    title: "Entregar",
+    text: `O conversor eleva os ${v(converter.fromVolts)} da bateria para os ${v(converter.toVolts)} do USB, e o celular carrega normalmente.`,
+    color: "energia-saida",
+    legend: `Saída de ${v(output.volts)}`,
+  },
+];
+
+/** Rótulo do callout da etapa 4 ("3,7 V → 5 V"); a seta é desenhada em SVG. */
+export const conversionLabel = { from: v(converter.fromVolts), to: v(converter.toVolts) };

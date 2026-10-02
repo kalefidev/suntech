@@ -1,59 +1,83 @@
-# SunTech — carregador solar (site de produto)
+# SunTech: site 3D do Carregador Solar SunTech
 
-Antes de qualquer mudança, leia `BRIEF.md` inteiro (fonte da verdade do conceito,
-copy, storyboard e regras de arquitetura) e `PROGRESS.md` (estado atual, decisões
-já tomadas e pendências). Não repita decisões que já foram registradas lá.
+Antes de qualquer mudança, leia o `BRIEF.md` (fonte da verdade: conceito,
+textos, roteiro e arquitetura), o `docs/fase-0.md` (plano aprovado, com as
+mudanças M1 a M8) e o `PROGRESS.md` (estado, decisões e pendências). Não
+reabra decisões que já estão registradas lá. `PRODUCT.md` e `DESIGN.md` são o
+contexto da `impeccable`.
 
 ## Stack
 
 Vite 8 + React 19 + TypeScript strict · three + @react-three/fiber v9 +
 @react-three/drei v10 · three-custom-shader-material · @react-three/postprocessing
-· gsap 3.15+ (`ScrollTrigger`, `SplitText`, `CustomEase`, `DrawSVGPlugin`, todos
-bundled, carregados sob demanda em `lib/gsapText.ts`) · lenis · maath ·
-tailwindcss v4 (`@theme` em `src/index.css`) · @fontsource-variable/archivo ·
-Dev: leva, r3f-perf, playwright (`?debug` só carrega leva/r3f-perf).
+· gsap 3.15+ e @gsap/react (ScrollTrigger no chunk inicial; SplitText,
+CustomEase e DrawSVG sob demanda em `lib/split.ts`) · lenis · maath ·
+tailwindcss v4 (`@theme` em `src/index.css`) · @fontsource-variable/archivo
+(eixos `wdth` e `wght`). Dev: leva, r3f-perf e playwright.
 
-Sem backend, sem modelos/HDRIs/imagens externas — tudo procedural (canvas 2D em
-runtime) ou shader (`.glsl?raw`).
+Sem backend. Sem modelos, HDRIs ou imagens externas: geometria procedural,
+texturas em canvas 2D em runtime e shaders em `.glsl?raw`.
 
 ## Comandos
 
-- `npm run dev` — servidor de desenvolvimento
-- `npm run typecheck` — `tsc -b --noEmit`
-- `npm run lint` — `oxlint`
-- `npm run build` — typecheck + build de produção
-- `npm run preview` — serve o build
-- `npm run snap [fase]` — build, sobe o preview, screenshota cada ato (normal
-  e reduced-motion) em `.snapshots/<fase>/` (fora do git)
+- `npm run dev`: servidor de desenvolvimento
+- `npm run typecheck`: `tsc -b --noEmit`
+- `npm run lint`: `oxlint`
+- `npm run build`: typecheck + build de produção
+- `npm run preview`: serve o build
+- `npm run snap <fase>`: build, gzip de cada chunk contra o orçamento, e
+  fotos de cada seção (início, meio e fim; nas cenas presas, 0%, 50% e 100%
+  do pin) em 1440×900 e 390×844, normal e com reduced motion, mais TV
+  1920×1080 e `?nowebgl`. Mede o contraste nos pixels reais e falha com erro
+  de console, contraste abaixo de AA ou WebGL ausente. Saída em
+  `.snapshots/<fase>/` (fora do git), com `report.json`. **Demora** (uns 30
+  min completo): rode em segundo plano. Para iterar:
+  `node scripts/snap.mjs <nome> --quick --only=390x844 --no-build`.
 
-Flags de URL: `?debug` (leva + r3f-perf), `?snap` (expõe `window.__ready`/
-`window.__acts`/`window.__lenis`), `?act=<id>` (pula direto pro ato).
+Flags de URL: `?debug` (leva + r3f-perf), `?snap` (expõe `window.__ready`,
+`window.__sections` e `window.__lenis`; DPR 1), `?goto=<id>` (pula para uma
+seção) e `?nowebgl` (força o fallback).
 
-## Regras de arquitetura que não se quebram (seção 5 do brief)
+## Regras de arquitetura (seção 5 do brief)
 
-- Um único `<Canvas>` fixo em tela cheia atrás do DOM (`scene/SceneCanvas.tsx`,
-  carregado via `React.lazy`); o DOM rola por cima, `pointer-events: none` no
-  canvas, `eventSource`/`eventPrefix="client"` na raiz.
-- `sceneState` (`scene/state.ts`) é o único objeto mutável com os parâmetros
-  animáveis. Só o GSAP (ScrollTrigger com scrub) escreve nele; `useFrame` só lê
-  e aplica com `easing.damp` do maath. **Nunca** `useState` no loop de animação.
-- `state.ts` não pode importar `three` (nem nada do ecossistema R3F) — é
-  compartilhado com código fora do chunk 3D (App.tsx). Ver PROGRESS.md, Fase 1,
-  para o porquê (isso já causou um estouro de orçamento de JS inicial uma vez).
-- Toda cor derivada de `dayTime` (céu, sol, estrelas, texto) sai só de
-  `scene/daylight.ts`.
+- Um único `<Canvas>` fixo atrás do DOM (`scene/SceneCanvas.tsx`, via
+  `React.lazy`), com `eventSource` na raiz, `eventPrefix="client"` e
+  `pointer-events: none`. O wrapper (`.scene-canvas-wrap`) fica em
+  `z-index: -1`: um `fixed` com `z-index: 0` pinta por cima do texto. Todo
+  elemento HTML acima do canvas precisa de `position` + `z-index` positivo.
+- `sceneState` (`scene/state.ts`) é o único objeto mutável da animação. Só o
+  GSAP escreve nele; o `useFrame` só lê e aplica com `easing.damp`. Nunca
+  `useState` no loop de animação.
+- **Timeline mestre (M1):** `scene/choreography.ts` é o mapa de scroll como
+  dados (por seção, pontos de 0 a 1 da faixa da seção, ou do pin). O
+  `lib/tracks.ts` transforma isso numa timeline do GSAP em que o tempo é o
+  pixel de scroll, e um único ScrollTrigger a percorre. Por isso a página
+  pode pular (pitch, `?goto`, âncoras) sem dois gatilhos brigando. Com reduced
+  motion, a timeline salta para o ponto de repouso de cada seção (`REST_AT`).
+  As cenas presas usam `lib/stage.ts` (pin com `gsap.matchMedia`) só para o
+  texto delas.
+- `state.ts`, `choreography.ts`, `daylight.ts` e `tracks.ts` entram no chunk
+  inicial e **não podem importar `three`** (já estourou o orçamento uma vez).
+- Toda cor derivada da hora (céu, sol, nuvens, estrelas, luz e tom do texto)
+  sai de `scene/daylight.ts`. `dayTime` está em horas contínuas (4,5 a 65,7:
+  três dias); o céu usa `dayTime mod 24`.
+- **Contraste:** a zona morta fica entre L 0,167 e 0,246. O céu só a cruza
+  nas 3 travessias (nascer do sol no começo de "Por dentro", pôr do sol no
+  começo de "A energia fica" e nascer do dia seguinte no fim dela), sem texto
+  na tela: o trilho `tone` vale 0, o `<html>` ganha `data-crossing` e o
+  header sai de cena. O tom do texto é `data-tone` no `<html>` (`--fg`).
+- Seções: cada parte e cada cena tem `data-section` (e `data-part`, de 1 a
+  6). O marcador nunca vive num componente que desmonta.
+  `lib/sections.ts` mede as faixas a cada refresh do ScrollTrigger.
 - `ScrollControls` do drei é proibido.
-- O wrapper do canvas (`.scene-canvas-wrap`) usa `z-index: -1` de propósito —
-  um `fixed` com `z-index: 0` pinta depois do conteúdo não-posicionado do
-  DOM e cobre o texto (`pointer-events: none` só afeta hit-test, não
-  pintura). Qualquer elemento HTML que precise ficar visível por cima do
-  canvas precisa de `position` + `z-index` positivo explícitos.
+- Objetos 3D fora da sua cena ficam com `visible = false`.
 
-## Onde estão as fontes de fatos
+## Fontes de fatos
 
-- Empresa e produto: `src/content/company.ts` e `src/content/product.ts` — só
-  a seção 2 do `BRIEF.md` os alimenta. Nenhum número solto no resto do código.
-- Conceito, copy, storyboard, tokens: `BRIEF.md`.
-- Execução (easing, duração, acessibilidade, anti-padrões visuais): as skills
-  instaladas (Emil Kowalski, `impeccable`, `accessible-animation` etc.) — ver
-  o mapa de skills por fase no plano da Fase 0, arquivado em `PROGRESS.md`.
+- Fatos só em `src/content/` (`company.ts`, `product.ts` e `feira.ts`), da
+  seção 3 do brief. Textos em `copy.ts`; formatação pt-BR em `format.ts`.
+  Nenhum número solto em componente. Estimativas rotuladas; dados externos
+  com fonte.
+- Execução (easing, duração, acessibilidade e anti-padrões visuais): as
+  skills (`impeccable`, Emil Kowalski, GSAP, `accessible-animation`). O mapa
+  de skills por fase está no `docs/fase-0.md`, item 10.

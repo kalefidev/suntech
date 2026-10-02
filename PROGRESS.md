@@ -1,145 +1,159 @@
-# PROGRESS
+# PROGRESS (v2)
 
-Estado do projeto SunTech. Leia isto antes de continuar qualquer fase — evita
-repetir decisões já tomadas ou reabrir debates já resolvidos.
+Estado do projeto SunTech. Leia antes de continuar qualquer fase: evita
+repetir decisões já tomadas ou reabrir debates resolvidos. O plano aprovado
+está em `docs/fase-0.md`; o brief, em `BRIEF.md`.
 
-## Fase 0 — plano (aprovado)
+## Linha do tempo
 
-Entregue e aprovado pelo usuário. O plano completo (tokens finais, wireframes,
-mapa de scroll, peças/poses/ordem de explosão, árvore de componentes, tiers,
-riscos, autocrítica e mapa de skills) está em
-`C:\Users\User\.claude\plans\acesse-a-pasta-claude-spicy-thimble.md`. Decisões
-que valem citar aqui porque afetam código futuro:
+- **27/09:** v1, com o brief antigo. Commit `856ae2f` na branch `master`, que
+  fica intocada para comparação.
+- **28/09:** prompt novo (o `BRIEF.md` atual). Fase 0 da v2 aprovada; a Fase 1
+  começou na branch `v2`.
+- **01/10:** Fase 0 revisada (M1 a M8) e aprovada; a Fase 1 avançou.
+- **02/10:** Fase 1 fechada.
 
-- **`dayTime` é 0–1** ("um dia contado pela página", não hora real), com
-  waypoints: 0,00 madrugada · 0,08 primeiro raio · 0,20 manhã · 0,45 meio-dia ·
-  0,62 tarde · 0,62→0,95 entardecer→noite (Ato 4) · snap 0,95→0,30 · 0,30 fixo
-  nos Atos 5–7 · 0,30→0,68 no Ato 8 (fim de tarde dourado).
-- **Regra de `--fg` por zona de contraste medida** (WCAG), não por "metade
-  clara/escura do dia": `Nuvem` sobre `Brasa` reprova AA (2,74:1); `Noite`
-  cobre manhã/meio-dia/tarde/amanhecer/entardecer (≥5,4:1). `Nuvem` só nas
-  pontas (madrugada profunda / noite plena). Implementado em
-  `scene/daylight.ts` (`isNightZenith`, limiares 0,06 e 0,88).
-- **Só o LED azul de saída tem callout narrativo** (Ato 4). Os LEDs do próprio
-  módulo TP4056 (vermelho carregando / azul completo) ficam só na textura da
-  placa, sem callout — dois "LED azul" narrativos colidiriam.
-- **Esquema do Ato 3: 7 nós, 4 passos coloridos.** Captar→painel · Proteger→
-  diodo+controlador · Guardar→bateria · Entregar→conversor+saída. Ver
-  `content/product.ts` (`energyPath[].schematicNodes`).
-- Medidas/peso do produto continuam `null` (placeholders tipados) até serem
-  medidos — `product.ts`, `DEFAULT_PROPORTIONS` cobre o 3D enquanto isso.
+## Respostas do usuário (valem daqui para a frente)
 
-## Fase 1 — fundação (em andamento)
+- **Público, nesta ordem:** avaliadores; visitantes pelo QR code no celular;
+  apresentadores do estande; clientes do desenvolvedor (`PRODUCT.md`).
+- **F8:** a frase "O custo não inclui mão de obra..." fica de fora.
+- **Portfólio:** `https://site.kaiquecalefi.online` (`src/config.ts`).
+
+## Fase 0: plano (aprovado em 01/10/2026)
+
+Tudo em `docs/fase-0.md`. As mudanças em relação ao plano de 28/09:
+
+| # | Decisão |
+|---|---|
+| M1 | A coreografia é uma timeline mestre do GSAP montada de `scene/choreography.ts` (`lib/tracks.ts`), percorrida por um único ScrollTrigger |
+| M2 | Nenhum respiro vazio: as 3 travessias da zona morta acontecem dentro das cenas presas; a 3c é lida na manhã seguinte, com texto escuro |
+| M3 | "Como funciona": as 4 etapas aparecem numeradas e legendadas desde 10% do pin, acendem até 70%, e de 70% a 100% o circuito funciona junto |
+| M4 | O `snap` mede o contraste nos pixels reais (foto sem texto); saiu o modelo em TypeScript que copiava o shader |
+| M5 | A guarda de contraste do shader nunca escurece o disco do sol nem o brilho em volta |
+| M6 | Celular com `deviceMemory` ≤ 4 GB ou ≤ 4 núcleos entra no tier baixo |
+| M7 | Receita de estúdio para o aceite da Fase 2 (`docs/fase-0.md`, item 6) |
+| M8 | O modo pitch é testado com `page.clock` do Playwright |
+
+## Fase 1: fundação (fechada em 02/10/2026)
 
 Feito:
-- Scaffold Vite + React 19 + TS strict gerado numa pasta temporária e movido
-  para cá (nunca sobrescrevemos `BRIEF.md`). `brief-01-carregador-solar.md`
-  virou `BRIEF.md` (cópia, arquivo antigo removido) — era a pendência da
-  Fase 0.
-- Dependências instaladas com as versões estáveis mais recentes de cada uma
-  (checadas contra o registry no momento: three 0.186, R3F 9.8, drei 10.7,
-  gsap 3.15, lenis 1.3, tailwindcss 4.3 etc. — todas dentro das faixas major
-  pedidas pela seção 4 do brief).
-- `sceneState` (`scene/state.ts`), `daylight.ts` (céu + regra de contraste +
-  posição do sol), `quality.ts` (tiers alto/médio/baixo + `PerformanceMonitor`
-  do drei ajustando em runtime).
-- Céu em shader (`shaders/sky.{vert,frag}.glsl`, quad em tela cheia, gradiente
-  + disco/glow do sol + estrelas procedurais + grão), lido por `scene/Sky.tsx`.
-- Lenis + GSAP sincronizados exatamente como a seção 5 pede
-  (`lib/lenis.ts`/`lib/gsap.ts`); pulado por completo (não instanciado) sob
-  `prefers-reduced-motion: reduce`.
-- Registro de atos (`lib/acts.ts`): `window.__ready`, `window.__acts`,
-  `window.__lenis`, `?act=`, `?debug`, `?snap` (`lib/env.ts`).
-- Curva provisória de `dayTime` cobrindo a rolagem inteira da página (um
-  `ScrollTrigger` no `<body>`) — vai ser substituída pelas timelines por ato
-  conforme cada fase constrói seu conteúdo real.
-- As 9 seções (Ato 0 a Ato 8) existem com estrutura e copy reais (do brief),
-  altura em vh conforme o mapa de scroll, `data-act`, mas **sem** a
-  coreografia 3D/GSAP específica de cada ato — isso é o trabalho das Fases
-  2–8. Header com âncoras, menu mobile e indicador de progresso fino.
-- Fallback sem WebGL (`CanvasErrorBoundary` + `scene/Fallback.tsx`): gradiente
-  CSS + diagrama SVG simples do fluxo de energia a partir de `product.ts`.
-- `scripts/snap.mjs` funcionando (build → preview → Chromium com
-  `--use-angle=swiftshader` → 2 viewports × 2 passadas incluindo
-  reduced-motion → screenshots em `.snapshots/<fase>/`).
+- Fonte (Archivo com `wdth`, preload), tokens no `@theme`, escala
+  tipográfica e superfícies do navegador (`src/index.css`).
+- Lenis sincronizado com o GSAP (`lib/lenis.ts`), desligado com reduced
+  motion; `useReducedMotion` reativo.
+- `sceneState` com todos os campos da seção 5 (`scene/state.ts`).
+- `daylight.ts`: keyframes do céu por hora, tempestade, posição do sol por
+  aspecto de tela, crossfade entre céus (`mixSky`) e tom do texto.
+- Céu em shader (`shaders/sky.*`): gradiente, sol, brilho, nuvens fbm por
+  tier, estrelas, guarda de contraste e grão estático. Saltos de mais de 6 h
+  (e toda troca com reduced motion) viram um crossfade de 0,35 s.
+- Registro de seções com `data-section`, `?goto`, `?nowebgl`, `?snap` e
+  `?debug` (`lib/sections.ts`, `lib/env.ts`).
+- Timeline mestre (M1) e as 3 travessias dentro das cenas (M2).
+- Tiers de qualidade com `PerformanceMonitor` e a regra de entrada (M6).
+- Loader com progresso real e abertura provisória (o céu nasce); a Fase 2
+  soma o produto.
+- Todas as seções com o texto real das aulas (checklist da seção 15 no DOM),
+  header com as 6 âncoras, "N de 6" e menu do celular.
+- Fallback sem WebGL (céu em CSS seguindo a hora e diagrama SVG).
+- `snap` v2 (M4) e conteúdo da seção 3 em `src/content/`.
+- `PRODUCT.md` (público v2), `DESIGN.md` com `.impeccable/design.json`,
+  `CLAUDE.md` e este arquivo.
 
-Decisões técnicas registradas (para não repetir o mesmo caminho):
+### Decisões técnicas (não repetir o caminho)
 
-- **`gsap/SplitText`, `gsap/DrawSVGPlugin` e `gsap/CustomEase` não são
-  registrados no boot.** Só `gsap` core + `ScrollTrigger` carregam eager (são
-  usados desde a Fase 1). Os outros três só entram quando algo realmente
-  precisa deles — `lib/gsapText.ts` expõe `loadTextPlugins()` (import
-  dinâmico, memoizado). Comece a usar isso a partir da Fase 2 (títulos com
-  `SplitText`/`CustomEase`) e da Fase 3 (`DrawSVGPlugin` nos callouts).
-- **`scene/state.ts` não pode importar `three`.** Isso já aconteceu uma vez:
-  `cameraTarget` era um `THREE.Vector3`, e como `state.ts` é importado
-  eager por `App.tsx` (fora do chunk 3D), isso inflou o bundle inicial de
-  ~126 KB para ~223 KB gzip. Virou `{x,y,z}` simples; o código da cena
-  (dentro do chunk 3D) que aplicar isso num `Vector3` seu. Qualquer campo
-  novo em `sceneState` que "pareça" precisar de um tipo do three deve usar um
-  tipo simples aqui, e converter para three só dentro de `scene/`.
-- **Orçamento de JS medido nesta fase** (build de produção, gzip): chunk
-  inicial (tudo antes do 3D) ≈ **126 KB** — dentro do teto de 150 KB da seção
-  11. Chunk 3D (`SceneCanvas`, hoje só com o céu) ≈ **247 KB**, mais um chunk
-  compartilhado de ~75 KB que só o gráfico 3D usa. Total sem o painel de
-  debug (`leva`, que só carrega com `?debug`) ≈ **448 KB**, sob o teto de
-  500 KB, mas com pouca folga (~52 KB) para o produto procedural completo, a
-  vista explodida, o fluxo de energia e o pós-processamento das Fases 2–8.
-  **Ponto de atenção para as próximas fases:** medir o bundle a cada fase
-  (`npm run build`) e, se aproximar do teto, priorizar: (1) materiais/geometria
-  simples antes de efeitos, (2) `@react-three/postprocessing` só no tier alto
-  (já é a regra da seção 8), (3) considerar adiar `GodRays` se o orçamento
-  apertar de verdade (o plano da Fase 0 já previa isso como risco com plano B).
-- **Bug crítico encontrado e corrigido pelo `snap`:** o canvas 3D (`fixed`,
-  `z-index: 0`) pintava por cima de todo o texto do DOM — as seções não têm
-  `position`, e um elemento `position:fixed` com `z-index:0` pinta *depois*
-  do conteúdo não-posicionado em qualquer navegador (regra de stacking do
-  CSS), mesmo com `pointer-events: none` (que só afeta hit-test, não pintura).
-  O hero inteiro ficava invisível. Corrigido dando `z-index: -1` ao
-  `.scene-canvas-wrap` (`src/index.css`). **Lição para as próximas fases:**
-  qualquer elemento novo que precise ficar acima do canvas (`Header`, modais,
-  callouts em HTML) precisa de `position` + `z-index` positivo explícitos;
-  não existe "z-index 0 basta" nesta página.
-- **Segundo bug do `snap`:** `window.__acts["0"]` só aparecia na passada
-  normal, sumia na passada `reducedMotion`. Causa: o marcador `data-act="0"`
-  estava no próprio overlay do `Opening`, que desmonta depois de pronto — o
-  `refresh` do `markReady()` recalculava os atos depois desse desmonte, e a
-  ordem de effects do React fazia essa corrida se comportar diferente por
-  acaso entre os dois modos. Corrigido movendo o marcador do Ato 0 para uma
-  `div` permanente em `App.tsx` (fora do `Opening`), que nunca desmonta.
-  **Lição:** marcador de `data-act` nunca deve viver num componente que se
-  desmonta — sempre num elemento permanente da árvore.
-- Trocado `@playwright/test` por `playwright` (pacote base) no
-  `package.json`: o brief pede `playwright` na seção 4, e o script `snap` é
-  um script Node solto, não uma suíte de testes.
-- `npm install` emite avisos de peer-dependency por causa do `r3f-perf`
-  (ele ainda depende de `@react-three/drei@9`/`@react-spring`, incompatível
-  com React 19 na resolução de peers). É só o `r3f-perf`, que só entra sob
-  `?debug`; não afeta o bundle de produção. Sem ação necessária por enquanto.
+- **`state.ts`, `choreography.ts`, `daylight.ts` e `tracks.ts` não importam
+  `three`.** Entram no chunk inicial. Na v1, um `THREE.Vector3` no
+  `state.ts` levou o JS inicial de ~126 para ~223 KB gzip.
+- **Plugins de texto sob demanda:** só o núcleo do GSAP e o ScrollTrigger
+  entram no chunk inicial. SplitText, CustomEase e DrawSVG carregam com
+  `loadTextPlugins()` (`lib/split.ts`), que também registra a curva de
+  revelação `suntechReveal`.
+- **Canvas em `z-index: -1`.** Um `fixed` com `z-index: 0` pinta por cima do
+  conteúdo não posicionado. Tudo que precisa ficar acima do canvas leva
+  `position` + `z-index` positivo.
+- **Marcador `data-section` nunca num componente que desmonta** (bug da v1
+  com o overlay da abertura).
+- **Guarda de contraste:** no desktop, a rampa horizontal é larga (de 0,5 a
+  0,85 da largura); uma rampa curta desenhava uma faixa escura no céu. No
+  celular (`guardX0` 2), ela cobre a tela toda, mas solta o sol e o brilho
+  em volta (M5).
+- **Horizonte no celular a 0,56 da altura:** o sol nasce atrás do produto,
+  acima do texto. A linha do loader acompanha (44% a partir do topo).
+- **`dayTime` em horas contínuas** (4,5 a 65,7). Saltos maiores que 6 h no
+  céu são crossfade, não varredura.
+- **`?snap` força DPR 1:** o SwiftShader renderiza na CPU.
+- **Total de custos** sai da soma da tabela (`product.costTotalBRL`).
+- `npm install` avisa de peer-dependency por causa do `r3f-perf` (que só
+  carrega com `?debug`); não afeta o build.
 
-Pendências (não bloqueiam, mas precisam de você antes das fases indicadas):
-- `PORTFOLIO_URL` (`src/config.ts`) — precisa da URL real antes da Fase 8.
-- `WHATSAPP_URL` — opcional, antes da Fase 8.
-- Medidas e peso do produto (`product.ts`) — quando você tiver os números do
-  protótipo, preencha os campos marcados `// TODO: preencher`; o 3D se ajusta
-  sozinho (usa `DEFAULT_PROPORTIONS` até lá).
+### Medições da Fase 1
 
-Fechamento da Fase 1:
-- `snap` rodou limpo (108 screenshots, 2 viewports × 2 passadas, sem erro de
-  console) depois de dois bugs corrigidos (ver acima: z-index do canvas e o
-  marcador do Ato 0). Revisado manualmente uma amostra dos atos — cores,
-  contraste e conteúdo batem com o plano da Fase 0.
-- `impeccable detect --json src`: **0 achados**. `PRODUCT.md` criado
-  (`impeccable init`/`teach`) a partir do `BRIEF.md`, sem necessidade de
-  entrevista (o brief já respondia tudo com evidência forte). `.impeccable/
-  config.json` com `buildPath: "code"` (sem geração de imagem disponível
-  nesta sessão, e o brief proíbe imagem externa de qualquer forma).
-- **`/impeccable critique` e `/review-animations` (do Emil) só podem ser
-  disparados por você** — o Skill tool recusa invocá-los internamente
-  (`disable-model-invocation`). Não tentei contornar isso. Rode os dois
-  quando quiser essa camada de revisão; nesta fase, o conteúdo é
-  propositalmente placeholder/estrutural (nenhum ato tem a coreografia real
-  ainda), então uma crítica completa de design provavelmente vai só apontar
-  "isso ainda não foi desenhado" — provavelmente vale mais a pena a partir da
-  Fase 2, quando o hero e o produto 3D existirem de verdade. Sua decisão.
-- Commit inicial no git feito ao fim desta fase.
+| Medida | Valor |
+|---|---|
+| JS inicial (gzip) | 131,6 KB (teto 150) |
+| Chunk da cena (`SceneCanvas`, gzip) | 241,9 KB |
+| JS total sem o debug (gzip) | 373,5 KB (teto 500) |
+| CSS (gzip) | 6,6 KB |
+| LCP / CLS (1440×900, SwiftShader) | 484 ms / 0 |
+
+Sobram uns 126 KB de JS para o produto, o CSM, o pós-processamento e os
+plugins de texto.
+
+### `snap` da Fase 1 (`.snapshots/fase-1/`)
+
+| Passada | Erros de console | Violações de contraste | WebGL | LCP | CLS |
+|---|---|---|---|---|---|
+| 1440×900 | 0 | 0 | sim | 484 ms | 0 |
+| 390×844 | 0 | 0 | sim | 220 ms | 0 |
+| 1440×900 reduced motion | 0 | 0 | sim | 356 ms | 0 |
+| 390×844 reduced motion | 0 | 0 | sim | 200 ms | 0 |
+| TV 1920×1080 | 0 | 0 | sim | 232 ms | 0 |
+| 1440×900 `?nowebgl` | 0 | 0 | não (esperado) | 204 ms | 0 |
+
+Aceite da Fase 1 cumprido: o céu passa por todas as horas e pela tempestade;
+build limpo; imagens por seção; zero violação de contraste, zero erro e
+WebGL ligado em toda imagem fora do `?nowebgl`.
+
+### Crítica de design e revisão de motion
+
+`impeccable critique` (rodada em contexto único, sem subagentes, com o
+detector depois da avaliação) em `.impeccable/critique/`: **20/28 (71%,
+bom)**. O detector não achou anti-padrão; só avisos de tamanho fora da
+escala (o 1rem virou o passo "UI" no `DESIGN.md`). Corrigido nesta fase, e
+conferido em `.snapshots/fase-1-fix/`:
+
+- **Header encavalado no texto** no desktop: agora sai ao rolar para baixo em
+  toda tela, volta ao subir e com o foco do teclado.
+- **Arco dourado fino no céu do fim de tarde:** a guarda de contraste (texto
+  escuro) misturava com o horizonte por uma divisão que saltava de 0 a 1 onde
+  o céu tinha a luminância do horizonte. O divisor ganhou um piso de 0,05.
+- **Grids quebrados:** a classe `.block` colidia com o utilitário `block` do
+  Tailwind (`display: block`), desmontando o manifesto e a persona. Virou
+  `.part-block`. **Lição:** classe própria nunca com nome de utilitário do
+  Tailwind.
+- Título de capítulo limitado à coluna de texto; "O sol se põe. / A energia
+  fica." em duas linhas.
+
+Revisão de motion (skill do Emil): com reduced motion, o header some só com
+opacidade; hover do nav e do CTA só com `pointer: fine`; barra de progresso
+em 300 ms.
+
+Ficam para as fases seguintes (registrados na crítica):
+- Fase 3: metade direita do desktop vazia nas Partes 1, 2 e 3a; espaço entre
+  blocos vindo do conteúdo (hoje 18svh em tudo); "Seu Antônio" como título e
+  "Persona" como legenda; link "Pular para o conteúdo".
+- Fase 6: a palavra "empreendedorismo" passa um pouco da coluna no título do
+  capítulo 6, no desktop.
+
+## Pendências do usuário (nenhuma bloqueia)
+
+- **F6:** confirmar no protótipo que o boost sai do OUT do módulo TP4056. Se
+  der, medir o tempo de carga e quantas cargas de celular a bateria rende (F3
+  e F4).
+- Opcionais: medidas e peso do produto (`product.ts`, campos `// TODO:
+  preencher`), fotos em `referencias/` e nomes autorizados da equipe.
+- URL de produção, para o OG com URL absoluta (Fase 7).
+- **Só você dispara** a `/review-animations` do Emil: ao fim das Fases 2, 4
+  e 6.

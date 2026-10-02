@@ -1,23 +1,25 @@
-import { product } from "../content/product";
+import { copy } from "../content/copy";
+import { Loader } from "./Loader";
 
 /**
- * Ato 1 — hero (manhã, 100vh). A pose 3D do produto e o tilt por ponteiro
- * entram na Fase 2, junto do modelo procedural.
+ * Hero (manhã). O título pinta no primeiro quadro, sobre o céu da madrugada
+ * que o `body` já tem. O produto 3D fica à direita (no celular, em cima), e a
+ * linha do loader marca o horizonte onde ele pousa.
  */
 export function Hero() {
   return (
-    <section
-      data-act="1"
-      className="flex h-[100vh] flex-col justify-center px-6 md:px-10"
-    >
-      <p className="text-sm opacity-70">SunTech</p>
-      <h1 className="max-w-3xl text-[clamp(3rem,9vw,9rem)] leading-[0.95] font-bold" style={{ fontVariationSettings: '"wdth" 120' }}>
-        Carregue o celular com a luz do sol.
-      </h1>
-      <p className="mt-6 max-w-md text-[17px] leading-normal opacity-80">
-        O {product.name} junta um painel solar dobrável e uma bateria. Ele
-        guarda a energia do dia para você usar quando precisar.
-      </p>
+    <section id="hero" data-section="hero" aria-labelledby="hero-titulo" className="hero page-x">
+      <div className="hero__text col-text">
+        <p className="type-label hero__name" data-hero-name>
+          {copy.hero.productName}
+        </p>
+        <h1 id="hero-titulo" className="type-display hero__title">
+          {copy.hero.title}
+        </h1>
+        <p className="type-lead hero__lead">{copy.hero.lead}</p>
+      </div>
+      <span className="hero__cue" aria-hidden="true" />
+      <Loader />
     </section>
   );
 }

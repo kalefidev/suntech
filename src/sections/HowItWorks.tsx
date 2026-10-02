@@ -1,31 +1,52 @@
-import { product } from "../content/product";
+import { useRef } from "react";
+import { copy } from "../content/copy";
+import { energyPath } from "../content/product";
+import { usePinnedStage } from "../lib/stage";
+import { EnergyDiagram } from "./EnergyDiagram";
 
 /**
- * Ato 3 — como funciona (pin de 400vh). O esquema, os fios e os pulsos de
- * energia entram na Fase 4. Aqui só a estrutura e o texto dos 4 passos.
+ * Cena "Como funciona" (pin; do meio-dia às 17h). A lista ordenada com as
+ * quatro etapas está sempre no DOM: é o que o leitor de tela lê, já que o
+ * esquema 3D não é lido (seção 10 do brief).
  */
 export function HowItWorks() {
+  const ref = useRef<HTMLElement>(null);
+  usePinnedStage(ref, { length: { wide: 350, narrow: 245 } });
+
   return (
     <section
-      id="how-it-works"
-      data-act="3"
-      className="flex h-[400vh] flex-col justify-center px-6 md:px-10"
+      ref={ref}
+      id="como-funciona"
+      data-section="como-funciona"
+      data-part="3"
+      aria-labelledby="como-funciona-titulo"
+      className="stage page-x"
     >
-      <div className="sticky top-1/4 max-w-xl">
-        <ol className="flex flex-wrap gap-x-4 gap-y-1 text-sm opacity-70">
-          {product.energyPath.map((step, i) => (
-            <li key={step.id}>
-              {i + 1}. {step.title}
+      <div className="stage__text col-narrow" data-stage-text>
+        <h3 id="como-funciona-titulo" className="type-h2">
+          {copy.solucao.howTitle}
+        </h3>
+        <ol className="steps">
+          {energyPath.map((s) => (
+            <li key={s.id} className="steps__item" data-step={s.id}>
+              <h4 className="type-h3 steps__title">
+                <span className="num">{s.n}</span> {s.title}
+              </h4>
+              <p className="type-body steps__text">{s.text}</p>
             </li>
           ))}
         </ol>
-        <div className="mt-6 space-y-8">
-          {product.energyPath.map((step) => (
-            <div key={step.id}>
-              <h3 className="text-xl font-semibold">{step.title}</h3>
-              <p className="mt-1 text-[17px] opacity-80">{step.text}</p>
-            </div>
-          ))}
+        <EnergyDiagram />
+        <div className="legend">
+          <p className="type-caption legend__title">{copy.solucao.howLegendTitle}</p>
+          <ul>
+            {energyPath.map((s) => (
+              <li key={s.id} className="type-caption">
+                <span className="legend__swatch" style={{ background: `var(--color-${s.color})` }} aria-hidden="true" />
+                {s.legend}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

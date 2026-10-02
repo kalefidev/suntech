@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-02T12:38:52.857Z",
+  "title": "Design System: SunTech",
+  "extensions": {
+    "colorMeta": {
+      "sol": {
+        "role": "primary",
+        "displayName": "Sol",
+        "canonical": "oklch(81.7% 0.161 75.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.104 75.1)",
+          "oklch(26.4% 0.134 75.1)",
+          "oklch(37.9% 0.154 75.1)",
+          "oklch(49.3% 0.161 75.1)",
+          "oklch(60.7% 0.155 75.1)",
+          "oklch(72.1% 0.137 75.1)",
+          "oklch(83.6% 0.108 75.1)",
+          "oklch(95.0% 0.073 75.1)"
+        ]
+      },
+      "brasa": {
+        "role": "secondary",
+        "displayName": "Brasa",
+        "canonical": "oklch(68.9% 0.158 46.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.102 46.5)",
+          "oklch(26.4% 0.131 46.5)",
+          "oklch(37.9% 0.151 46.5)",
+          "oklch(49.3% 0.158 46.5)",
+          "oklch(60.7% 0.152 46.5)",
+          "oklch(72.1% 0.134 46.5)",
+          "oklch(83.6% 0.106 46.5)",
+          "oklch(95.0% 0.071 46.5)"
+        ]
+      },
+      "noite": {
+        "role": "neutral",
+        "displayName": "Noite",
+        "canonical": "oklch(25.2% 0.056 264.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.036 264.0)",
+          "oklch(26.4% 0.047 264.0)",
+          "oklch(37.9% 0.054 264.0)",
+          "oklch(49.3% 0.056 264.0)",
+          "oklch(60.7% 0.054 264.0)",
+          "oklch(72.1% 0.048 264.0)",
+          "oklch(83.6% 0.038 264.0)",
+          "oklch(95.0% 0.025 264.0)"
+        ]
+      },
+      "nuvem": {
+        "role": "neutral",
+        "displayName": "Nuvem",
+        "canonical": "oklch(97.5% 0.005 247.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 247.9)",
+          "oklch(26.4% 0.004 247.9)",
+          "oklch(37.9% 0.005 247.9)",
+          "oklch(49.3% 0.005 247.9)",
+          "oklch(60.7% 0.005 247.9)",
+          "oklch(72.1% 0.004 247.9)",
+          "oklch(83.6% 0.003 247.9)",
+          "oklch(95.0% 0.002 247.9)"
+        ]
+      },
+      "ceu": {
+        "role": "neutral",
+        "displayName": "Céu",
+        "canonical": "oklch(91.6% 0.030 226.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.020 226.0)",
+          "oklch(26.4% 0.025 226.0)",
+          "oklch(37.9% 0.029 226.0)",
+          "oklch(49.3% 0.030 226.0)",
+          "oklch(60.7% 0.029 226.0)",
+          "oklch(72.1% 0.026 226.0)",
+          "oklch(83.6% 0.020 226.0)",
+          "oklch(95.0% 0.014 226.0)"
+        ]
+      },
+      "grafite": {
+        "role": "neutral",
+        "displayName": "Grafite",
+        "canonical": "oklch(30.7% 0.013 253.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 253.0)",
+          "oklch(26.4% 0.011 253.0)",
+          "oklch(37.9% 0.012 253.0)",
+          "oklch(49.3% 0.013 253.0)",
+          "oklch(60.7% 0.012 253.0)",
+          "oklch(72.1% 0.011 253.0)",
+          "oklch(83.6% 0.009 253.0)",
+          "oklch(95.0% 0.006 253.0)"
+        ]
+      },
+      "energia-luz": {
+        "role": "tertiary",
+        "displayName": "Energia: Luz",
+        "canonical": "oklch(88.0% 0.135 86.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.087 86.1)",
+          "oklch(26.4% 0.112 86.1)",
+          "oklch(37.9% 0.128 86.1)",
+          "oklch(49.3% 0.135 86.1)",
+          "oklch(60.7% 0.130 86.1)",
+          "oklch(72.1% 0.114 86.1)",
+          "oklch(83.6% 0.090 86.1)",
+          "oklch(95.0% 0.061 86.1)"
+        ]
+      },
+      "energia-painel": {
+        "role": "tertiary",
+        "displayName": "Energia: Corrente do painel",
+        "canonical": "oklch(78.3% 0.168 66.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.108 66.2)",
+          "oklch(26.4% 0.139 66.2)",
+          "oklch(37.9% 0.160 66.2)",
+          "oklch(49.3% 0.168 66.2)",
+          "oklch(60.7% 0.162 66.2)",
+          "oklch(72.1% 0.143 66.2)",
+          "oklch(83.6% 0.113 66.2)",
+          "oklch(95.0% 0.076 66.2)"
+        ]
+      },
+      "energia-guardada": {
+        "role": "tertiary",
+        "displayName": "Energia: Energia guardada",
+        "canonical": "oklch(79.7% 0.164 159.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.106 159.7)",
+          "oklch(26.4% 0.136 159.7)",
+          "oklch(37.9% 0.156 159.7)",
+          "oklch(49.3% 0.164 159.7)",
+          "oklch(60.7% 0.158 159.7)",
+          "oklch(72.1% 0.139 159.7)",
+          "oklch(83.6% 0.110 159.7)",
+          "oklch(95.0% 0.074 159.7)"
+        ]
+      },
+      "energia-saida": {
+        "role": "tertiary",
+        "displayName": "Energia: Saída de 5 V",
+        "canonical": "oklch(78.2% 0.121 222.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.078 222.5)",
+          "oklch(26.4% 0.101 222.5)",
+          "oklch(37.9% 0.116 222.5)",
+          "oklch(49.3% 0.121 222.5)",
+          "oklch(60.7% 0.117 222.5)",
+          "oklch(72.1% 0.103 222.5)",
+          "oklch(83.6% 0.081 222.5)",
+          "oklch(95.0% 0.055 222.5)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Só o título do hero."
+      },
+      "numeral": {
+        "displayName": "Numeral de capítulo",
+        "purpose": "O número de cada uma das 6 partes, com algarismos tabulares."
+      },
+      "headline": {
+        "displayName": "Título de parte",
+        "purpose": "Títulos de parte e de cena."
+      },
+      "title": {
+        "displayName": "Subtítulo",
+        "purpose": "Subtítulos dentro das partes."
+      },
+      "quote": {
+        "displayName": "Destaque",
+        "purpose": "Situação-problema, frase-síntese e pergunta norteadora; até 30ch."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Aberturas e o texto do hero; até 42ch."
+      },
+      "body": {
+        "displayName": "Corpo",
+        "purpose": "Texto corrido; 17px, até 65ch."
+      },
+      "ui": {
+        "displayName": "UI",
+        "purpose": "O CTA, a marca no header e o corpo das tabelas."
+      },
+      "label": {
+        "displayName": "Rótulo",
+        "purpose": "Nomes de grupo, perguntas e cabeçalhos de tabela; sem caixa-alta."
+      },
+      "caption": {
+        "displayName": "Legenda",
+        "purpose": "Aula N, fontes e rótulos de estimativa, sempre abaixo do que explicam."
+      }
+    },
+    "shadows": [
+      {
+        "name": "boarding-pass",
+        "value": "drop-shadow(0 14px 18px rgb(20 33 61 / 0.28)) drop-shadow(0 2px 3px rgb(20 33 61 / 0.14))",
+        "purpose": "Cartão de embarque, como filter no invólucro (a máscara do picote cortaria uma box-shadow)."
+      },
+      {
+        "name": "cta",
+        "value": "0 10px 24px -12px rgb(20 33 61 / 0.55)",
+        "purpose": "CTA sobre o céu dourado; sombra curta e azulada."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-reveal",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Revelações: numerais, títulos por linha, contadores e linhas desenhadas (CustomEase suntechReveal)."
+      },
+      {
+        "name": "ease-out-quart",
+        "value": "cubic-bezier(0.25, 1, 0.5, 1)",
+        "purpose": "Microinterações de interface: hover, foco, header e o crossfade de --fg."
+      },
+      {
+        "name": "fg-crossfade",
+        "value": "400ms",
+        "purpose": "Troca do tom do texto (Nuvem e Noite), só nas travessias."
+      },
+      {
+        "name": "hover",
+        "value": "180ms",
+        "purpose": "CTA e links."
+      },
+      {
+        "name": "scrub",
+        "value": "linear",
+        "purpose": "Timelines com scrub ficam lineares; o damping fica no useFrame (maath)."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "largo",
+        "value": "(min-width: 768px) and (min-aspect-ratio: 1/1)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "CTA",
+      "kind": "button",
+      "refersTo": "button-cta",
+      "description": "Botão de ação: fundo Noite com texto Sol; preenche de Sol no hover e no foco.",
+      "html": "<button class=\"ds-cta\" type=\"button\">Ver o pitch em 3 minutos</button>",
+      "css": ".ds-cta{display:inline-flex;align-items:center;min-height:3rem;padding:0.8rem 1.4rem;border:0;border-radius:999px;background:var(--color-noite,#14213d);color:var(--color-sol,#ffb22c);font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif;font-stretch:110%;font-weight:650;font-size:1rem;line-height:1.2;box-shadow:0 10px 24px -12px rgb(20 33 61 / 0.55);cursor:pointer;transition:background-color 180ms cubic-bezier(0.25,1,0.5,1),color 180ms cubic-bezier(0.25,1,0.5,1),transform 160ms cubic-bezier(0.25,1,0.5,1)}.ds-cta:hover,.ds-cta:focus-visible{background:var(--color-sol,#ffb22c);color:var(--color-noite,#14213d)}.ds-cta:focus-visible{outline:2px solid var(--color-sol,#ffb22c);outline-offset:3px}.ds-cta:active{transform:scale(0.97)}"
+    },
+    {
+      "name": "Header",
+      "kind": "nav",
+      "refersTo": "header",
+      "description": "Só texto, sem fundo: a marca à esquerda e as 6 partes numeradas; um fio de 1px marca a parte atual.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Partes\"><span class=\"ds-nav__brand\">SunTech</span><ol><li><a href=\"#\" aria-current=\"true\"><b>1</b> Problema</a></li><li><a href=\"#\"><b>2</b> Cliente</a></li><li><a href=\"#\"><b>3</b> Solução</a></li><li><a href=\"#\"><b>4</b> Empresa</a></li><li><a href=\"#\"><b>5</b> Pitch</a></li><li><a href=\"#\"><b>6</b> Jovem</a></li></ol></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:1.5rem;padding:0 2rem;height:4rem;background:#14213d;color:#f4f7fa;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-nav__brand{margin-right:auto;font-stretch:118%;font-weight:780}.ds-nav ol{display:flex;gap:1.6rem;margin:0;padding:0;list-style:none}.ds-nav a{position:relative;display:inline-block;padding-block:0.6rem;color:inherit;font-size:0.875rem;font-weight:500;text-decoration:none}.ds-nav b{font-weight:700}.ds-nav a::after{content:\"\";position:absolute;inset:auto 0 0.3rem 0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 220ms cubic-bezier(0.25,1,0.5,1)}.ds-nav a[aria-current]::after,.ds-nav a:hover::after{transform:scaleX(1)}.ds-nav a:focus-visible{outline:2px solid currentColor;outline-offset:3px}"
+    },
+    {
+      "name": "Abertura de capítulo",
+      "kind": "custom",
+      "refersTo": "chapter-opener",
+      "description": "Numeral enorme, título alinhado à base dele e a aula de origem abaixo, como legenda.",
+      "html": "<header class=\"ds-chapter\"><span class=\"ds-chapter__n\" aria-hidden=\"true\">3</span><div><h2 class=\"ds-chapter__title\">A solução e o diferencial</h2><p class=\"ds-chapter__aula\">Aula 4: Diferenciais reais e solução</p></div></header>",
+      "css": ".ds-chapter{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:1rem 1.75rem;padding:2rem;background:#14213d;color:#f4f7fa;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-chapter__n{font-size:8rem;font-stretch:125%;font-weight:800;line-height:0.8;letter-spacing:-0.03em;font-variant-numeric:tabular-nums lining-nums}.ds-chapter__title{margin:0;font-size:3rem;font-stretch:115%;font-weight:720;line-height:1;letter-spacing:-0.015em;text-wrap:balance}.ds-chapter__aula{margin:0.9rem 0 0;font-size:0.875rem;font-weight:450;line-height:1.4}"
+    },
+    {
+      "name": "Dado com fonte",
+      "kind": "custom",
+      "refersTo": "fact",
+      "description": "Número dentro da frase, maior e tabular, com a fonte logo abaixo; nunca um bloco de métrica isolado.",
+      "html": "<div class=\"ds-fact\"><p class=\"ds-fact__text\">Em novembro de 2020, o Amapá passou mais de <strong>20</strong> dias com falta de energia.</p><p class=\"ds-fact__source\">Fonte: <a href=\"#\">Idec</a></p></div>",
+      "css": ".ds-fact{padding:2rem;background:#14213d;color:#f4f7fa;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-fact__text{margin:0;max-width:42ch;font-size:1.3rem;font-weight:420;line-height:1.45}.ds-fact__text strong{font-size:1.85em;font-stretch:112%;font-weight:720;line-height:1;letter-spacing:-0.01em;font-variant-numeric:tabular-nums lining-nums}.ds-fact__source{margin:0.6rem 0 0;font-size:0.875rem;font-weight:450}.ds-fact__source a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:0.2em}"
+    },
+    {
+      "name": "Cartão de embarque",
+      "kind": "card",
+      "refersTo": "boarding-pass",
+      "description": "Plano de voo da Aula 5: o único cartão da página, com picote e dois recortes.",
+      "html": "<figure class=\"ds-ticket\"><dl class=\"ds-ticket__main\"><div><dt>Propósito</dt><dd>Levar energia limpa e acessível a quem vive longe da tomada.</dd></div><div><dt>Destino</dt><dd>Um mundo em que estar longe da tomada não signifique ficar sem energia.</dd></div></dl><div class=\"ds-ticket__stub\"><span>SunTech</span><small>Feira de Empreendedorismo</small></div></figure>",
+      "css": ".ds-ticket{display:grid;grid-template-columns:minmax(0,1fr) 11rem;margin:0;border-radius:18px;background:#f4f7fa;color:#14213d;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif;filter:drop-shadow(0 14px 18px rgb(20 33 61 / 0.28)) drop-shadow(0 2px 3px rgb(20 33 61 / 0.14));mask:radial-gradient(circle at calc(100% - 11rem) 0,transparent 11px,#000 11.5px) top/100% 51% no-repeat,radial-gradient(circle at calc(100% - 11rem) 100%,transparent 11px,#000 11.5px) bottom/100% 51% no-repeat}.ds-ticket__main{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem 2rem;margin:0;padding:1.75rem}.ds-ticket dt{font-size:0.875rem;font-weight:650}.ds-ticket dd{margin:0.3rem 0 0;font-size:1.0625rem;line-height:1.5}.ds-ticket__stub{display:flex;flex-direction:column;justify-content:flex-end;gap:0.35rem;padding:1.5rem 1.75rem;border-left:2px dashed rgb(20 33 61 / 0.25)}.ds-ticket__stub span{font-size:1.75rem;font-stretch:125%;font-weight:800;line-height:1}.ds-ticket__stub small{font-size:0.875rem}"
+    },
+    {
+      "name": "Tabela de dados",
+      "kind": "custom",
+      "refersTo": "data-table",
+      "description": "Sem fundo e sem zebra: fios finos, valores tabulares à direita e o rótulo de estimativa na legenda.",
+      "html": "<table class=\"ds-table\"><caption>Custos <span>(estimativa)</span></caption><thead><tr><th scope=\"col\">Item</th><th scope=\"col\" class=\"ds-num\">Custo</th></tr></thead><tbody><tr><th scope=\"row\">Cabo 3 em 1</th><td class=\"ds-num\">R$ 20</td></tr><tr><th scope=\"row\">Módulo de carga TP4056</th><td class=\"ds-num\">R$ 7</td></tr></tbody></table>",
+      "css": ".ds-table{width:100%;max-width:28rem;border-collapse:collapse;background:#cfe8f3;color:#14213d;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif;font-size:1rem;line-height:1.4}.ds-table caption{caption-side:top;padding-bottom:0.6rem;text-align:left;font-size:0.875rem;font-stretch:110%;font-weight:600}.ds-table caption span{font-weight:500}.ds-table th,.ds-table td{padding:0.85rem 1.1rem 0.85rem 0;text-align:left;border-bottom:1px solid rgb(20 33 61 / 0.28)}.ds-table thead th{font-size:0.875rem;font-stretch:110%;font-weight:650}.ds-table tbody th{font-weight:600}.ds-table .ds-num{text-align:right;padding-right:0;white-space:nowrap;font-variant-numeric:tabular-nums lining-nums}"
+    },
+    {
+      "name": "Legenda da energia",
+      "kind": "chip",
+      "refersTo": "energy-legend",
+      "description": "Cada cor de energia é luz num fio Grafite, sempre com o nome ao lado em --fg.",
+      "html": "<ul class=\"ds-legend\"><li><i style=\"--c:#FFD166\"></i>Luz</li><li><i style=\"--c:#FF9F1C\"></i>Corrente do painel</li><li><i style=\"--c:#3DDC97\"></i>Energia guardada</li><li><i style=\"--c:#4CC9F0\"></i>Saída de 5 V</li></ul>",
+      "css": ".ds-legend{display:flex;flex-wrap:wrap;gap:0.5rem 1.25rem;margin:0;padding:1.5rem;list-style:none;background:#cfe8f3;color:#14213d;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif;font-size:0.875rem;font-weight:450}.ds-legend li{display:inline-flex;align-items:center;gap:0.5rem}.ds-legend i{width:1.6rem;height:0.5rem;border-radius:999px;border:2px solid #2b3036;background:var(--c)}"
+    },
+    {
+      "name": "Menu do celular",
+      "kind": "nav",
+      "refersTo": "menu-sheet",
+      "description": "Folha em Noite com as 6 partes, o número da parte atual em Sol e a aula como legenda.",
+      "html": "<ol class=\"ds-sheet\"><li><a href=\"#\" aria-current=\"true\"><b>1</b><span><strong>O problema</strong><small>Aula 2: Kickoff inspirador</small></span></a></li><li><a href=\"#\"><b>2</b><span><strong>O cliente</strong><small>Aula 3: Conhecendo o cliente</small></span></a></li></ol>",
+      "css": ".ds-sheet{margin:0;padding:1rem 1.25rem;list-style:none;background:#14213d;color:#f4f7fa;font-family:\"Archivo\", ui-sans-serif, system-ui, sans-serif}.ds-sheet a{display:grid;grid-template-columns:3.25rem minmax(0,1fr);align-items:baseline;padding-block:0.95rem;color:inherit;text-decoration:none;border-top:1px solid rgb(244 247 250 / 0.16)}.ds-sheet b{font-size:2.25rem;font-stretch:125%;font-weight:800;line-height:1}.ds-sheet a[aria-current] b{color:#ffb22c}.ds-sheet strong{display:block;font-size:1.25rem;font-stretch:110%;font-weight:650;line-height:1.2;margin-bottom:0.2rem}.ds-sheet small{font-size:0.875rem;font-weight:450}.ds-sheet a:focus-visible{outline:2px solid #f4f7fa;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Um dia contado pela página",
+    "overview": "A página inteira é um dia (na verdade, três). O céu é renderizado em WebGL atrás do texto e anda com o scroll: madrugada na abertura, tempestade e noite no problema, o sol nascendo quando a solução aparece, a noite em que a energia guardada carrega o celular, e o fim de tarde dourado do final. A hora do dia decide a cor do céu, a luz no produto e o tom do texto. Não existe \"tema claro\" ou \"tema escuro\": existe a hora.\n\nO DOM é tipografia sobre o céu, sem caixas. As seções não têm fundo próprio, os blocos não viram cards, e a hierarquia vem só da Archivo (o eixo de largura separa título de leitura) e do espaço. O produto 3D ocupa o lado direito no desktop (no celular, o alto da tela) e muda de pose entre as cenas; só as cenas 3D ficam presas. O padrão é o de página de lançamento de hardware, com a clareza de um trabalho escolar bem organizado: quem avalia acha cada aula pelo número da parte.",
+    "keyCharacteristics": [
+      "Céu em shader como única superfície; a cor de tudo deriva de dayTime.",
+      "Uma família tipográfica, dois papéis pelo eixo de largura.",
+      "Texto alinhado à esquerda, em coluna; produto no centro ou à direita.",
+      "Contraste AA garantido por regra de luminância e medido nos pixels.",
+      "Movimento só em resposta a scroll ou ponteiro (exceto a abertura e o modo pitch)."
+    ],
+    "rules": [
+      {
+        "name": "A Regra da Hora",
+        "body": "Toda cor de céu, sol, nuvens, estrelas, luz da cena e tom do texto sai de scene/daylight.ts, a partir de dayTime. Nenhuma seção tem fundo próprio; o único fundo sólido do DOM é o cartão de embarque.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Zona Morta",
+        "body": "Entre L 0,167 e L 0,246 (luminância WCAG), nem Nuvem nem Noite chegam a 4,5:1. Com texto na tela, o céu fica com L ≤ 0,12 (texto Nuvem) ou L ≥ 0,30 (texto Noite), e a guarda do shader segura 0,13 e 0,36 na coluna de texto. O céu só cruza a zona morta nas três travessias, com só o 3D na tela e o header fora de cena.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Luz, Não Tinta",
+        "body": "As cores de energia são luz dentro de um fio Grafite (de 6,5 a 9,2:1), nunca cor de texto e nunca fundo. Na legenda, viram um traço colorido com o nome em --fg.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Família Única",
+        "body": "Uma família, dois papéis: expandida para títulos e números, normal para leitura. Nada de segunda fonte, nada de mono.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Legenda Embaixo",
+        "body": "A aula de origem e a fonte de um dado ficam abaixo do que explicam, como legenda. Nunca um rótulo em caixa-alta acima do título.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Número Tabular",
+        "body": "Preço, custos, contadores, horários do pitch e numerais de capítulo usam tabular-nums lining-nums, e a unidade fica presa ao número por um espaço inseparável (\"3,7 V\", \"R$ 249\").",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Céu Como Superfície",
+        "body": "Nada de painel de vidro, cartão ou faixa de fundo atrás do texto para \"garantir contraste\". O contraste vem da regra de luminância do céu.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do derive toda cor ligada à hora de scene/daylight.ts e deixe o céu aparecer atrás de todas as seções.",
+      "Do troque o tom do texto (Nuvem e Noite) só nas travessias, com o crossfade de 400ms de --fg, nunca com o texto à vista em contraste baixo.",
+      "Do use a Archivo expandida (de 108 a 125%) para títulos e números, e a largura 100% para leitura, com corpo de 17px, entrelinha 1,5 e até 65ch.",
+      "Do ponha a aula de origem e as fontes abaixo do que explicam, em caption.",
+      "Do mostre cada cor de energia como luz num fio Grafite, sempre com o nome.",
+      "Do revele com a curva cubic-bezier(0.22, 1, 0.36, 1) (numerais, títulos por linha, contadores e linhas desenhadas) e use ease linear nas timelines com scrub, com damping no useFrame.",
+      "Do mantenha alvos de toque com 44px ou mais e foco visível em tudo."
+    ],
+    "donts": [
+      "Don't dê fundo próprio a uma seção, nem ponha vidro, cartão ou faixa atrás do texto.",
+      "Don't use fade com slide-up em toda seção; os parágrafos só rolam.",
+      "Don't crie grade de cards iguais; cada bloco tem o layout que o conteúdo pede.",
+      "Don't use rótulo em caixa-alta acima de título, palavra do título destacada em cor ou itálico, \"→\" em botão ou fonte mono em rótulo.",
+      "Don't use as cores de energia como cor de texto ou como enfeite.",
+      "Don't use separadores \"·\", \"—\" ou \"→\" na interface.",
+      "Don't use fundo quase preto no lugar de Noite, nem cinza neutro no lugar de Grafite."
+    ]
+  }
+}

@@ -1,23 +1,34 @@
-/** Flags de ambiente lidas da URL/mídia, usadas em vários pontos do app. */
+/** Flags de URL e de mídia, lidas uma vez. */
 
-function param(name: string): string | null {
-  if (typeof window === "undefined") return null;
-  return new URLSearchParams(window.location.search).get(name);
-}
+const params = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
 
-export function isDebug(): boolean {
-  return param("debug") !== null;
-}
+export const flags = {
+  /** `?debug`: leva + r3f-perf. */
+  debug: params.has("debug"),
+  /** `?snap`: expõe `window.__ready`, `__sections`, `__lenis` e a sonda do céu. */
+  snap: params.has("snap"),
+  /** `?nowebgl`: força o fallback sem WebGL (teste do checklist). */
+  noWebgl: params.has("nowebgl"),
+  /** `?goto=<id>`: pula direto para uma seção depois de pronto. */
+  goto: params.get("goto"),
+};
 
-export function isSnap(): boolean {
-  return param("snap") !== null;
-}
+/** Ganchos de teste só em desenvolvimento ou com `?snap` (seção 5 do brief). */
+export const testHooks = import.meta.env.DEV || flags.snap;
 
-export function getActParam(): string | null {
-  return param("act");
-}
+export const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+
+/**
+ * Layout "largo": texto à esquerda e produto à direita. Segue a orientação da
+ * tela, como o céu (daylight.ts): um tablet em pé usa o layout empilhado.
+ */
+export const WIDE = "(min-width: 768px) and (min-aspect-ratio: 1/1)";
 
 export function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined" || !window.matchMedia) return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return typeof window !== "undefined" && window.matchMedia(REDUCED_MOTION).matches;
+}
+
+/** Ponteiro fino (mouse/trackpad): cursor customizado e botão magnético. */
+export function hasFinePointer(): boolean {
+  return typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
