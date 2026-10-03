@@ -26,6 +26,11 @@ export function brl(value: number): string {
   return `R$${NBSP}${num(value)}`;
 }
 
+/** ["Ana", "Bia", "Caio"] → "Ana, Bia e Caio". */
+export function list(items: readonly string[]): string {
+  return new Intl.ListFormat("pt-BR", { style: "long", type: "conjunction" }).format(items);
+}
+
 /** {150, 100, 40} → "150 × 100 × 40 mm". */
 export function mm(dims: readonly number[]): string {
   return `${dims.map((d) => num(d)).join(`${NBSP}×${NBSP}`)}${NBSP}mm`;

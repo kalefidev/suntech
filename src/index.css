@@ -276,7 +276,7 @@ a {
 
   .scene-canvas-wrap {
     opacity: 0;
-    transition: opacity 700ms ease;
+    transition: opacity 700ms var(--ease-out-quart);
   }
 
   :root[data-scene="on"] .scene-canvas-wrap {
@@ -1029,7 +1029,8 @@ a {
     stroke-width: 1.5;
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
-    transition: stroke-dashoffset 260ms var(--ease-out-quart) 80ms;
+    /* Sai na hora (resposta do sistema); entra com atraso, depois do ponto. */
+    transition: stroke-dashoffset 140ms var(--ease-out-quart);
   }
 
   .callout__label {
@@ -1048,8 +1049,8 @@ a {
     opacity: 0;
     transform: translateY(4px);
     transition:
-      opacity 200ms linear 200ms,
-      transform 260ms var(--ease-out-quart) 200ms;
+      opacity 120ms linear,
+      transform 160ms var(--ease-out-quart);
   }
 
   .callout[data-side="left"] .callout__line {
@@ -1070,11 +1071,16 @@ a {
 
   .callout[data-current="1"] .callout__line path {
     stroke-dashoffset: 0;
+    transition: stroke-dashoffset 260ms var(--ease-out-quart) 80ms;
   }
 
+  /* A etiqueta nova espera a linha chegar; a velha já saiu (sem sobrepor). */
   .callout[data-current="1"] .callout__label {
     opacity: 1;
     transform: none;
+    transition:
+      opacity 200ms linear 200ms,
+      transform 260ms var(--ease-out-quart) 200ms;
   }
 
   /* Etiquetas das etapas no esquema de "Como funciona" (a cena 3D escreve a
@@ -1110,8 +1116,18 @@ a {
     white-space: nowrap;
     translate: -50% calc(-100% - 0.4rem);
     will-change: transform;
-    box-shadow: 0 0 0 1.5px transparent;
-    transition: box-shadow 220ms var(--ease-out-quart);
+  }
+
+  /* O anel da etapa em curso: só a opacidade anima (a sombra fica parada). */
+  .step-tag::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 1.5px var(--step-color, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms var(--ease-out-quart);
   }
 
   .step-tag__n {
@@ -1144,8 +1160,8 @@ a {
   }
 
   /* A etapa em curso ganha o anel na cor dela. */
-  .step-tag[data-state="active"] {
-    box-shadow: 0 0 0 1.5px var(--step-color);
+  .step-tag[data-state="active"]::after {
+    opacity: 1;
   }
 
   /* "3,7 V → 5 V" embaixo do conversor: só aparece na etapa 4. */
@@ -1426,7 +1442,6 @@ a {
   }
 
   .ticket__stub {
-    --tear: 1;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1435,9 +1450,10 @@ a {
   }
 
   /* O picote: uma linha tracejada que se desenha quando o cartão entra
-     (`--tear`, de 0 a 1, com o scroll). */
-  .ticket__stub::before {
-    content: "";
+     (`--tear`, de 0 a 1, com o scroll). A variável fica no próprio traço (um
+     elemento sem filhos): animá-la não recalcula nada além dele. */
+  .ticket__tear {
+    --tear: 1;
     position: absolute;
     inset: 0 0 auto;
     border-top: 2px dashed rgb(20 33 61 / 0.25);
@@ -1522,7 +1538,6 @@ a {
   }
 
   .history__step {
-    --drawn: 1;
     position: relative;
     display: grid;
     grid-template-columns: 1.75rem minmax(0, 1fr);
@@ -1530,9 +1545,10 @@ a {
     border-top: 0;
   }
 
-  /* A linha de cada etapa se desenha depois da anterior (`--drawn`). */
-  .history__step::before {
-    content: "";
+  /* A linha de cada etapa se desenha depois da anterior (`--drawn`, no
+     próprio traço, sem filhos para recalcular). */
+  .history__line {
+    --drawn: 1;
     position: absolute;
     inset: 0 0 auto;
     border-top: 2px solid currentColor;
@@ -1549,14 +1565,14 @@ a {
   }
 
   .timeline__block {
-    --drawn: 1;
     position: relative;
     padding: 0 0 2rem 1.4rem;
   }
 
-  /* O ponto de cada bloco aparece quando a linha dele começa a se desenhar. */
-  .timeline__block::before {
-    content: "";
+  /* O ponto de cada bloco aparece quando a linha dele começa a se desenhar
+     (`--drawn` em cada um, elementos sem filhos). */
+  .timeline__dot {
+    --drawn: 1;
     position: absolute;
     z-index: 1;
     left: -5px;
@@ -1570,8 +1586,8 @@ a {
   }
 
   /* A linha do bloco (vertical no celular), desenhada com o scroll. */
-  .timeline__block::after {
-    content: "";
+  .timeline__line {
+    --drawn: 1;
     position: absolute;
     inset: 0 auto 0 0;
     border-left: 2px solid currentColor;
@@ -1611,7 +1627,7 @@ a {
     opacity: 0;
     scale: 0.3;
     transition:
-      scale 220ms var(--ease-out-quart),
+      scale 160ms var(--ease-out-quart),
       opacity 160ms linear;
   }
 
@@ -2028,7 +2044,7 @@ a {
       justify-content: flex-end;
     }
 
-    .ticket__stub::before {
+    .ticket__tear {
       inset: 0 auto 0 0;
       border-top: 0;
       border-left: 2px dashed rgb(20 33 61 / 0.25);
@@ -2059,12 +2075,12 @@ a {
       padding: 1.6rem 1.5rem 0 0;
     }
 
-    .timeline__block::before {
+    .timeline__dot {
       left: 0;
       top: -5px;
     }
 
-    .timeline__block::after {
+    .timeline__line {
       inset: 0 0 auto;
       border-left: 0;
       border-top: 2px solid currentColor;
@@ -2078,6 +2094,12 @@ a {
   from {
     opacity: 0;
     transform: translateY(100%);
+  }
+}
+
+@keyframes hud-fade {
+  from {
+    opacity: 0;
   }
 }
 
@@ -2101,6 +2123,18 @@ a {
 
   .menu-sheet {
     animation: none;
+  }
+
+  /* O HUD aparece no lugar, sem subir da borda. */
+  .pitch-hud {
+    animation-name: hud-fade;
+    animation-duration: 200ms;
+  }
+
+  /* Callouts: só a opacidade (sem o ponto crescer nem a etiqueta subir). */
+  .callout__dot,
+  .callout__label {
+    transform: none;
   }
 
   :root:not([data-opened]) .hero__name-text {

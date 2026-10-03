@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { copy } from "../content/copy";
 import { company } from "../content/company";
-import { brl } from "../content/format";
+import { brl, list } from "../content/format";
 import { partsOfFair } from "../content/feira";
 import { product, specSheet } from "../content/product";
 import { ChapterOpener } from "./ChapterOpener";
@@ -18,7 +18,7 @@ const t = copy.empresa;
 function BoardingPass() {
   const ref = useRef<HTMLDivElement>(null);
   // O picote se desenha quando o cartão entra na tela.
-  useScrubFrom(ref, ".ticket__stub", { "--tear": 0 }, { start: "top 92%", end: "top 55%" });
+  useScrubFrom(ref, ".ticket__tear", { "--tear": 0 }, { start: "top 92%", end: "top 55%" });
   return (
     <div ref={ref} className="ticket-wrap">
       <figure className="ticket" aria-labelledby="plano-de-voo">
@@ -33,6 +33,7 @@ function BoardingPass() {
         </dl>
       </div>
       <div className="ticket__stub" aria-hidden="true">
+        <span className="ticket__tear" />
         <span className="ticket__brand">{company.name}</span>
         <span className="type-caption">{company.event}</span>
         <span className="type-caption">
@@ -177,7 +178,7 @@ function Sectors() {
 function Prototype() {
   const ref = useRef<HTMLOListElement>(null);
   // A linha das três etapas se desenha uma depois da outra.
-  useScrubFrom(ref, ".history__step", { "--drawn": 0, stagger: 0.35 }, { start: "top 90%", end: "top 50%" });
+  useScrubFrom(ref, ".history__line", { "--drawn": 0, stagger: 0.35 }, { start: "top 90%", end: "top 50%" });
   return (
     <div className="part-block part-block--last col-text">
       <h3 className="type-h2">{t.prototypeTitle}</h3>
@@ -202,6 +203,7 @@ function Prototype() {
       <ol ref={ref} className="history">
         {company.history.map((step, i) => (
           <li key={step.title} className="history__step">
+            <span className="history__line" aria-hidden="true" />
             <span className="type-label num">{i + 1}</span>
             <div>
               <p className="type-label">{step.title}</p>
@@ -210,7 +212,9 @@ function Prototype() {
           </li>
         ))}
       </ol>
-      <p className="type-caption mt-8">{company.team}</p>
+      <p className="type-caption mt-8">
+        {company.team}: {list(company.members)}.
+      </p>
     </div>
   );
 }

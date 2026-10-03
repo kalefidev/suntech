@@ -59,8 +59,9 @@ crítica) estão no `PROGRESS.md`.
 - [x] Aula 6: o pitch em 3 minutos, com problema e persona, solução e valor,
   quem apresenta cada parte e o preço justo.
 - [x] AQ3: o papel do jovem no empreendedorismo do futuro.
-- [x] Todo número vem da seção 3 (`npm run check:numbers`); estimativas
-  rotuladas; dados externos com fonte (revalidadas no navegador na Fase 3).
+- [x] Todo número vem da seção 3 (`npm run check:numbers`), com uma exceção
+  pedida por você (o alcance da d.light, desvio 7); estimativas rotuladas;
+  dados externos com fonte (revalidadas no navegador).
 
 ## Desvios do brief e por quê
 
@@ -93,18 +94,23 @@ crítica) estão no `PROGRESS.md`.
    - As tags com URL entram quando houver `SITE_URL` ou, na Vercel, o domínio
      de produção (lido sozinho no build).
 
+7. **O alcance da d.light não é mais o da seção 3** ("mais de 150
+   milhões"): por resposta sua em 02/10, passou a 215 milhões, o número que a
+   própria d.light publica hoje ("215 million lives transformed"). A frase
+   diz que o número é da empresa.
+
 ## Pendências suas (nenhuma bloqueia a publicação)
 
-- **`/review-animations`** das Fases 4 e 6: só você pode disparar. Aplico os
-  achados quando chegarem.
-- **d.light:** o site diz "mais de 150 milhões" (seção 3). As fontes hoje
-  falam em 175 milhões (Earthshot) e 215 milhões (d.light). Quer atualizar?
-- **F6:** confirmar no protótipo que o boost sai do OUT do módulo TP4056. Se
-  der, medir o tempo de carga e quantas cargas de celular a bateria rende.
-- **Medidas e peso** do produto (`product.ts`, campos `// TODO: preencher`):
-  o 3D e a ficha técnica se ajustam sozinhos.
-- **Fotos** em `referencias/` (opcional) e **nomes da equipe** (só com
-  autorização de cada um).
+Resolvidas em 02/10: a `/review-animations` (achados aplicados; veja o
+`PROGRESS.md`), o número da d.light (215 milhões, da própria empresa) e os
+nomes da equipe (no fim da Parte 4).
+
+- **F6:** confirmar no protótipo que o boost sai do OUT do módulo TP4056 (e
+  não direto da bateria). Se der, medir o tempo de carga e quantas cargas de
+  celular a bateria rende.
+- **Medidas e peso** do produto (`product.ts`, campos `// TODO: preencher`) e
+  **fotos** em `referencias/`, quando existirem: o 3D e a ficha técnica se
+  ajustam sozinhos.
 - **Domínio de produção:** defina `SITE_URL` na Vercel se não for usar o
   domínio da própria Vercel.
 - **FPS** no seu PC e no seu celular, com `?debug` (README).

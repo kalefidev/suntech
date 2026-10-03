@@ -14,7 +14,13 @@ const part = partsOfFair[4];
  */
 export function Pitch() {
   const timelineRef = useRef<HTMLOListElement>(null);
-  useScrubFrom(timelineRef, ".timeline__block", { "--drawn": 0, stagger: 0.4 }, { start: "top 88%", end: "top 38%" });
+  // A linha e o ponto de cada bloco começam juntos; o bloco seguinte, depois.
+  useScrubFrom(
+    timelineRef,
+    ".timeline__line, .timeline__dot",
+    { "--drawn": 0, stagger: (i: number) => Math.floor(i / 2) * 0.4 },
+    { start: "top 88%", end: "top 38%" },
+  );
 
   return (
     <section
@@ -31,6 +37,8 @@ export function Pitch() {
         <ol ref={timelineRef} className="timeline">
           {pitchTimeline.map((block) => (
             <li key={block.from} className="timeline__block">
+              <span className="timeline__line" aria-hidden="true" />
+              <span className="timeline__dot" aria-hidden="true" />
               <p className="type-label num timeline__time">
                 {block.from} a {block.to}
               </p>

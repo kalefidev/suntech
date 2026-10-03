@@ -22,8 +22,12 @@ export const company = {
     "Sustentabilidade, acessibilidade, inovação e transparência. Começar pelo carregador solar, validar na feira e depois criar mais produtos solares.",
   operations:
     "Compramos os componentes, montamos e testamos cada carregador, vendemos na feira, nas redes e no site, e oferecemos garantia e peças de reposição.",
-  /** Nomes de integrantes só com a autorização de cada um. */
   team: "Equipe SunTech",
+  /**
+   * Integrantes, na ordem que o Kaique passou em 02/10/2026 (nomes só com a
+   * autorização de cada um, seção 14 do brief).
+   */
+  members: ["Kaique", "Gabriel Barbosa", "Gabriel Matildes", "Ítalo", "João Bernardo", "Luigi", "Thiago"],
   presentedAt: "Apresentação na escola, em novembro de 2025",
   history: [
     { title: "A ideia", text: "Surgiu ao pensar em quem vive longe da tomada." },

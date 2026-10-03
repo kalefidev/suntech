@@ -57,7 +57,7 @@ export function useLineReveal(
                   yPercent: 105,
                   duration: 0.95,
                   ease: REVEAL_EASE,
-                  stagger: options.stagger ?? 0.09,
+                  stagger: options.stagger ?? 0.07,
                   scrollTrigger: { trigger: el, start: ENTER, once: true },
                   onComplete: () => {
                     revealed = true;

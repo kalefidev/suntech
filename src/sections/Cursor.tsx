@@ -18,8 +18,9 @@ export function Cursor() {
     if (!el) return;
     const mm = gsap.matchMedia();
     mm.add("(pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
-      const x = gsap.quickTo(el, "x", { duration: 0.35, ease: "power3.out" });
-      const y = gsap.quickTo(el, "y", { duration: 0.35, ease: "power3.out" });
+      // Acompanha a seta de perto (um anel que fica para trás parece lento).
+      const x = gsap.quickTo(el, "x", { duration: 0.2, ease: "power3.out" });
+      const y = gsap.quickTo(el, "y", { duration: 0.2, ease: "power3.out" });
       const move = (event: PointerEvent) => {
         if (event.pointerType !== "mouse") return;
         x(event.clientX);

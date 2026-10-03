@@ -21,6 +21,16 @@ está em `docs/fase-0.md`; o brief, em `BRIEF.md`.
   apresentadores do estande; clientes do desenvolvedor (`PRODUCT.md`).
 - **F8:** a frase "O custo não inclui mão de obra..." fica de fora.
 - **Portfólio:** `https://site.kaiquecalefi.online` (`src/config.ts`).
+- **d.light (02/10):** atualizar. O número passou de "mais de 150 milhões"
+  (seção 3 do brief) para 215 milhões, o da própria d.light ("215 million
+  lives transformed", conferido no site dela em 02/10), e a frase diz que o
+  número é da empresa ("Segundo a própria empresa, já são 215 milhões de
+  vidas transformadas"). A Earthshot fala em "over 175 million lives", número
+  mais antigo; as duas fontes continuam no bloco. O `BRIEF.md` não foi
+  mexido: esta resposta vale por cima dele.
+- **Equipe (02/10):** Kaique, Gabriel Barbosa, Gabriel Matildes, Ítalo, João
+  Bernardo, Luigi e Thiago (`company.members`), no fim da Parte 4.
+- **Medidas, peso e fotos:** ainda não existem; os campos seguem vazios.
 
 ## Fase 0: plano (aprovado em 01/10/2026)
 
@@ -573,16 +583,37 @@ JS gzip: inicial 137,7 KB (teto 150); cena 286,4 KB; total 432,5 KB (teto
 500); CSS 9,0 KB. Revisado imagem por imagem (as 231 fotos, em grades por
 passada). Relatório final: `docs/relatorio-final.md`.
 
+## Revisão de motion (`/review-animations`, 02/10/2026)
+
+Rodada pelo usuário depois da Fase 7, sobre todo o motion do site. Achados,
+todos aplicados:
+- **Reduced motion:** o HUD do pitch ainda subia da borda (agora aparece no
+  lugar, só com opacidade) e os callouts ainda cresciam e subiam (agora só a
+  opacidade muda).
+- **Saltos longos do pitch:** "Como funciona" → "Diferencial" rolava 5,6
+  telas em 1,4 s, um time-lapse da noite inteira com texto ilegível; persona
+  → "Por dentro", 4,2 telas. Acima de 2 telas, a parada chega num corte (o
+  céu faz o crossfade dele e o produto assenta pelo damping).
+- **Callouts assimétricos:** o atraso de entrada valia também na saída, e a
+  etiqueta velha ficava sobre a nova; agora a velha sai na hora.
+- **Linhas desenhadas** (picote, história, linha do tempo): a variável
+  animada morava no pai e era herdada pelos filhos (recálculo de estilo a cada
+  quadro do scroll); agora mora no próprio traço, um elemento sem filhos.
+- **Anel da etapa em curso:** saiu a transição de `box-shadow` (pintura);
+  agora só a opacidade de um pseudo-elemento anima.
+- **Cursor:** o anel acompanha a seta em 0,2 s (antes 0,35 s, ficava para
+  trás) e cresce em 160 ms (antes 220 ms; acontece em todo hover).
+- **Revelação por linhas:** stagger de 70 ms (antes 90 ms; o padrão é de 30
+  a 80 ms).
+- **Fade do canvas:** a curva do projeto no lugar do `ease` padrão.
+
 ## Pendências do usuário (nenhuma bloqueia)
 
-- **d.light:** quer atualizar o número da seção 3 (hoje "mais de 150
-  milhões") para o que as fontes dizem agora (175 ou 215 milhões)?
-
-- **F6:** confirmar no protótipo que o boost sai do OUT do módulo TP4056. Se
-  der, medir o tempo de carga e quantas cargas de celular a bateria rende (F3
-  e F4).
-- Opcionais: medidas e peso do produto (`product.ts`, campos `// TODO:
-  preencher`), fotos em `referencias/` e nomes autorizados da equipe.
-- URL de produção, para o OG com URL absoluta (Fase 7).
-- **Só você dispara** a `/review-animations` do Emil: ao fim das Fases 2, 4
-  e 6.
+- **F6:** confirmar no protótipo que o boost sai do OUT do módulo TP4056 (e
+  não direto da bateria, no B+). Se der, medir o tempo de carga e quantas
+  cargas de celular a bateria rende (F3 e F4), para trocar as estimativas por
+  medições.
+- Medidas e peso do produto (`product.ts`, campos `// TODO: preencher`) e
+  fotos em `referencias/`, quando existirem.
+- URL de produção, para o OG com URL absoluta (`SITE_URL`, se não for o
+  domínio da Vercel).

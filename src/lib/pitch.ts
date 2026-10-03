@@ -46,6 +46,13 @@ export const pitchProgress: { element: HTMLElement | null } = { element: null };
 
 /** Segundos de rolagem até cada parada. */
 const ARRIVE = 1.4;
+/**
+ * Acima desta distância (em telas), a parada chega num corte, como um slide:
+ * rolar 5 telas em 1,4 s vira um borrão de texto e passa cenas inteiras em
+ * time-lapse (a noite de "A energia fica"). Com o corte, o céu faz o
+ * crossfade dele e o produto assenta pelo damping.
+ */
+const MAX_GLIDE = 2;
 const NAV_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"]);
 
 let clock: gsap.core.Timeline | null = null;
@@ -66,7 +73,9 @@ function targetY(stop: PitchStop, fraction = stop.from ?? 0): number {
 
 function arrive(stop: PitchStop, reduced: boolean): void {
   set({ stop });
-  scrollToY(targetY(stop), reduced ? { immediate: true } : { duration: ARRIVE });
+  const y = targetY(stop);
+  const far = Math.abs(y - window.scrollY) > window.innerHeight * MAX_GLIDE;
+  scrollToY(y, reduced || far ? { immediate: true } : { duration: ARRIVE });
 }
 
 function tick(): void {

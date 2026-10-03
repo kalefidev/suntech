@@ -60,10 +60,14 @@ export const facts = {
     after: " dias com falta de energia.",
     sources: [sources.idec],
   },
+  // Atualizado em 02/10/2026, a pedido do usuário: a seção 3 do brief diz
+  // "mais de 150 milhões"; a d.light hoje diz "215 million lives transformed"
+  // (e a Earthshot, "over 175 million lives", número mais antigo). O número é
+  // o da própria empresa, e a frase diz isso.
   dlightAlcance: {
-    before: "A empresa já chegou a mais de ",
-    value: 150,
-    after: " milhões de pessoas.",
+    before: "Segundo a própria empresa, já são ",
+    value: 215,
+    after: " milhões de vidas transformadas.",
     sources: [sources.dlight, sources.earthshot],
   },
 } satisfies Record<string, Fact>;
