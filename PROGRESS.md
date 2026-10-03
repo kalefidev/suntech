@@ -583,6 +583,14 @@ JS gzip: inicial 137,7 KB (teto 150); cena 286,4 KB; total 432,5 KB (teto
 500); CSS 9,0 KB. Revisado imagem por imagem (as 231 fotos, em grades por
 passada). Relatório final: `docs/relatorio-final.md`.
 
+## Publicação (02/10/2026)
+
+No ar em **https://suntech-ten.vercel.app** (Vercel, conta
+`kaiquecalefi-8397`, projeto `suntech`, ligado ao GitHub
+`kalefidev/suntech`: cada push na `main` publica de novo). As tags de prévia
+de link usam esse domínio automaticamente. Conferido no navegador: cena 3D
+ligada, sem erros no console.
+
 ## Revisão de motion (`/review-animations`, 02/10/2026)
 
 Rodada pelo usuário depois da Fase 7, sobre todo o motion do site. Achados,
@@ -615,5 +623,4 @@ todos aplicados:
   medições.
 - Medidas e peso do produto (`product.ts`, campos `// TODO: preencher`) e
   fotos em `referencias/`, quando existirem.
-- URL de produção, para o OG com URL absoluta (`SITE_URL`, se não for o
-  domínio da Vercel).
+

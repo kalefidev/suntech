@@ -26,3 +26,6 @@ dist-ssr
 
 # Logs do navegador do Playwright MCP
 .playwright-mcp/
+
+.vercel
+.env*

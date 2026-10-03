@@ -1,5 +1,8 @@
 # Relatório final: site do Carregador Solar SunTech (v2)
 
+**No ar:** https://suntech-ten.vercel.app (código em
+https://github.com/kalefidev/suntech).
+
 02/10/2026, branch `v2`. Detalhes de cada fase (decisões técnicas, `snap` e
 crítica) estão no `PROGRESS.md`.
 
@@ -111,6 +114,4 @@ nomes da equipe (no fim da Parte 4).
 - **Medidas e peso** do produto (`product.ts`, campos `// TODO: preencher`) e
   **fotos** em `referencias/`, quando existirem: o 3D e a ficha técnica se
   ajustam sozinhos.
-- **Domínio de produção:** defina `SITE_URL` na Vercel se não for usar o
-  domínio da própria Vercel.
 - **FPS** no seu PC e no seu celular, com `?debug` (README).
