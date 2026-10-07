@@ -120,7 +120,7 @@ export function Header() {
   };
 
   return (
-    <header ref={headerRef} className="site-header page-x" data-away="false">
+    <header ref={headerRef} className="site-header page-x" data-away="false" data-solid={part > 0 ? "true" : "false"}>
       <a
         href="#hero"
         className="type-label site-header__brand"

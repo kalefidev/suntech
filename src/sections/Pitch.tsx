@@ -4,6 +4,7 @@ import { partsOfFair, pitchTimeline } from "../content/feira";
 import { startPitch } from "../lib/pitch";
 import { useScrubFrom } from "../lib/reveal";
 import { ChapterOpener } from "./ChapterOpener";
+import { PART_TONE } from "../scene/choreography";
 
 const part = partsOfFair[4];
 
@@ -26,6 +27,7 @@ export function Pitch() {
     <section
       id={part.id}
       data-section={part.id}
+      data-field={PART_TONE[part.id]}
       data-part={part.n}
       aria-labelledby={`${part.id}-titulo`}
       className="part page-x"

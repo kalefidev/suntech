@@ -291,7 +291,12 @@ Nuvem sobre escuro. Não existe gradiente de fundo, céu nem hora do dia.
 **A Regra do Corte.** Entre L 0,167 e L 0,246 (luminância WCAG), nem Nuvem nem
 Noite chegam a 4,5:1, e a troca de tom passa por aí. Por isso ela acontece só
 nos 3% finais de cada beat, com o texto em opacidade 0 e o header fora de
-cena. Nenhum texto fica à vista sobre um fundo intermediário.
+cena. Nenhum texto fica à vista sobre um fundo intermediário. Nas partes das
+aulas o corte é literal: cada parte pinta o próprio campo (`PART_TONE` em
+`scene/choreography.ts`: Noite, Nuvem, Grafite, Grafite, Céu, Noite, Nuvem) e
+a divisa rola como uma borda reta; o header vira uma faixa no tom da parte
+que está sob ele. Depois do pin, a imagem da cena sobe junto com a página e o
+produto sai pelo topo, antes de a ponte e a Parte 1 chegarem.
 
 **A Regra da Luz, Não Tinta.** As cores de energia são luz dentro de um fio
 Grafite (de 6,5 a 9,2:1), nunca cor de texto e nunca fundo. Na legenda, viram

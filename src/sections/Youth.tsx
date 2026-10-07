@@ -5,6 +5,7 @@ import { useLineReveal } from "../lib/reveal";
 import { useMagnetic } from "../lib/magnetic";
 import { startPitch } from "../lib/pitch";
 import { ChapterOpener } from "./ChapterOpener";
+import { PART_TONE } from "../scene/choreography";
 
 const part = partsOfFair[5];
 const t = copy.jovem;
@@ -33,6 +34,7 @@ export function Youth() {
     <section
       id={part.id}
       data-section={part.id}
+      data-field={PART_TONE[part.id]}
       data-part={part.n}
       aria-labelledby={`${part.id}-titulo`}
       className="part page-x"

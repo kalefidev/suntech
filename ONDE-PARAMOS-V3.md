@@ -2,11 +2,11 @@
 
 > **Para retomar, diga:** "Leia o ONDE-PARAMOS-V3.md e continue de onde paramos."
 
-**Última atualização:** 07/10/2026. A **Fase 1** está commitada (`629c084`). Depois, a **Fase 1b**, com as respostas do dono: rolagem de 90° nos closes do celular, etiquetas ligadas às peças, medidas fictícias e o guia do modelo feito à mão (detalhes em `docs/v3-progresso.md`, seção de 07/10). Branch `v3` (criada da `v2`). Os servidores estão parados (dev na porta 5180, preview na 4173).
+**Última atualização:** 07/10/2026, com a **Fase 2 fechada** (commit "Fase 2 (v3)"). Fases anteriores: Fase 1 (`629c084`, a cena do produto) e Fase 1b (`8343056`: rolagem nos closes do celular, etiquetas, medidas fictícias, guia do modelo à mão). Branch `v3`. Os servidores estão parados.
 
 ## Em uma frase
 
-A página tem só a **cena do produto** (hero de 700vh no desktop, 490vh no celular), a ponte e o rodapé: o carregador grande no centro da tela, que **abre, desmonta em cascata, dá foco em cada componente (painel, carga, células, saída), remonta e carrega um celular**, com um fundo de cor por beat e uma palavra gigante atrás. As 6 partes das aulas e o modo pitch **ainda não estão montados** (Fase 2); os componentes continuam em `src/sections`.
+A página tem a **cena do produto** (hero de 700vh no desktop, 490vh no celular; o carregador abre, desmonta, mostra os 4 componentes, remonta e carrega um celular), a ponte, as **6 partes das aulas** (cada uma num campo de tom sólido) e o rodapé, com o **modo pitch** de 180 s. Falta a **Fase 3** (polimento, celular real, SEO e deploy) e o **modelo 3D feito à mão** pelo dono.
 
 ## O que o dono decidiu (06/10/2026)
 
@@ -16,6 +16,19 @@ A página tem só a **cena do produto** (hero de 700vh no desktop, 490vh no celu
 4. `pcb` virou `pcb_charge` e `pcb_boost` (o roteiro tem 4 componentes).
 5. Critérios 1 e 4 reescritos (já no `CLAUDE.md`): altura 55–70% **e** largura ≤ 66% no desktop; celular, largura ≤ 88% e altura 45–55% quando a proporção deixa; tempo de quadro p95 ≤ 18 ms e p99 ≤ 25 ms numa varredura de scroll.
 6. Pediu: ao fechar a fase, **parar o projeto e escrever este arquivo**.
+
+## Fase 2 (07/10/2026): checklist, concluído
+
+O dono pediu para seguir a Fase 2 até os créditos dele chegarem em 27% e salvar até onde foi. Todos os itens foram concluídos na mesma sessão.
+
+- [x] 1. As 6 partes montadas em `App.tsx` depois da cena, na ordem das aulas (Problema, Cliente, Solução, Diferencial, Empresa, Pitch, Jovem) + `PitchHud`.
+- [x] 2. Tom de cada parte: `PART_TONE` em `choreography.ts` (Noite, Nuvem, Grafite, Grafite, Céu, Noite, Nuvem). Cada parte pinta o próprio campo (`data-field` + CSS `[data-field]`, que redefine `--bg`/`--fg`); os trilhos `bg.*` e `tone` seguem a parte sob o header (degrau na divisa). A textura de grão (`body::before`) fica coberta pelos campos: decidir se volta.
+- [x] 3. Modo pitch remapeado: "Por dentro" e "Como funciona" apontam para `produto` (frações 0,08–0,38 e 0,38–0,8). `npm run test:pitch`: tudo certo.
+- [x] 4. Header: os 6 links levam ao início exato de cada parte, com `aria-current`, foco no título e o tom certo (conferido com Playwright, 0 erros). Nas partes o header vira uma faixa sólida em `--bg` (`data-solid`), então a divisa passa por baixo dele.
+- [x] 5. `?nowebgl` e reduced motion com as partes: `npm run snap v3-fase-2` **tudo certo** nas 8 passadas (9 seções, 0 erros, 0 contraste, CLS 0; JS inicial 136,5 KB, total 441,0 KB). `reverse.mjs`: ok no desktop e no celular. `test:pitch`: ok.
+- [x] 5b. **Tempo de quadro:** com as partes na página o pin tinha picos de 33–50 ms. Causa: o texto dos beats e a palavra gigante mudam a cada quadro sem camada própria e repintavam a camada da página, que agora inclui o conteúdo das partes logo abaixo. Correção: `will-change: transform, opacity` em `.beat` e `.beat-word`. Medido com 3 rodadas por configuração (a máquina estava ruidosa): atual reprovava 2 de 3; com a correção, 3 de 3 passam (e mais 2 + 2 depois de aplicada, desktop e celular DPR 2).
+- [x] 6. Ponte: depois do pin, a imagem da cena sobe junto com a página (`lift`, 0 → 1 tela, linear e sem `damp`, somado ao `sy` no `CameraRig`) e o produto some fora da tela; o texto da ponte não passa mais por cima dele, e o campo da Parte 1 não o corta. O grão da página é repetido dentro dos campos (`[data-field]::before`), senão o Noite da Parte 1 ficava mais escuro que o da ponte (emenda).
+- [x] 7. Aceite: `typecheck`, `lint` e `check:numbers` limpos; `snap v3-fase-2` tudo certo (refeito depois do `will-change`); `reverse.mjs` ok (desktop e celular); `sweep.mjs` ok; `axe` 0 violações (3 modos); `tab-order` 21 paradas com contorno; `test:pitch` ok. Registrado em `docs/v3-progresso.md`. Commit "Fase 2 (v3)".
 
 ## O que o dono decidiu (07/10/2026)
 
@@ -79,7 +92,7 @@ JS gzip inicial 129,6 KB (teto 150), total 424,8 KB (teto 500); GLB 1,13 MB (tet
 
 1. **O modelo 3D** (reprovado; o dono modela à mão, ver `docs/v3-modelo-a-mao.md`).
 2. **Celular:** com a rolagem, Guardar e Entregar foram para 50% de altura; Fechado (38%), Proteger (40%), Remonta (38%) e Energia (32%) seguem limitados pela largura (dentro do critério).
-3. **As 6 partes e o pitch não estão na página.** Os links "1 Problema" a "6 Jovem" do cabeçalho não levam a lugar nenhum por enquanto, e o texto da ponte encosta na borda do painel.
+3. **Textura de grão:** é repetida dentro de cada campo (`[data-field]::before`); o tile não se alinha com o da página na divisa da ponte, mas no mesmo tom a emenda não aparece.
 4. **Medidas e peso são fictícios** (autorizado), com o rótulo "ilustrativo" na ficha técnica; trocar pelos reais quando existirem.
 5. **FPS só medido num PC** (GTX 1060). Falta testar num celular real (README, "Como medir o FPS").
 6. **Polimento visual:** interior da caixa vazio (sem fios, sem oclusão ambiente por peça); aço do USB brilhando demais nos closes; preto fosco da caixa some em parte sobre o fundo Noite; o pano de fundo do texto nos closes é um cartão arredondado (escolha visual a rever com o dono).
@@ -87,18 +100,15 @@ JS gzip inicial 129,6 KB (teto 150), total 424,8 KB (teto 500); GLB 1,13 MB (tet
 
 ## Próximos passos, em ordem
 
-1. **Commit da Fase 1b** (se ainda não estiver feito: `git status`) e revisão do dono das etiquetas e da rolagem no celular.
+1. **Revisão do dono** das partes (fotos em `.snapshots/v3-fase-2/`: `1440x900-<parte>-start|mid|end.png` e `390x844-...`), dos tons por parte e da saída do produto pela ponte.
 2. **Quando o dono entregar o GLB:** seguir "Depois de trocar" no `docs/v3-modelo-a-mao.md`.
-3. **Fase 2: reintegrar as 6 partes e o modo pitch em volta da cena.** O que sei que precisa de decisão ou trabalho:
-   - Os componentes estão em `src/sections` (`Problem`, `Client`, `Solution`, `Company`, `Differential`, `Youth`, `ChapterOpener`, `Fact`, `Highlight`, `Pitch`, `PitchHud`); monte-os em `App.tsx` depois da ponte, na ordem das aulas.
-   - `choreography.ts` só conhece as seções `produto` e `ponte`: **cada parte precisa do tom de fundo e de texto** (trilhos `bg.r/g/b` e `tone`, ou CSS fixo por seção). A cena termina em Noite, então a Parte 1 continua no escuro (opção A; `PRODUCT.md`, princípio 3: "o problema acontece no escuro").
-   - `lib/pitch.ts` e `pitchStops` (`src/content/feira.ts`) apontam para ids de seção da v2: remapeie os alvos (a cena do produto agora é uma seção só, `produto`, com `positionOf("produto", fração)`). Rode `npm run test:pitch` (usa o `dist/`).
-   - Header: os links 1–6 voltam a funcionar quando as seções existirem; a troca de tom do header (`data-crossing`) precisa conferir com os novos tons.
-   - `?nowebgl`: refazer o diagrama do fallback (`EnergyDiagram`) se o beat "Dentro" mudar.
-   - Código morto do céu: já apaguei os arquivos; confira `PROGRESS.md`/`BRIEF.md` só como história.
-4. **Fase 3:** polimento (itens 6 e 7 acima), performance em celular real, SEO (`og.png`, `og:image:alt`), `/impeccable document` (refaz o `.impeccable/design.json`), e **deploy** na Vercel. Cuidado: a Vercel publica a `main` a cada push, e a `main`/`v2` é a versão aprovada no ar (suntech-ten.vercel.app): **não faça merge da `v3` na `main` antes de o dono aprovar a v3 inteira**.
+3. **Fase 3:** polimento (itens 6 e 7 acima), performance em celular real, SEO (`og.png`, `og:image:alt`), `/impeccable document` (refaz o `.impeccable/design.json`), e **deploy** na Vercel. Cuidado: a Vercel publica a `main` a cada push, e a `main`/`v2` é a versão aprovada no ar (suntech-ten.vercel.app): **não faça merge da `v3` na `main` antes de o dono aprovar a v3 inteira**.
 
 ## Armadilhas (o que me custou tempo)
+
+- **Tempo de quadro com a máquina ruidosa:** uma rodada do `sweep.mjs` não decide nada (a mesma configuração deu 0 e 8 picos). Compare com 3 rodadas por configuração e isole com `--css`.
+- **Elemento que muda a cada quadro precisa de camada própria** (`will-change`), senão repinta a camada da página e, com as partes abaixo do pin, trava (Fase 2).
+- **Regra fora de `@layer` vence regra em camada**, qualquer que seja a ordem: o `body::before` do grão é assim, e o ajuste do grão dos campos teve de ficar fora da camada também.
 
 - **Não use `timeline.render(y, false, true)` do GSAP para os trilhos.** Depois de saltos de vários beats, trilhos ficavam presos no valor do salto anterior (fundo errado, foco errado). Os trilhos são uma função pura de `scrollY` (`lib/tracks.ts`); o `reverse.mjs` pega a regressão.
 - O `pin.start` do ScrollTrigger pode vir `−0,001`: já é clampado em `rangeOf` (um tempo negativo prendia `product.ry` e `tilt` na primeira descida).
@@ -121,5 +131,6 @@ Branch `v3`. A Fase 1 está no commit `629c084`. Ao commitar, deixe de fora as s
 ## Perguntas para o dono
 
 1. As etiquetas e a rolagem no celular ficaram boas? (Fotos em `.snapshots/v3-fase-1b/`.)
+4. Os tons das partes (Noite, Nuvem, Grafite, Grafite, Céu, Noite, Nuvem) e o header em faixa sólida nas partes estão bons?
 2. O modelo feito à mão sai quando, e em que programa? (O guia assume Blender.)
 3. O painel quase plano no desktop e em V no celular, o cartão atrás do texto nos closes: seguem assim?

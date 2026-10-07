@@ -46,7 +46,8 @@ export function CameraRig() {
     camera.fov = fit === 1 ? l.fov : (360 / Math.PI) * Math.atan(Math.tan((l.fov * Math.PI) / 360) * fit);
     // O three tira o aspecto da câmera da "tela cheia" do deslocamento: passa
     // a tela real. Já atualiza a projeção.
-    camera.setViewOffset(width, height, -l.sx * width, l.sy * height, width, height);
+    // `lift` (a saída depois do pin) entra direto, sem `damp`: a imagem tem de andar com a página.
+    camera.setViewOffset(width, height, -l.sx * width, (l.sy + sceneState.lift) * height, width, height);
   });
 
   return null;

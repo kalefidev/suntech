@@ -80,6 +80,12 @@ export interface SceneState {
   cable: number;
   /** 0 → 1 quanto o ponteiro (ou a velocidade do scroll, no toque) inclina o produto. */
   tilt: number;
+  /**
+   * Quanto a imagem da cena sobe, em frações da altura da tela (0 → 1 entre o fim do pin e a
+   * ponte): o produto sai pelo topo junto com a página, sem fade e sem nada passar por cima dele.
+   * Somado ao deslocamento de lente da câmera, sem suavização (já é função de `scrollY`).
+   */
+  lift: number;
   /** 0 → 1 presença do produto (0 = `visible = false`). */
   productVisible: number;
   /** 0 → 1 luz de contorno (as tiras do ambiente, mais fortes nos fundos escuros). */
@@ -108,6 +114,7 @@ export const sceneState: SceneState = {
   cable: 0,
   tilt: 1,
   productVisible: 0,
+  lift: 0,
   rim: 0,
   shadow: 1,
   product: { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0, s: 1 },

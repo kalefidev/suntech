@@ -86,8 +86,11 @@ body {
   overflow-x: clip;
 }
 
-/* Grão: um tile fixo atrás de tudo, na cor do texto (sem blend mode). */
-body::before {
+/* Grão: um tile fixo atrás de tudo, na cor do texto (sem blend mode). Os campos de tom das partes
+   cobrem o fundo da página e repetem o grão por dentro (`[data-field]::before`, mais abaixo): sem
+   ele, o mesmo Noite parecia mais escuro do que o da ponte, e a divisa virava uma emenda. */
+body::before,
+[data-field]::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -97,6 +100,11 @@ body::before {
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events: none;
+}
+
+[data-field]::before {
+  position: absolute;
+  z-index: -1;
 }
 
 ::selection {
@@ -334,6 +342,13 @@ a {
     opacity: 0;
   }
 
+  /* Nas partes, o header é uma faixa no tom da parte que está sob ele (`--bg` e `--fg` seguem o
+     mesmo degrau): a divisa entre dois campos passa por baixo dele, e o texto nunca fica sobre o
+     tom da parte vizinha. Na cena do produto ele segue transparente sobre o 3D. */
+  .site-header[data-solid="true"] {
+    background: var(--bg);
+  }
+
   /* O foco do teclado traz o header de volta na hora, sem animar. */
   :root .site-header:focus-within {
     transform: none;
@@ -531,6 +546,9 @@ a {
     padding-top: var(--header-h);
   }
 
+  /* `will-change`: o texto dos beats e a palavra gigante mudam a cada quadro do pin. Sem camada
+     própria, cada mudança repintava a camada da página, que inclui o conteúdo das partes logo
+     abaixo: com elas na página, o pin tinha quadros de 33 a 50 ms (sweep.mjs, Fase 2). */
   .beat {
     position: absolute;
     left: var(--gutter);
@@ -538,6 +556,7 @@ a {
     bottom: 6svh;
     opacity: 0;
     pointer-events: none;
+    will-change: transform, opacity;
   }
 
   .beat[data-beat="fechado"] {
@@ -634,6 +653,7 @@ a {
     white-space: nowrap;
     color: color-mix(in srgb, var(--fg) 11%, transparent);
     opacity: 0;
+    will-change: transform, opacity;
   }
 
   /* Etiquetas das peças em foco (PartLabels): ponto na peça, linha e pílula Noite com o número
@@ -715,6 +735,35 @@ a {
     position: relative;
     padding-top: 32svh;
     padding-bottom: 8svh;
+  }
+
+  /* Campo de tom de cada parte (PART_TONE em scene/choreography.ts): a parte pinta o próprio
+     fundo e redefine `--bg` e `--fg` para tudo o que mora nela. A divisa entre duas partes rola
+     como uma borda reta; nenhum texto fica sobre um tom intermediário (Regra do Corte). */
+  [data-field] {
+    isolation: isolate;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  [data-field="nuvem"] {
+    --bg: var(--color-nuvem);
+    --fg: var(--color-noite);
+  }
+
+  [data-field="ceu"] {
+    --bg: var(--color-ceu);
+    --fg: var(--color-noite);
+  }
+
+  [data-field="noite"] {
+    --bg: var(--color-noite);
+    --fg: var(--color-nuvem);
+  }
+
+  [data-field="grafite"] {
+    --bg: var(--color-grafite);
+    --fg: var(--color-nuvem);
   }
 
   .part--tight {

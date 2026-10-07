@@ -10,7 +10,8 @@
  * lib/tracks.ts, e os scripts de medição o leem direto.
  */
 
-export type SectionId = "produto" | "ponte";
+export type SectionId = "produto" | "ponte" | PartSectionId;
+export type PartSectionId = "problema" | "cliente" | "solucao" | "diferencial" | "empresa" | "pitch" | "jovem";
 
 export type Keys = ReadonlyArray<readonly [at: number, value: number]>;
 
@@ -111,6 +112,23 @@ export const flightOf = (beat: Beat): readonly [number, number] => {
 export const restOf = (beat: Beat): number => {
   const next = BEATS[BEATS.indexOf(beat) + 1];
   return (next ? flightOf(next)[0] : beat.to) - 0.002;
+};
+
+/**
+ * Tom de cada parte das aulas (DESIGN.md, Regra do Tom). Cada parte pinta o próprio campo
+ * (`data-field`), então a divisa entre duas partes rola como uma borda reta e todo texto fica
+ * sobre o fundo da sua parte: nenhum ponto passa por um tom intermediário. Alternam escuro e
+ * claro; a Parte 1 continua no Noite em que a cena do produto termina ("o problema acontece no
+ * escuro"); a Parte 3 tem dois trechos (Solução e Diferencial) no mesmo campo.
+ */
+export const PART_TONE: Record<PartSectionId, ToneId> = {
+  problema: "noite",
+  cliente: "nuvem",
+  solucao: "grafite",
+  diferencial: "grafite",
+  empresa: "ceu",
+  pitch: "noite",
+  jovem: "nuvem",
 };
 
 const lightTone = (id: ToneId) => id === "noite" || id === "grafite";
@@ -332,15 +350,28 @@ const panelKeys = (open: number): Keys => [
   [remountFrom, 0],
 ];
 
-export const TRACKS: Track[] = [
-  // Fundo e tom do texto: um por beat, trocados com o texto fora da tela.
-  { path: "bg.r", keys: { produto: bgKeys(0) } },
-  { path: "bg.g", keys: { produto: bgKeys(1) } },
-  { path: "bg.b", keys: { produto: bgKeys(2) } },
-  { path: "tone", step: true, keys: { produto: toneKeys() } },
+/**
+ * Nas partes, `--bg` e o tom do texto seguem a parte que está sob o header (o topo da seção no
+ * topo da tela): servem ao header e ao fundo da página; o campo de cada parte é pintado por ela.
+ * Duas chaves iguais nas pontas de cada faixa viram degrau na divisa (lib/tracks.ts).
+ */
+const parts = Object.entries(PART_TONE) as Array<[PartSectionId, ToneId]>;
+const partKeys = (value: (tone: ToneId) => number) =>
+  Object.fromEntries(parts.map(([id, tone]): [PartSectionId, Keys] => [id, [[0, value(tone)], [1, value(tone)]]]));
+const partBg = (channel: 0 | 1 | 2) => partKeys((tone) => TONES[tone][channel]);
+const partTone = partKeys((tone) => (lightTone(tone) ? 1 : -1));
 
-  // Presença: o produto sai na ponte para a próxima parte (a cena de energia fica até o fim do pin).
-  { path: "productVisible", keys: { produto: [[0, 1]], ponte: [[0, 1], [0.7, 0]] } },
+export const TRACKS: Track[] = [
+  // Fundo e tom do texto: um por beat (trocados com o texto fora da tela) e um por parte.
+  { path: "bg.r", keys: { produto: bgKeys(0), ...partBg(0) } },
+  { path: "bg.g", keys: { produto: bgKeys(1), ...partBg(1) } },
+  { path: "bg.b", keys: { produto: bgKeys(2), ...partBg(2) } },
+  { path: "tone", step: true, keys: { produto: toneKeys(), ...partTone } },
+
+  // Saída: depois do pin, a imagem sobe junto com a página (linear, 1 = uma tela, o quanto ela rola
+  // do fim do pin até o topo da ponte) e o produto some quando já está fora da tela.
+  { path: "lift", keys: { produto: [[1, 0]], ponte: [[0, 1]] } },
+  { path: "productVisible", keys: { produto: [[0, 1]], ponte: [[0, 1], [0.001, 0]] } },
 
   // Tampa: abre no beat "Abre", fica aberta até a remontagem.
   {

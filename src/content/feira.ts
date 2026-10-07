@@ -121,8 +121,11 @@ export const PITCH_SECONDS = 180;
 export const pitchStops: PitchStop[] = [
   { at: 0, sector: "Marketing", label: "Situação-problema", target: "situacao-problema" },
   { at: 30, sector: "Marketing", label: "Persona", target: "persona" },
-  { at: 60, sector: "Produtos", label: "Por dentro", target: "por-dentro", from: 0.2, to: 0.85 },
-  { at: 85, sector: "Produtos", label: "Como funciona", target: "como-funciona", from: 0.1, to: 0.75 },
+  // A cena do produto (v3) é uma seção presa só, `produto`: "Por dentro" vai do início do beat Abre
+  // ao fim da explosão, e "Como funciona" percorre os quatro componentes (Captar a Entregar). Os
+  // pontos são os de BEATS, em scene/choreography.ts: mude junto.
+  { at: 60, sector: "Produtos", label: "Por dentro", target: "produto", from: 0.08, to: 0.38 },
+  { at: 85, sector: "Produtos", label: "Como funciona", target: "produto", from: 0.38, to: 0.8 },
   { at: 110, sector: "Produtos", label: "Diferencial", target: "diferencial-tabela" },
   { at: 120, sector: "Finanças", label: "Custos", target: "custos" },
   { at: 160, sector: "Finanças", label: "Preço", target: "preco" },

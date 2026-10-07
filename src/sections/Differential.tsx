@@ -1,4 +1,5 @@
 import { copy } from "../content/copy";
+import { PART_TONE } from "../scene/choreography";
 
 const t = copy.solucao;
 
@@ -8,6 +9,7 @@ export function Differential() {
     <section
       id="diferencial"
       data-section="diferencial"
+      data-field={PART_TONE.diferencial}
       data-part="3"
       aria-labelledby="diferencial-titulo"
       className="part part--tight page-x"

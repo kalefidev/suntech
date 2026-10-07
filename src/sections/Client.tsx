@@ -5,6 +5,7 @@ import { partsOfFair } from "../content/feira";
 import { useScrubFrom } from "../lib/reveal";
 import { ChapterOpener } from "./ChapterOpener";
 import { Highlight } from "./Highlight";
+import { PART_TONE } from "../scene/choreography";
 
 const part = partsOfFair[1];
 const t = copy.cliente;
@@ -42,6 +43,7 @@ export function Client() {
     <section
       id={part.id}
       data-section={part.id}
+      data-field={PART_TONE[part.id]}
       data-part={part.n}
       aria-labelledby={`${part.id}-titulo`}
       className="part page-x"

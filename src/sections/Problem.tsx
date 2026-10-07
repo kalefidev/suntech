@@ -3,6 +3,7 @@ import { facts, partsOfFair } from "../content/feira";
 import { ChapterOpener } from "./ChapterOpener";
 import { Fact } from "./Fact";
 import { Highlight } from "./Highlight";
+import { PART_TONE } from "../scene/choreography";
 
 const part = partsOfFair[0];
 const t = copy.problema;
@@ -18,6 +19,7 @@ export function Problem() {
     <section
       id={part.id}
       data-section={part.id}
+      data-field={PART_TONE[part.id]}
       data-part={part.n}
       aria-labelledby={`${part.id}-titulo`}
       className="part page-x"

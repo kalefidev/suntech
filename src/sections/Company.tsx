@@ -6,6 +6,7 @@ import { partsOfFair } from "../content/feira";
 import { product, specSheet } from "../content/product";
 import { ChapterOpener } from "./ChapterOpener";
 import { useScrubFrom } from "../lib/reveal";
+import { PART_TONE } from "../scene/choreography";
 
 const part = partsOfFair[3];
 const t = copy.empresa;
@@ -226,6 +227,7 @@ export function Company() {
     <section
       id={part.id}
       data-section={part.id}
+      data-field={PART_TONE[part.id]}
       data-part={part.n}
       aria-labelledby={`${part.id}-titulo`}
       className="part page-x"

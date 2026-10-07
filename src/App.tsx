@@ -12,6 +12,14 @@ import { CanvasErrorBoundary } from "./scene/CanvasErrorBoundary";
 import { Fallback } from "./scene/Fallback";
 import { Header } from "./sections/Header";
 import { ProductScene } from "./sections/ProductScene";
+import { Problem } from "./sections/Problem";
+import { Client } from "./sections/Client";
+import { Solution } from "./sections/Solution";
+import { Differential } from "./sections/Differential";
+import { Company } from "./sections/Company";
+import { Pitch } from "./sections/Pitch";
+import { Youth } from "./sections/Youth";
+import { PitchHud } from "./sections/PitchHud";
 import { Footer } from "./sections/Footer";
 import { Cursor } from "./sections/Cursor";
 import { copy } from "./content/copy";
@@ -26,9 +34,9 @@ const LevaPanel = lazy(() => import("leva").then((m) => ({ default: m.Leva })));
 holdTracks(true);
 
 /**
- * Fase 1 da v3: a página é a cena do produto (o hero de 700vh) e o rodapé. As 6 partes
- * (Problema a Jovem) e o modo pitch voltam em volta dela na Fase 2: os componentes
- * continuam em src/sections, só não estão montados.
+ * A página: a cena do produto (o hero de 700vh, com a ponte), as 6 partes das aulas na
+ * ordem (Problema a Jovem; a Parte 3 tem dois trechos, Solução e Diferencial) e o rodapé.
+ * Cada parte pinta o próprio campo de tom (`data-field`, DESIGN.md, Regra do Tom).
  */
 export default function App() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -95,9 +103,17 @@ export default function App() {
 
       <main id="conteudo" tabIndex={-1}>
         <ProductScene />
+        <Problem />
+        <Client />
+        <Solution />
+        <Differential />
+        <Company />
+        <Pitch />
+        <Youth />
       </main>
 
       <Footer />
+      <PitchHud />
       <Cursor />
 
       {flags.debug && (
