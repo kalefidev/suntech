@@ -21,6 +21,7 @@ import { quality } from "../quality";
 import { createBatteryMaterial } from "./batteryMaterial";
 import { createCellsMaterial } from "./cellsMaterial";
 import { PhoneCable } from "./PhoneCable";
+import { LabelProjector } from "./LabelProjector";
 import { along, focusOpacity, MOTION, PART_FOCUS, PART_NAMES, phase, type PartName } from "./motion";
 import { complete } from "../../lib/loading";
 import { testHooks } from "../../lib/env";
@@ -280,6 +281,7 @@ export function SuntechModel({ rootRef }: { rootRef: React.RefObject<Group | nul
   return (
     <primitive ref={rootRef} object={model.root}>
       <PhoneCable model={model} />
+      <LabelProjector model={model} />
     </primitive>
   );
 }

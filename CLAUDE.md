@@ -61,5 +61,5 @@ Ferramentas de depuração em `scripts/dev/` (com o preview no ar em :4173; o `s
 
 ## Fontes de fatos
 
-- Fatos só em `src/content/` (`company.ts`, `product.ts` e `feira.ts`), da seção 3 do brief. Textos em `copy.ts`; formatação pt-BR em `format.ts`. Nenhum número solto em componente. Estimativas rotuladas; dados externos com fonte. Campos `// TODO: preencher` em `product.ts` (medidas, peso) seguem pendentes: não invente valores.
+- Fatos só em `src/content/` (`company.ts`, `product.ts` e `feira.ts`), da seção 3 do brief. Textos em `copy.ts`; formatação pt-BR em `format.ts`. Nenhum número solto em componente. Estimativas rotuladas; dados externos com fonte. Medidas e peso em `product.ts` são **fictícios** (autorizado pelo dono em 07/10/2026, enquanto o protótipo não é medido): iguais às proporções do 3D e marcados como "ilustrativo" na ficha técnica. Não invente outros valores.
 - Execução (easing, duração, acessibilidade e anti-padrões visuais): as skills (`impeccable`, Emil Kowalski, GSAP, `accessible-animation`). O mapa de skills por fase da v2 está em `docs/fase-0.md`, item 10; a v3 repete esse mapa no `docs/v3-fase-0.md`.

@@ -21,6 +21,8 @@ export interface SpecRow {
   value: string;
   /** true = aparece com o rótulo "estimativa". */
   estimate?: boolean;
+  /** true = valor fictício (medidas e peso ainda não medidos no protótipo), com o rótulo "ilustrativo". */
+  illustrative?: boolean;
 }
 
 export interface PartInfo {
@@ -62,12 +64,16 @@ const measurements: {
   panelClosed: Dimensions | null;
   case: Dimensions | null;
 } = {
-  panelOpen: null, // TODO: preencher
-  panelClosed: null, // TODO: preencher
-  case: null, // TODO: preencher
+  // FICTÍCIO (autorizado pelo dono em 07/10/2026): o protótipo ainda não foi medido. Valores
+  // plausíveis, iguais às proporções do 3D, e marcados como "ilustrativos" na ficha técnica.
+  // Troque pelos reais quando existirem e tire `illustrative` das linhas em `specSheet`.
+  panelOpen: { length: 400, width: 150, height: 6 },
+  panelClosed: { length: 200, width: 150, height: 12 },
+  case: { length: 150, width: 100, height: 40 },
 };
 
-const weightGrams: number | null = null; // TODO: preencher
+/** FICTÍCIO, como as medidas: painel ~330 g (duas placas de epóxi com moldura) + caixa ~250 g (com as células). */
+const weightGrams: number | null = 580;
 
 const panel = { plates: 2, voltsEach: 6, wattsEach: 3, volts: 6, watts: 6 };
 /** "18650" é o formato da célula (18 mm de diâmetro por 65 mm), não uma quantidade. */
@@ -167,10 +173,10 @@ export function specSheet(): SpecRow[] {
   ];
 
   const m = product.measurements;
-  if (m.panelOpen) rows.push({ label: "Painel aberto", value: mm([m.panelOpen.length, m.panelOpen.width, m.panelOpen.height]) });
-  if (m.panelClosed) rows.push({ label: "Painel fechado", value: mm([m.panelClosed.length, m.panelClosed.width, m.panelClosed.height]) });
-  if (m.case) rows.push({ label: "Caixa", value: mm([m.case.length, m.case.width, m.case.height]) });
-  if (product.weightGrams !== null) rows.push({ label: "Peso", value: unit(product.weightGrams, "g") });
+  if (m.panelOpen) rows.push({ label: "Painel aberto", value: mm([m.panelOpen.length, m.panelOpen.width, m.panelOpen.height]), illustrative: true });
+  if (m.panelClosed) rows.push({ label: "Painel fechado", value: mm([m.panelClosed.length, m.panelClosed.width, m.panelClosed.height]), illustrative: true });
+  if (m.case) rows.push({ label: "Caixa", value: mm([m.case.length, m.case.width, m.case.height]), illustrative: true });
+  if (product.weightGrams !== null) rows.push({ label: "Peso", value: unit(product.weightGrams, "g"), illustrative: true });
 
   rows.push({ label: "Preço", value: brl(product.priceBRL) });
   return rows;

@@ -6,7 +6,7 @@ import { sceneState, type CameraPose } from "./state";
 import { useMedia, useReducedMotion } from "../lib/useReducedMotion";
 import { WIDE } from "../lib/env";
 
-const KEYS = ["x", "y", "z", "tx", "ty", "tz", "fov", "sx", "sy"] as const satisfies ReadonlyArray<keyof CameraPose>;
+const KEYS = ["x", "y", "z", "tx", "ty", "tz", "fov", "sx", "sy", "roll"] as const satisfies ReadonlyArray<keyof CameraPose>;
 
 /**
  * Suavização curta da câmera (a única do `useFrame`; o resto da cena lê o estado
@@ -37,6 +37,7 @@ export function CameraRig() {
     camera.position.set(l.x, l.y, l.z);
     target.set(l.tx, l.ty, l.tz);
     camera.lookAt(target);
+    camera.rotateZ((l.roll * Math.PI) / 180);
     const { width, height } = size;
     // As poses foram enquadradas em 16:10 (desktop) e 390×844 (celular). Numa
     // tela mais estreita que essas, o campo de visão abre na mesma proporção:

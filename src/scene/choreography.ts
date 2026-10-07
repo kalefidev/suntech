@@ -155,11 +155,13 @@ interface CameraKey {
   fov: number;
   sx: number;
   sy: number;
+  roll: number;
 }
 
 /**
  * Câmera em órbita do alvo: azimute e elevação em graus (azimute 0 = de
- * frente, positivo = da direita). `sx` e `sy` são o deslocamento de lente.
+ * frente, positivo = da direita). `sx` e `sy` são o deslocamento de lente; `roll`, a
+ * rolagem em volta do eixo de visão (graus).
  */
 export function orbit(
   target: readonly [number, number, number],
@@ -169,6 +171,7 @@ export function orbit(
   fov = 30,
   sx = 0,
   sy = 0,
+  roll = 0,
 ): CameraKey {
   const az = (azimuth * Math.PI) / 180;
   const el = (elevation * Math.PI) / 180;
@@ -183,6 +186,7 @@ export function orbit(
     fov,
     sx,
     sy,
+    roll,
   };
 }
 
@@ -192,7 +196,7 @@ export function orbit(
  * da largura no desktop (celular: até 88% da largura). O alvo é o centro do sujeito.
  * `fov` 30 no desktop e 34 no celular.
  */
-export type Frame = readonly [target: readonly [number, number, number], az: number, el: number, dist: number, sx?: number, sy?: number];
+export type Frame = readonly [target: readonly [number, number, number], az: number, el: number, dist: number, sx?: number, sy?: number, roll?: number];
 
 export const DESKTOP: Record<BeatId, Frame> = {
   fechado: [[-0.01, 0.77, 0.18], 30, 22, 6.95, -0.02, 0.03],
@@ -206,20 +210,24 @@ export const DESKTOP: Record<BeatId, Frame> = {
   energia: [[0.36, 0.86, 0.16], 20, 25, 6.5, -0.04, 0.03],
 };
 
-/** Celular: a largura manda, então as distâncias crescem. */
+/**
+ * Celular: a largura manda, então as distâncias crescem. Nos closes das peças largas (células e
+ * saída) a câmera rola 90° (o último número): a peça fica em pé e a altura vai de ~28% a 50%. O
+ * módulo de carga é quase quadrado e não ganharia nada (41% contra 40%): fica sem rolagem.
+ */
 export const NARROW: Record<BeatId, Frame> = {
   fechado: [[-0.01, 0.77, 0.18], 30, 22, 9.69, -0.04, 0.01],
   abre: [[-0.09, 0.77, 0.16], 24, 42, 8.3, -0.1, 0.01],
   explode: [[0.12, 1.7, 0.54], 30, 22, 12.16, 0.01, -0.01],
   painel: [[0.49, 4.02, 0.46], 30, 45, 10.97, 0.04, 0],
   carga: [[0.32, 1.72, 0.78], 30, 45, 0.94, 0.03, 0.03],
-  celulas: [[-0.22, 1.15, 0.44], 30, 45, 3.27, 0.01, 0.01],
-  saida: [[0.61, 0.67, 0.71], 12, 28, 0.97, -0.02, 0.02],
+  celulas: [[-0.22, 1.15, 0.44], 30, 45, 2.66, 0.03, -0.01, 90],
+  saida: [[0.61, 0.67, 0.71], 12, 28, 0.8, 0.06, 0.01, 90],
   remonta: [[-0.09, 0.77, 0.16], 60, 22, 10.17, -0.06, 0.02],
   energia: [[0.36, 0.86, 0.16], 20, 25, 10.98, -0.05, 0.01],
 };
 
-const frameKey = (frame: Frame, fov: number) => orbit(frame[0], frame[1], frame[2], frame[3], fov, frame[4] ?? 0, frame[5] ?? 0);
+const frameKey = (frame: Frame, fov: number) => orbit(frame[0], frame[1], frame[2], frame[3], fov, frame[4] ?? 0, frame[5] ?? 0, frame[6] ?? 0);
 
 /**
  * Uma câmera parada por beat e um voo entre uma e outra (`flightOf`). Com `via`, o voo chega ao
@@ -302,6 +310,20 @@ const focusKeys = (): Keys => {
   return keys;
 };
 
+/** Etiquetas: acendem depois da chegada da câmera a cada close e apagam antes do voo para o próximo. */
+const labelKeys = (): Keys => {
+  const keys: Array<readonly [number, number]> = [[0, 0]];
+  BEATS.forEach((beat, i) => {
+    if (!beat.focus) return;
+    const arrive = flightOf(beat)[1];
+    const leave = flightOf(BEATS[i + 1])[0];
+    // Inteira até o ponto de repouso do beat (`restOf`, onde o reduced motion para) e apaga no início do voo.
+    keys.push([arrive, 0], [beat.from + SWAP + 0.01, 1], [leave - 0.002, 1], [leave, 0]);
+  });
+  keys.push([1, 0]);
+  return keys;
+};
+
 const panelKeys = (open: number): Keys => [
   [0, 0],
   [panelFrom + 0.03, 0],
@@ -342,6 +364,7 @@ export const TRACKS: Track[] = [
     narrow: { produto: panelKeys(PANEL_OPEN.narrow) },
   },
   { path: "focus", ease: "power2.inOut", keys: { produto: focusKeys() } },
+  { path: "labels", keys: { produto: labelKeys() } },
   // A carga das células sobe no beat "Guardar".
   { path: "charge", keys: { produto: [[0, 0.15], [cellsFrom + 0.015, 0.15], [cellsFrom + 0.06, 1]] } },
   // O LED acende na vez do beat "Entregar" e fica aceso até o fim.

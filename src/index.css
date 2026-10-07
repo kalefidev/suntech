@@ -636,6 +636,68 @@ a {
     opacity: 0;
   }
 
+  /* Etiquetas das peças em foco (PartLabels): ponto na peça, linha e pílula Noite com o número
+     numa pastilha na cor da etapa. Camada fixa acima do canvas e do texto, abaixo do header; a
+     cena 3D escreve a posição (transform e atributos da linha) e a opacidade a cada quadro. */
+  .part-labels {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .part-labels[data-visible="1"] {
+    visibility: visible;
+  }
+
+  .part-labels__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .part-labels__lines line {
+    stroke: var(--fg);
+    stroke-width: 1.5;
+  }
+
+  .part-labels__lines circle {
+    fill: var(--dot);
+    stroke: var(--color-noite);
+    stroke-width: 2;
+  }
+
+  .part-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.3rem 0.95rem 0.3rem 0.3rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--color-nuvem) 22%, transparent);
+    background: var(--color-noite);
+    color: var(--color-nuvem);
+    white-space: nowrap;
+    opacity: 0;
+  }
+
+  .part-label__n {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--dot);
+    color: var(--color-noite);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
   /* A ponte para a próxima parte: o produto sai nela. */
   .bridge {
     position: relative;

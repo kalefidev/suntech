@@ -194,6 +194,7 @@ function Prototype() {
             <dd className="type-body">
               {row.value}
               {row.estimate && <span className="estimate"> ({t.estimateLabel})</span>}
+              {row.illustrative && <span className="estimate"> ({t.illustrativeLabel})</span>}
             </dd>
           </div>
         ))}

@@ -200,6 +200,7 @@ export const copy = {
       "Nosso protótipo é funcional: o painel carrega a bateria de verdade, e a caixa carrega o celular. No estande, o visitante vê as peças por dentro e testa a carga com a lâmpada fazendo o papel do sol.",
     specTitle: "Ficha técnica",
     estimateLabel: "estimativa",
+    illustrativeLabel: "ilustrativo",
     historyTitle: "Nasceu como projeto de escola",
   },
 
@@ -260,6 +261,13 @@ export const sceneCopy = {
     remonta: { title: "Tudo no lugar.", text: copy.solucao.life[1].text },
     energia: { title: copy.solucao.staysTitle.join(" "), text: copy.solucao.staysText, note: copy.solucao.staysNote },
   },
+  /** Etiqueta presa à peça em foco, uma por componente (o número é a etapa do caminho da energia). */
+  labels: [
+    { n: energyPath[0].n, name: "Painel solar", color: energyPath[0].color },
+    { n: energyPath[1].n, name: `Módulo ${product.charger.module}`, color: energyPath[1].color },
+    { n: energyPath[2].n, name: `Células ${product.battery.format}`, color: energyPath[2].color },
+    { n: energyPath[3].n, name: "Conversor e USB", color: energyPath[3].color },
+  ],
   bridge: "Agora, o problema que nos trouxe até aqui.",
   scroll: "Role para abrir",
 } as const;

@@ -39,6 +39,11 @@ export interface CameraPose {
    */
   sx: number;
   sy: number;
+  /**
+   * Rolagem da câmera em volta do eixo de visão, em graus. No celular, os closes das peças
+   * largas giram 90°: a peça fica em pé na tela em pé e ganha altura (a largura mandava).
+   */
+  roll: number;
 }
 
 export interface SceneState {
@@ -58,6 +63,11 @@ export interface SceneState {
    * ficam a ~15% de opacidade.
    */
   focus: number;
+  /**
+   * 0 → 1 etiqueta da peça em foco (scene/model/LabelProjector.tsx). Só acende com a câmera parada
+   * no close e o texto na tela: nos voos o foco passa por outros componentes (de 4 a 0 na remontagem).
+   */
+  labels: number;
   /** 0 → 1 carga visível das células. */
   charge: number;
   /** 0 → 1 LED azul de saída. */
@@ -90,6 +100,7 @@ export const sceneState: SceneState = {
   explode: 0,
   panelOpen: 0,
   focus: 0,
+  labels: 0,
   charge: 0.15,
   ledOn: 0,
   phoneVisible: 0,
@@ -100,6 +111,6 @@ export const sceneState: SceneState = {
   rim: 0,
   shadow: 1,
   product: { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0, s: 1 },
-  camera: { x: 3.4, y: 3.2, z: 6.9, tx: 0, ty: 0.75, tz: 0.25, fov: 30, sx: 0, sy: 0 },
+  camera: { x: 3.4, y: 3.2, z: 6.9, tx: 0, ty: 0.75, tz: 0.25, fov: 30, sx: 0, sy: 0, roll: 0 },
   pointer: { x: 0, y: 0 },
 };

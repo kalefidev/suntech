@@ -70,10 +70,11 @@ Regras: os números vêm só desses arquivos (o `npm run check:numbers`
 confere), estimativas aparecem com o rótulo "estimativa" e dado externo sempre
 leva a fonte.
 
-**Medidas e peso do produto:** em `product.ts`, os campos marcados com
-`// TODO: preencher` estão vazios (`null`). Preencha em milímetros e gramas:
-o modelo 3D se ajusta às medidas sozinho, e a ficha técnica passa a mostrar
-os campos.
+**Medidas e peso do produto:** em `product.ts`, as
+medidas e o peso são **fictícios** por enquanto (o protótipo ainda não foi
+medido) e aparecem na ficha técnica com o rótulo "ilustrativo". Quando houver
+os reais, troque os valores (milímetros e gramas) e tire o `illustrative` das
+linhas em `specSheet`.
 
 **Modo pitch:** a sequência (quais seções e em que segundo) está em
 `pitchStops`, no `feira.ts`. O total é `PITCH_SECONDS` (180).

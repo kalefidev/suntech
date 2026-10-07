@@ -441,9 +441,12 @@ cento, por `transform`) e troca com o beat, sem fade-up.
 Na lateral, um título em Headline e, nos quatro componentes, um dado de
 `product.ts` em Lead (2 placas de 6 V e 3 W; TP4056 com proteção DW01; 2
 células 18650, 5.200 mAh; boost de 3,7 V para 5 V). Perto da peça em foco, a
-etiqueta de componente: uma pílula Noite com o número numa pastilha Grafite que
-acende na cor da etapa, e o nome. No celular, o texto fica embaixo e a
-etiqueta mostra só o número.
+etiqueta de componente: um ponto na peça, uma linha e uma pílula Noite com o
+número numa pastilha na cor da etapa, e o nome. No desktop, a pílula fica na
+coluna livre do lado oposto ao texto; no celular, o texto fica embaixo e a
+pílula logo acima dele. Só aparece com a câmera parada no close (junto com o
+texto). No celular, os closes das células e do conversor giram 90° (a peça
+fica em pé na tela em pé).
 
 ### Abertura de capítulo (assinatura)
 Numeral enorme à esquerda, com o título alinhado à base dele e a aula de

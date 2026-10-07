@@ -3,6 +3,7 @@
 // real no fim do beat; o script devolve altura, largura e desvio do centro, em % da viewport.
 //   node scripts/dev/framing.mjs [--url=http://localhost:4173] [--size=1440x900] [--solve [--apply]] [--beats=painel,carga]
 //        [--at=0,0.25,0.5,0.75,1]
+// A rolagem (7º número da linha, celular) entra na medida e passa intacta pelo --apply.
 // Sem --solve: confere a câmera de hoje. Com --solve: resolve alvo, distância e deslocamento de
 // lente (sx, sy) para altura-alvo 62% (celular: 50%), largura ≤ 66% (celular: 88%) e centro em
 // 0, e imprime as linhas prontas para as tabelas DESKTOP/NARROW do choreography.ts (`--apply` as grava).
@@ -38,7 +39,7 @@ await page.goto(`${base}/?snap`, { waitUntil: "load" });
 await page.waitForFunction(() => window.__ready === true && window.__model, null, { timeout: 90000 });
 
 /** Roda no navegador: projeta o sujeito e, se pedido, resolve a câmera. */
-function measure({ names, solve, limits, az, el, fovBase, wide: isWide }) {
+function measure({ names, solve, limits, az, el, roll, fovBase, wide: isWide }) {
   const { camera } = window.__three;
   const model = window.__model;
   const V = camera.position.constructor;
@@ -83,6 +84,7 @@ function measure({ names, solve, limits, az, el, fovBase, wide: isWide }) {
     const flat = dist * Math.cos(e);
     cam.position.set(target.x + flat * Math.sin(a), target.y + dist * Math.sin(e), target.z + flat * Math.cos(a));
     cam.lookAt(target);
+    cam.rotateZ((roll * Math.PI) / 180);
     const fit = Math.max(1, (isWide ? 1.6 : 0.46) / (W / H));
     cam.fov = fit === 1 ? fovBase : (360 / Math.PI) * Math.atan(Math.tan((fovBase * Math.PI) / 360) * fit);
     cam.setViewOffset(W, H, -sx * W, sy * H, W, H);
@@ -145,6 +147,7 @@ for (const { beat, p, label, flight } of probes) {
     limits: LIMITS,
     az: (wide ? DESKTOP : NARROW)[beat.id][1],
     el: (wide ? DESKTOP : NARROW)[beat.id][2],
+    roll: (wide ? DESKTOP : NARROW)[beat.id][6] ?? 0,
     fovBase: wide ? 30 : 34,
     wide,
   });
@@ -157,9 +160,10 @@ for (const { beat, p, label, flight } of probes) {
   console.log(`${label.padEnd(at.length ? 16 : 9)} ${pct(m.h)} ${pct(m.w)} ${pct(m.dx)} ${pct(m.dy)}   ${ok ? "ok" : flight ? "voo" : "FORA"}`);
   if (frame.solved) {
     const s = frame.solved;
-    const [, azimuth, elevation] = (wide ? DESKTOP : NARROW)[beat.id];
-    patches.push([beat.id, `[[${s.target.map(r2).join(", ")}], ${azimuth}, ${elevation}, ${r2(s.dist)}, ${r2(s.sx)}, ${r2(s.sy)}]`]);
-    lines.push(`  ${beat.id}: [[${s.target.map(r2).join(", ")}], ${azimuth}, ${elevation}, ${r2(s.dist)}, ${r2(s.sx)}, ${r2(s.sy)}], // h ${pct(s.after.h)} l ${pct(s.after.w)}`);
+    const [, azimuth, elevation, , , , roll] = (wide ? DESKTOP : NARROW)[beat.id];
+    const row = `[[${s.target.map(r2).join(", ")}], ${azimuth}, ${elevation}, ${r2(s.dist)}, ${r2(s.sx)}, ${r2(s.sy)}${roll ? `, ${roll}` : ""}]`;
+    patches.push([beat.id, row]);
+    lines.push(`  ${beat.id}: ${row}, // h ${pct(s.after.h)} l ${pct(s.after.w)}`);
   }
 }
 if (flag("apply") && patches.length) {

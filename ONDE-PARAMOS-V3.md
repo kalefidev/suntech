@@ -2,7 +2,7 @@
 
 > **Para retomar, diga:** "Leia o ONDE-PARAMOS-V3.md e continue de onde paramos."
 
-**Última atualização:** 06/10/2026, com a **Fase 1 da v3 fechada** (só a cena do produto, isolada). Branch `v3` (criada da `v2`). **Nada foi commitado ainda** (veja "Git" no fim). Os servidores estão parados (dev na porta 5180, preview na 4173).
+**Última atualização:** 07/10/2026. A **Fase 1** está commitada (`629c084`). Depois, a **Fase 1b**, com as respostas do dono: rolagem de 90° nos closes do celular, etiquetas ligadas às peças, medidas fictícias e o guia do modelo feito à mão (detalhes em `docs/v3-progresso.md`, seção de 07/10). Branch `v3` (criada da `v2`). Os servidores estão parados (dev na porta 5180, preview na 4173).
 
 ## Em uma frase
 
@@ -16,6 +16,13 @@ A página tem só a **cena do produto** (hero de 700vh no desktop, 490vh no celu
 4. `pcb` virou `pcb_charge` e `pcb_boost` (o roteiro tem 4 componentes).
 5. Critérios 1 e 4 reescritos (já no `CLAUDE.md`): altura 55–70% **e** largura ≤ 66% no desktop; celular, largura ≤ 88% e altura 45–55% quando a proporção deixa; tempo de quadro p95 ≤ 18 ms e p99 ≤ 25 ms numa varredura de scroll.
 6. Pediu: ao fechar a fase, **parar o projeto e escrever este arquivo**.
+
+## O que o dono decidiu (07/10/2026)
+
+1. **O modelo gerado foi reprovado** ("muito simples"). Ele vai **modelar à mão** e entregar mais para a frente. O contrato do GLB está em **`docs/v3-modelo-a-mao.md`**. Até lá, o gerado fica como provisório. Não gaste tempo melhorando o `scripts/model/`.
+2. Girar 90° os closes no celular: sim (feito: Guardar e Entregar).
+3. Etiquetas ligadas às peças: sim (feito).
+4. Medidas e peso: **fictícios**, marcados como "ilustrativo" (feito).
 
 ## Primeiros passos ao retomar
 
@@ -70,25 +77,26 @@ JS gzip inicial 129,6 KB (teto 150), total 424,8 KB (teto 500); GLB 1,13 MB (tet
 
 ## O que ficou abaixo do esperado
 
-1. **Celular:** a altura do sujeito fica em 27–50% (a largura manda, 88%). A Fase 0 pedia testar **girar 90° as peças em foco** (rolagem da câmera) no celular; **não testei**. É o primeiro candidato de melhoria visual no celular.
-2. **Sem etiquetas ligadas às peças** (as âncoras `label_*` existem no GLB; nada as projeta).
+1. **O modelo 3D** (reprovado; o dono modela à mão, ver `docs/v3-modelo-a-mao.md`).
+2. **Celular:** com a rolagem, Guardar e Entregar foram para 50% de altura; Fechado (38%), Proteger (40%), Remonta (38%) e Energia (32%) seguem limitados pela largura (dentro do critério).
 3. **As 6 partes e o pitch não estão na página.** Os links "1 Problema" a "6 Jovem" do cabeçalho não levam a lugar nenhum por enquanto, e o texto da ponte encosta na borda do painel.
-4. **Medidas reais do produto** (`// TODO: preencher` em `product.ts`) seguem pendentes; o modelo usa as proporções padrão.
+4. **Medidas e peso são fictícios** (autorizado), com o rótulo "ilustrativo" na ficha técnica; trocar pelos reais quando existirem.
 5. **FPS só medido num PC** (GTX 1060). Falta testar num celular real (README, "Como medir o FPS").
 6. **Polimento visual:** interior da caixa vazio (sem fios, sem oclusão ambiente por peça); aço do USB brilhando demais nos closes; preto fosco da caixa some em parte sobre o fundo Noite; o pano de fundo do texto nos closes é um cartão arredondado (escolha visual a rever com o dono).
 7. **Fase 3 intocada:** `public/og.png` e `og:image:alt` mostram o hero da v2; `.impeccable/design.json` é da v2.
 
 ## Próximos passos, em ordem
 
-1. **Revisão do dono** das fotos da Fase 1 (e, se ele quiser, os itens 1, 2 e 6 acima antes de seguir). Depois, o commit da Fase 1.
-2. **Fase 2: reintegrar as 6 partes e o modo pitch em volta da cena.** O que sei que precisa de decisão ou trabalho:
+1. **Commit da Fase 1b** (se ainda não estiver feito: `git status`) e revisão do dono das etiquetas e da rolagem no celular.
+2. **Quando o dono entregar o GLB:** seguir "Depois de trocar" no `docs/v3-modelo-a-mao.md`.
+3. **Fase 2: reintegrar as 6 partes e o modo pitch em volta da cena.** O que sei que precisa de decisão ou trabalho:
    - Os componentes estão em `src/sections` (`Problem`, `Client`, `Solution`, `Company`, `Differential`, `Youth`, `ChapterOpener`, `Fact`, `Highlight`, `Pitch`, `PitchHud`); monte-os em `App.tsx` depois da ponte, na ordem das aulas.
    - `choreography.ts` só conhece as seções `produto` e `ponte`: **cada parte precisa do tom de fundo e de texto** (trilhos `bg.r/g/b` e `tone`, ou CSS fixo por seção). A cena termina em Noite, então a Parte 1 continua no escuro (opção A; `PRODUCT.md`, princípio 3: "o problema acontece no escuro").
    - `lib/pitch.ts` e `pitchStops` (`src/content/feira.ts`) apontam para ids de seção da v2: remapeie os alvos (a cena do produto agora é uma seção só, `produto`, com `positionOf("produto", fração)`). Rode `npm run test:pitch` (usa o `dist/`).
    - Header: os links 1–6 voltam a funcionar quando as seções existirem; a troca de tom do header (`data-crossing`) precisa conferir com os novos tons.
    - `?nowebgl`: refazer o diagrama do fallback (`EnergyDiagram`) se o beat "Dentro" mudar.
    - Código morto do céu: já apaguei os arquivos; confira `PROGRESS.md`/`BRIEF.md` só como história.
-3. **Fase 3:** polimento (itens 1, 2, 6 e 7 acima), performance em celular real, SEO (`og.png`, `og:image:alt`), `/impeccable document` (refaz o `.impeccable/design.json`), e **deploy** na Vercel. Cuidado: a Vercel publica a `main` a cada push, e a `main`/`v2` é a versão aprovada no ar (suntech-ten.vercel.app): **não faça merge da `v3` na `main` antes de o dono aprovar a v3 inteira**.
+4. **Fase 3:** polimento (itens 6 e 7 acima), performance em celular real, SEO (`og.png`, `og:image:alt`), `/impeccable document` (refaz o `.impeccable/design.json`), e **deploy** na Vercel. Cuidado: a Vercel publica a `main` a cada push, e a `main`/`v2` é a versão aprovada no ar (suntech-ten.vercel.app): **não faça merge da `v3` na `main` antes de o dono aprovar a v3 inteira**.
 
 ## Armadilhas (o que me custou tempo)
 
@@ -106,20 +114,12 @@ JS gzip inicial 129,6 KB (teto 150), total 424,8 KB (teto 500); GLB 1,13 MB (tet
 
 ## Git
 
-Branch `v3`, **tudo da Fase 1 sem commit** (modificados, apagados e novos). Para commitar sem as sobras da v2:
-
-```bash
-git add .gitignore CLAUDE.md DESIGN.md PROGRESS.md PROMPT-V3.md README.md ONDE-PARAMOS-V3.md package.json \
-        docs scripts src public/models
-git status                      # confira: nenhum ONDE-PARAMOS.md / ONDE-PARAMOS-CODIGO.md / PROMPT-1-SUNTECH.md
-git commit -m "Fase 1 (v3): a cena do produto"
-```
+Branch `v3`. A Fase 1 está no commit `629c084`. Ao commitar, deixe de fora as sobras da v2 (`ONDE-PARAMOS.md`, `ONDE-PARAMOS-CODIGO.md` e `PROMPT-1-SUNTECH.md`): adicione por nome ou por pasta (`docs scripts src public/models` e os `.md` da raiz que mudaram), nunca com `git add -A`.
 
 (`.snapshots/`, `dist/` e `scripts/model/node_modules` já estão no `.gitignore`; `public/models/suntech.glb` **entra** no commit.)
 
 ## Perguntas para o dono
 
-1. As fotos da Fase 1 estão aprovadas? Em especial: o desktop abre o painel quase plano (as duas placas inteiras no quadro), e o celular o abre em V; o cartão de texto nos closes; o aço dos USB.
-2. Quer que eu teste girar 90° as peças em foco no celular (mais altura no celular, produto "deitado" na tela)?
-3. Quer etiquetas ligadas às peças (linha da peça ao texto) ou o texto na lateral basta?
-4. As medidas e o peso reais do produto saem quando? (`product.ts`)
+1. As etiquetas e a rolagem no celular ficaram boas? (Fotos em `.snapshots/v3-fase-1b/`.)
+2. O modelo feito à mão sai quando, e em que programa? (O guia assume Blender.)
+3. O painel quase plano no desktop e em V no celular, o cartão atrás do texto nos closes: seguem assim?

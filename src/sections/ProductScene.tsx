@@ -6,6 +6,7 @@ import { usePinnedStage } from "../lib/stage";
 import { useWebglOff } from "../lib/useReducedMotion";
 import { Loader } from "./Loader";
 import { EnergyDiagram } from "./EnergyDiagram";
+import { PartLabels } from "./PartLabels";
 
 /** Duração dos fades do texto e da palavra, em fração do pin. */
 const FADE = 0.014;
@@ -84,6 +85,8 @@ export function ProductScene() {
           );
         })}
       </div>
+
+      <PartLabels />
 
       <section
         ref={ref}
