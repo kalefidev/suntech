@@ -29,3 +29,6 @@ dist-ssr
 
 .vercel
 .env*
+
+# Cache do gerador do modelo 3D (scripts/model)
+scripts/model/.cache/

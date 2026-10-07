@@ -11,21 +11,8 @@ import { useReducedMotion } from "./lib/useReducedMotion";
 import { CanvasErrorBoundary } from "./scene/CanvasErrorBoundary";
 import { Fallback } from "./scene/Fallback";
 import { Header } from "./sections/Header";
-import { Hero } from "./sections/Hero";
-import { Problem } from "./sections/Problem";
-import { Client } from "./sections/Client";
-import { Solution } from "./sections/Solution";
-import { Inside } from "./sections/Inside";
-import { HowItWorks } from "./sections/HowItWorks";
-import { EnergyStays } from "./sections/EnergyStays";
-import { Differential } from "./sections/Differential";
-import { Company } from "./sections/Company";
-import { Pitch } from "./sections/Pitch";
-import { Youth } from "./sections/Youth";
+import { ProductScene } from "./sections/ProductScene";
 import { Footer } from "./sections/Footer";
-import { CalloutLayer } from "./sections/CalloutLayer";
-import { StepLayer } from "./sections/StepLayer";
-import { PitchHud } from "./sections/PitchHud";
 import { Cursor } from "./sections/Cursor";
 import { copy } from "./content/copy";
 
@@ -35,9 +22,14 @@ const sceneChunk = flags.noWebgl ? null : track("scene", import("./scene/SceneCa
 const SceneCanvas = lazy(() => sceneChunk ?? import("./scene/SceneCanvas"));
 const LevaPanel = lazy(() => import("leva").then((m) => ({ default: m.Leva })));
 
-// A abertura segura o trilho de scroll até o sol nascer (lib/opening.ts).
+// A abertura segura o trilho de scroll até o produto entrar (lib/opening.ts).
 holdTracks(true);
 
+/**
+ * Fase 1 da v3: a página é a cena do produto (o hero de 700vh) e o rodapé. As 6 partes
+ * (Problema a Jovem) e o modo pitch voltam em volta dela na Fase 2: os componentes
+ * continuam em src/sections, só não estão montados.
+ */
 export default function App() {
   const rootRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
@@ -102,28 +94,11 @@ export default function App() {
       <Header />
 
       <main id="conteudo" tabIndex={-1}>
-        <Hero />
-        <Problem />
-        <Client />
-        <Solution />
-        <Inside />
-        <HowItWorks />
-        <EnergyStays />
-        <Differential />
-        <Company />
-        <Pitch />
-        <Youth />
+        <ProductScene />
       </main>
 
       <Footer />
-      <PitchHud />
       <Cursor />
-      {!flags.noWebgl && (
-        <>
-          <CalloutLayer />
-          <StepLayer />
-        </>
-      )}
 
       {flags.debug && (
         <Suspense fallback={null}>

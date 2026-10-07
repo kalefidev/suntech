@@ -2,7 +2,7 @@
 // product.ts, company.ts e feira.ts; aqui ficam só as palavras.
 
 import { company } from "./company";
-import { product } from "./product";
+import { componentSpecs, energyPath, product } from "./product";
 
 export const copy = {
   ui: {
@@ -230,3 +230,36 @@ export const copy = {
     sourcesTitle: "Fontes",
   },
 };
+
+/**
+ * Textos da cena do produto (docs/v3-fase-0.md, §2): uma palavra gigante, um título
+ * e um texto por beat. As frases vêm das que já existem na página (Aula 4); o dado de
+ * cada componente vem de `componentSpecs` (product.ts). Nenhum número mora aqui.
+ */
+export const sceneCopy = {
+  aria: "O Carregador Solar SunTech abrindo, peça por peça",
+  words: {
+    fechado: "Sol",
+    abre: "Abre",
+    explode: "Dentro",
+    painel: "Captar",
+    carga: "Proteger",
+    celulas: "Guardar",
+    saida: "Entregar",
+    remonta: "Simples",
+    energia: "Energia",
+  },
+  beats: {
+    fechado: { title: copy.hero.title, text: copy.hero.lead },
+    abre: { title: copy.solucao.insideTitle, text: "A tampa abre para cima, como no protótipo." },
+    explode: { title: "A energia segue um caminho.", text: "Do painel ao celular, cada peça faz uma parte do trabalho." },
+    painel: { title: energyPath[0].title, text: energyPath[0].text, data: componentSpecs.captar },
+    carga: { title: energyPath[1].title, text: energyPath[1].text, data: componentSpecs.proteger },
+    celulas: { title: energyPath[2].title, text: energyPath[2].text, data: componentSpecs.guardar },
+    saida: { title: energyPath[3].title, text: energyPath[3].text, data: componentSpecs.entregar },
+    remonta: { title: "Tudo no lugar.", text: copy.solucao.life[1].text },
+    energia: { title: copy.solucao.staysTitle.join(" "), text: copy.solucao.staysText, note: copy.solucao.staysNote },
+  },
+  bridge: "Agora, o problema que nos trouxe até aqui.",
+  scroll: "Role para abrir",
+} as const;

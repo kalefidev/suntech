@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { REDUCED_MOTION } from "./env";
+import { REDUCED_MOTION, subscribeWebgl, webglIsOff } from "./env";
 
 /** Uma media query, reativa: muda se a viewport ou a preferência mudar com a página aberta. */
 export function useMedia(query: string): boolean {
@@ -17,4 +17,9 @@ export function useMedia(query: string): boolean {
 /** `prefers-reduced-motion`, reativo: muda se a pessoa trocar a preferência com a página aberta. */
 export function useReducedMotion(): boolean {
   return useMedia(REDUCED_MOTION);
+}
+
+/** `true` sem WebGL (`?nowebgl` ou falha do contexto), reativo. */
+export function useWebglOff(): boolean {
+  return useSyncExternalStore(subscribeWebgl, webglIsOff, () => false);
 }

@@ -1,19 +1,24 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { type PerspectiveCamera, Vector3 } from "three";
 import { easing } from "maath";
 import { sceneState, type CameraPose } from "./state";
-import { LAYER_BACKDROP } from "./layers";
 import { useMedia, useReducedMotion } from "../lib/useReducedMotion";
 import { WIDE } from "../lib/env";
 
 const KEYS = ["x", "y", "z", "tx", "ty", "tz", "fov", "sx", "sy"] as const satisfies ReadonlyArray<keyof CameraPose>;
 
 /**
- * Câmera da cena: segue `sceneState.camera` com damping. O deslocamento de
- * lente (`sx`, `sy`) põe o produto onde o layout pede (à direita no desktop,
- * em cima no celular) sem mudar a perspectiva: a câmera continua mirando o
- * produto. Com reduced motion, a câmera pula para a pose, sem viajar.
+ * Suavização curta da câmera (a única do `useFrame`; o resto da cena lê o estado
+ * direto): 0,1 s equivale a λ ≈ 20 no `damp` de primeira ordem. O Lenis suaviza o
+ * scroll e a timeline é direta, então esta é a última e única camada que sobra.
+ */
+const SMOOTH = 0.1;
+
+/**
+ * Câmera da cena: segue `sceneState.camera`. O deslocamento de lente (`sx`, `sy`)
+ * fica em 0 na v3 (o produto é centrado) e serve só para ajuste fino. Com reduced
+ * motion, a câmera pula para a pose, sem viajar.
  */
 export function CameraRig() {
   const camera = useThree((state) => state.camera) as PerspectiveCamera;
@@ -22,16 +27,12 @@ export function CameraRig() {
   const live = useRef<CameraPose>({ ...sceneState.camera });
   const target = useMemo(() => new Vector3(), []);
 
-  useLayoutEffect(() => {
-    camera.layers.enable(LAYER_BACKDROP);
-  }, [camera]);
-
   useFrame(({ size }, delta) => {
     const pose = sceneState.camera;
     const l = live.current;
     for (const key of KEYS) {
       if (reduced) l[key] = pose[key];
-      else easing.damp(l, key, pose[key], 0.35, delta);
+      else easing.damp(l, key, pose[key], SMOOTH, delta);
     }
     camera.position.set(l.x, l.y, l.z);
     target.set(l.tx, l.ty, l.tz);

@@ -1,14 +1,18 @@
 # SunTech: site do Carregador Solar SunTech
 
 Site de produto da SunTech, empresa de estudantes do Colégio Ideal, feito
-para a Feira de Empreendedorismo. A página conta, em seis partes, as aulas do
-projeto (problema, cliente, solução, empresa, pitch e o papel do jovem), com
-o carregador em 3D atrás do texto e um céu que passa por três dias conforme a
-pessoa rola.
+para a Feira de Empreendedorismo. A v3 (branch `v3`) abre com o carregador em 3D
+grande no centro da tela: ao rolar, ele abre, se desmonta peça por peça e cada
+componente ganha o foco (painel, carga, células e saída), até a remontagem e a
+cena de energia. As seis partes das aulas do projeto (problema, cliente,
+solução, empresa, pitch e o papel do jovem) voltam depois dela, na Fase 2 da v3.
+**Estado atual: a cena do produto está pronta; as seis partes e o modo pitch
+ainda não estão montados na página** (ver `ONDE-PARAMOS-V3.md`).
 
-Tudo é gerado no navegador: o produto é modelado em código, as texturas são
-desenhadas em canvas e o céu é um shader. Não há modelos, imagens ou HDRIs
-externos, nem backend.
+O produto é um modelo 3D (`public/models/suntech.glb`) gerado por código
+(`npm run model`; licença em `public/models/LICENSE.md`). As texturas são
+desenhadas em canvas no navegador e a luz do ambiente é local. Não há ativos
+vindos de CDN nem backend.
 
 ## Como rodar
 
@@ -30,6 +34,8 @@ Outros comandos:
 | `npm run test:pitch` | Testa o modo pitch: 180 s exatos, pausa no Espaço e saída no Esc (rode o build antes) |
 | `npm run check:numbers` | Garante que nenhum número está escrito à mão nos componentes |
 | `npm run og` | Gera `public/og.png` (a imagem das prévias de link) a partir do hero (rode o build antes) |
+| `npm run model:install` / `npm run model` | Instala (uma vez) e roda o gerador do modelo 3D em `scripts/model/`, que grava `public/models/suntech.glb` |
+| `npm run model:view` | Folhas de contato do modelo, para conferir as peças |
 
 O `snap`, o `test:pitch` e o `og` usam o Playwright. Na primeira vez, rode
 `npx playwright install chromium`.

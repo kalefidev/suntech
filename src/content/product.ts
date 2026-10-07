@@ -224,5 +224,16 @@ export const energyPath: EnergyStep[] = [
   },
 ];
 
+/**
+ * Dado de cada componente na cena do produto (um por beat), da mesma fonte da ficha
+ * técnica: os números só moram aqui.
+ */
+export const componentSpecs: Record<EnergyStepId, string> = {
+  captar: `${num(panel.plates)} placas de ${v(panel.voltsEach)} e ${unit(panel.wattsEach, "W")} cada, em paralelo: ${v(panel.volts)} e ${unit(panel.watts, "W")} no total`,
+  proteger: `Módulo ${charger.module} com proteção ${charger.protection}, carga de até ${unit(charger.maxAmps, "A")}`,
+  guardar: `${num(battery.cells)} células ${battery.format} de ${v(battery.voltsEach)} e ${unit(battery.mAhEach, "mAh")}: ${unit(battery.mAh, "mAh")} no total`,
+  entregar: `Conversor de ${v(converter.fromVolts)} para ${v(converter.toVolts)}, até ${unit(converter.maxAmps, "A")}, na saída USB-A`,
+};
+
 /** Rótulo do callout da etapa 4 ("3,7 V → 5 V"); a seta é desenhada em SVG. */
 export const conversionLabel = { from: v(converter.fromVolts), to: v(converter.toVolts) };

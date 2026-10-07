@@ -1,9 +1,10 @@
 /**
  * Único objeto mutável com os parâmetros animáveis da cena.
  *
- * Só o GSAP escreve aqui (o trilho de scroll em lib/tracks.ts, a abertura e o
- * ponteiro via `gsap.quickTo`). O `useFrame` só lê e aplica com `easing.damp`.
- * Nunca `useState` no loop de animação.
+ * Só escrevem aqui o trilho de scroll (lib/tracks.ts, uma função pura de
+ * `scrollY`), a abertura e o ponteiro (GSAP, `gsap.quickTo`). O `useFrame` só lê. Nunca `useState` no loop de
+ * animação. As peças leem os valores direto, sem suavização: só a câmera tem um
+ * `damp` curto (uma só camada de suavização, CLAUDE.md).
  *
  * Não importe `three` (nem nada do ecossistema R3F) neste arquivo: ele entra
  * no chunk inicial, e uma dependência do three aqui já estourou o orçamento de
@@ -33,56 +34,49 @@ export interface CameraPose {
   fov: number;
   /**
    * Deslocamento de lente, em frações da tela (+0,25 leva a imagem 25% para a
-   * direita; +0,2 leva 20% para cima). A câmera continua mirando o produto, e
-   * o layout decide onde ele aparece, sem mudar a perspectiva.
+   * direita; +0,2 leva 20% para cima). Na v3 o produto fica no centro: vale 0,
+   * e serve só para um ajuste fino do enquadramento.
    */
   sx: number;
   sy: number;
 }
 
 export interface SceneState {
-  /** Horas contínuas ao longo da página (4,5 → 65,7). O céu usa `dayTime mod 24`. */
-  dayTime: number;
-  /** 0 céu limpo → 1 fechado (tempestade a partir de ~0,6). */
-  cloudCover: number;
-  /** Tom agendado do texto: 1 Nuvem, −1 Noite, 0 travessia (sem texto na tela). */
+  /** Tom do texto: 1 = Nuvem (fundo escuro), −1 = Noite (fundo claro), 0 = troca de tom (sem texto na tela). */
   tone: number;
-  /**
-   * Largura da guarda de contraste no desktop: 0 cobre só a coluna de texto
-   * (o produto e o sol ficam livres à direita); 1 cobre a tela toda (partes
-   * com texto em coluna larga).
-   */
-  guardWide: number;
-  /** 0 painel dobrado → 1 aberto (livro). */
-  panelOpen: number;
-  /** 0 tampa fechada → 1 aberta. */
-  lidOpen: number;
-  /** 0 montado → 1 vista explodida. */
+  /** Cor de fundo (sRGB, 0 a 255), animada pela timeline; vira `--bg` no CSS. */
+  bg: { r: number; g: number; b: number };
+  /** 0 → 1 tampa aberta (110°). */
+  lid: number;
+  /** 0 → 1 vista explodida (cascata, cada peça no seu trecho; ver scene/model/motion.ts). */
   explode: number;
-  /** 0 → 1 peças reorganizadas como esquema. */
-  schematic: number;
-  /** 0 → 4: etapa do caminho da energia (parte inteira) e progresso dentro dela. */
-  flow: number;
-  /** 0 → 1 carga visível da bateria. */
-  batteryCharge: number;
-  /** 0 → 1 carga na tela do celular. */
-  phoneCharge: number;
+  /** 0 → 1 painel aberto como um livro. */
+  panelOpen: number;
+  /**
+   * Componente em foco, de 0 (nenhum: tudo aceso) a 4 (1 painel, 2 módulo de carga,
+   * 3 células, 4 boost e saídas). Fracionário na travessia: as peças fora do foco
+   * ficam a ~15% de opacidade.
+   */
+  focus: number;
+  /** 0 → 1 carga visível das células. */
+  charge: number;
   /** 0 → 1 LED azul de saída. */
   ledOn: number;
-  /** 0 → 1 cabo 3 em 1 ligando a caixa ao celular. */
-  cable: number;
-  /** 0 → 1 cabo do painel até a caixa, desenhado ao longo do comprimento (abertura). */
-  panelCable: number;
-  /** 0 → 1 quanto o ponteiro (ou a velocidade do scroll, no toque) inclina o produto. */
-  tilt: number;
-  /** 0 → 1 reflexo que corre pelas células (abertura). */
-  glint: number;
-  /** 0 → 1 → 0 primeiro raio de sol (abertura). */
-  shaft: number;
-  /** 0 → 1 presença do produto (0 = `visible = false`). */
-  productVisible: number;
   /** 0 → 1 presença do celular. */
   phoneVisible: number;
+  /** 0 → 1 carga na tela do celular. */
+  phoneCharge: number;
+  /** 0 → 1 cabo 3 em 1 ligando a caixa ao celular. */
+  cable: number;
+  /** 0 → 1 quanto o ponteiro (ou a velocidade do scroll, no toque) inclina o produto. */
+  tilt: number;
+  /** 0 → 1 presença do produto (0 = `visible = false`). */
+  productVisible: number;
+  /** 0 → 1 luz de contorno (as tiras do ambiente, mais fortes nos fundos escuros). */
+  rim: number;
+  /** 0 → 1 sombra de contato no chão. */
+  shadow: number;
+  /** Giro do conjunto, em graus (preso ao scroll: nada de giro por tempo). */
   product: Pose;
   camera: CameraPose;
   /** Ponteiro normalizado (−1 a 1), escrito por `gsap.quickTo`. */
@@ -90,26 +84,22 @@ export interface SceneState {
 }
 
 export const sceneState: SceneState = {
-  dayTime: 4.5,
-  cloudCover: 0.1,
-  tone: 1,
-  guardWide: 0,
-  panelOpen: 0,
-  lidOpen: 0,
+  tone: -1,
+  bg: { r: 244, g: 247, b: 250 },
+  lid: 0,
   explode: 0,
-  schematic: 0,
-  flow: 0,
-  batteryCharge: 0.15,
-  phoneCharge: 0,
+  panelOpen: 0,
+  focus: 0,
+  charge: 0.15,
   ledOn: 0,
-  cable: 0,
-  panelCable: 0,
-  tilt: 0,
-  glint: 0,
-  shaft: 0,
-  productVisible: 0,
   phoneVisible: 0,
+  phoneCharge: 0,
+  cable: 0,
+  tilt: 1,
+  productVisible: 0,
+  rim: 0,
+  shadow: 1,
   product: { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0, s: 1 },
-  camera: { x: 0, y: 2.3, z: 11, tx: 0, ty: 0.45, tz: 0, fov: 30, sx: 0, sy: 0 },
+  camera: { x: 3.4, y: 3.2, z: 6.9, tx: 0, ty: 0.75, tz: 0.25, fov: 30, sx: 0, sy: 0 },
   pointer: { x: 0, y: 0 },
 };

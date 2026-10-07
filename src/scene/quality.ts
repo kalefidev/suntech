@@ -1,3 +1,5 @@
+import { flags } from "../lib/env";
+
 /**
  * Tiers de qualidade (Fase 0, item 7). O tier de entrada sai da viewport e do
  * processador; o `PerformanceMonitor` desce quando o FPS cai e sobe só até o
@@ -56,12 +58,16 @@ const TIERS: Record<QualityTier, QualitySettings> = {
 
 const ORDER: QualityTier[] = ["baixo", "medio", "alto"];
 
+/** `?tier=`: tier fixo, para testar um nível específico e para fotos que não mudam no meio da sessão. */
+const forced = ORDER.find((tier) => tier === flags.tier);
+
 /**
  * Celular fraco (pouca memória ou poucos núcleos, sinais que o Android expõe)
  * já entra no baixo, para não travar nos primeiros segundos antes de o
  * `PerformanceMonitor` reagir. Se rodar liso, ele sobe até o teto.
  */
 function entryTier(): QualityTier {
+  if (forced) return forced;
   if (typeof window === "undefined") return "medio";
   const cores = navigator.hardwareConcurrency ?? 4;
   const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
@@ -79,8 +85,18 @@ function ceilingTier(): QualityTier {
 const entry = entryTier();
 const ceiling = ceilingTier();
 let current: QualityTier = entry;
-let locked = false;
+let locked = Boolean(forced);
 const listeners = new Set<() => void>();
+
+/**
+ * Subir de tier liga o bloom e a sombra de verdade: o composer é refeito e os programas novos
+ * compilam no primeiro uso (130 ms num PC, mais num celular). No meio do scroll isso vira
+ * travada, então o `incline` espera o scroll parar. Descer não espera: a página já está lenta.
+ */
+const IDLE_MS = 400;
+let lastScroll = 0;
+let retry: ReturnType<typeof setTimeout> | undefined;
+if (typeof window !== "undefined") window.addEventListener("scroll", () => (lastScroll = performance.now()), { passive: true });
 
 function set(tier: QualityTier): void {
   if (tier === current) return;
@@ -102,6 +118,12 @@ export const quality = {
   },
   incline(): void {
     if (locked) return;
+    const wait = IDLE_MS - (performance.now() - lastScroll);
+    if (wait > 0) {
+      clearTimeout(retry);
+      retry = setTimeout(quality.incline, wait);
+      return;
+    }
     set(ORDER[Math.min(ORDER.indexOf(ceiling), ORDER.indexOf(current) + 1)]);
   },
   /** Oscilou demais: fica no baixo até o fim da visita. */

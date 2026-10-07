@@ -1,14 +1,10 @@
 /**
- * Uniforms compartilhados pelos materiais do produto (CSM). A luz escreve a
- * irradiância; o produto escreve o reflexo da abertura e a carga da bateria.
+ * Uniforms compartilhados pelos materiais do produto (CSM). O modelo escreve o
+ * brilho que corre pelas células quando o painel abre e a carga das células.
  */
 export const productUniforms = {
-  /** 0 a 1: quanto sol bate nas células (daylight.ts). */
-  uIrradiance: { value: 0 },
-  /** 0 a 1: posição do reflexo que corre pelas células na abertura. */
+  /** 0 a 1: posição do reflexo que corre pelas células quando o painel abre. */
   uGlint: { value: 0 },
-  /** 0 a 1: carga visível da bateria (`batteryCharge`). */
+  /** 0 a 1: carga visível das células (`charge`). */
   uCharge: { value: 0 },
-  /** 0 a 1: luz dos fótons nas células (etapa 1 de "Como funciona"). */
-  uLight: { value: 0 },
 };

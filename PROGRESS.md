@@ -624,3 +624,7 @@ todos aplicados:
 - Medidas e peso do produto (`product.ts`, campos `// TODO: preencher`) e
   fotos em `referencias/`, quando existirem.
 
+
+## v3 (branch `v3`)
+
+O estado da v3 não fica aqui: veja `docs/v3-progresso.md` (decisões e resultados da Fase 1) e `ONDE-PARAMOS-V3.md` (onde paramos e os próximos passos). As pendências do usuário acima (F6, medidas e peso) continuam valendo.

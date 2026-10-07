@@ -9,8 +9,10 @@ export const LOAD_TASKS = {
   font: 1,
   /** Chunk da cena 3D (three + R3F). */
   scene: 3,
+  /** O GLB do carregador (`public/models/suntech.glb`). */
+  model: 3,
   /** Texturas procedurais em canvas. */
-  textures: 2,
+  textures: 1,
   /** Compilação dos shaders (`renderer.compileAsync`). */
   shaders: 2,
 } as const;
@@ -42,6 +44,7 @@ export function track<T>(task: LoadTask, promise: Promise<T>): Promise<T> {
 /** Sem WebGL (ou com falha): as tarefas da cena não vão acontecer. */
 export function completeScene(): void {
   complete("scene");
+  complete("model");
   complete("textures");
   complete("shaders");
 }

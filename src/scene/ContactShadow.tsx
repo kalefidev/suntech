@@ -19,7 +19,6 @@ import { VerticalBlurShader } from "three/addons/shaders/VerticalBlurShader.js";
 import { quality } from "./quality";
 import { sceneState } from "./state";
 import { makeCanvas } from "./textures/canvas";
-import { productLive } from "./Product/motion";
 
 interface ContactShadowProps {
   /** O grupo do produto: a sombra só é refeita quando ele se mexe. */
@@ -44,15 +43,14 @@ export function ContactShadow(props: ContactShadowProps) {
   return settings.shadowSize > 0 ? <RenderedShadow {...props} resolution={settings.shadowSize} /> : <FakeShadow {...props} />;
 }
 
-/** O que muda a silhueta do produto além da pose do grupo (valores já amortecidos onde há). */
+/** O que muda a silhueta do produto além da pose do grupo. */
 const silhouette = () => [
-  productLive.panelOpen,
-  productLive.lidOpen,
-  productLive.explode,
-  productLive.schematic,
-  sceneState.panelCable,
-  sceneState.cable,
+  sceneState.lid,
+  sceneState.explode,
+  sceneState.panelOpen,
   sceneState.phoneVisible,
+  sceneState.cable,
+  sceneState.productVisible,
 ];
 
 function RenderedShadow({ subject, width, depth, far = 1.2, blur = 3.5, opacity = 0.9, resolution }: ContactShadowProps & { resolution: number }) {
@@ -131,8 +129,8 @@ function RenderedShadow({ subject, width, depth, far = 1.2, blur = 3.5, opacity 
     const material = planeMaterialRef.current;
     const object = subject.current;
     if (!group || !material || !object) return;
-    // No esquema, as peças flutuam: sem sombra no chão.
-    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5) * (1 - productLive.schematic);
+    // Na vista explodida, as peças flutuam: a sombra esmaece (a timeline escreve `shadow`).
+    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5) * sceneState.shadow;
     group.visible = object.visible && material.opacity > 0.001;
     if (!group.visible) return;
 
@@ -197,8 +195,7 @@ function FakeShadow({ subject, width, depth, opacity = 0.7 }: ContactShadowProps
     const mesh = meshRef.current;
     const material = materialRef.current;
     if (!mesh || !material) return;
-    // No esquema, as peças flutuam: sem sombra no chão.
-    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5) * (1 - productLive.schematic);
+    material.opacity = opacity * Math.min(1, sceneState.productVisible * 1.5) * sceneState.shadow;
     mesh.visible = (subject.current?.visible ?? false) && material.opacity > 0.001;
   });
 

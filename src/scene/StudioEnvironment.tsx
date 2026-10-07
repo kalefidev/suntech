@@ -16,18 +16,22 @@ interface Lightformer {
  * fosco) e um preenchimento frio e fraco.
  */
 const LIGHTFORMERS: Lightformer[] = [
-  // Softbox grande, acima e à frente.
-  { size: [9, 4], position: [0, 7, 5], color: "#FFFFFF", intensity: 2.4 },
-  // Faixa baixa à frente: o reflexo em degradê no vidro do painel em pé.
-  { size: [12, 2.6], position: [-1, 2.2, 9], color: "#FFFFFF", intensity: 1.1 },
-  // Softbox atrás e acima: o degradê no tampo da caixa (superfície de cima
+  // Softbox grande, acima e à frente: o degradê no tampo das peças deitadas.
+  { size: [10, 5], position: [0, 7.5, 4], color: "#FFFFFF", intensity: 2.6 },
+  // Faixa baixa à frente: o reflexo em degradê no vidro e nas faces da frente.
+  { size: [12, 2.6], position: [-1, 2.2, 9], color: "#FFFFFF", intensity: 1.5 },
+  // Softbox atrás e acima: o degradê no tampo da caixa (a superfície de cima
   // reflete o que está atrás dela, na altura da câmera).
-  { size: [10, 3.5], position: [0, 3.2, -8], color: "#F4F7FF", intensity: 1.5 },
+  { size: [14, 5], position: [0, 3.6, -8], color: "#F4F7FF", intensity: 4.2 },
+  // Softbox à frente e à esquerda: o brilho que atravessa as faces em pé (o painel dobrado) em diagonal.
+  { size: [6, 9], position: [-8, 3, 7], color: "#FFFFFF", intensity: 1.9 },
   // Tiras verticais nas laterais: desenham as bordas do preto fosco.
-  { size: [1.2, 9], position: [-8, 2.5, 2], color: "#FFFFFF", intensity: 3.2 },
-  { size: [1.2, 9], position: [8, 2.5, 0], color: "#FFF6EA", intensity: 2.6 },
+  { size: [1.4, 9], position: [-8, 2.5, 2], color: "#FFFFFF", intensity: 4.5 },
+  { size: [1.4, 9], position: [8, 2.5, 0], color: "#FFF6EA", intensity: 3.8 },
+  // Chapéu: uma faixa alta e estreita, para o brilho na quina de cima das peças em pé.
+  { size: [12, 0.8], position: [0, 6.2, -3], color: "#FFFFFF", intensity: 5 },
   // Preenchimento frio e fraco.
-  { size: [12, 3], position: [-2, 0.5, -9], color: "#BCD3FF", intensity: 0.5 },
+  { size: [12, 3], position: [-2, 0.5, -9], color: "#BCD3FF", intensity: 0.7 },
 ];
 
 /**

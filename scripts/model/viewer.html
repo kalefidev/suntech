@@ -1,0 +1,83 @@
+<!doctype html>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; background: #1c2230; }
+  canvas { display: block; }
+</style>
+<script type="importmap">
+  { "imports": { "three": "/three/build/three.module.js", "three/addons/": "/three/examples/jsm/" } }
+</script>
+<body>
+<script type="module">
+  // Visualizador de QA do GLB (scripts/model/view.mjs). Lê as tomadas de ?shots=<json>.
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+  import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+  const q = new URLSearchParams(location.search);
+  const shots = JSON.parse(q.get("shots"));
+  const cols = Number(q.get("cols") ?? 2);
+  const cw = Number(q.get("w") ?? 800);
+  const ch = Number(q.get("h") ?? 600);
+  const bg = q.get("bg") ?? "#dfe4ea";
+  const rows = Math.ceil(shots.length / cols);
+
+  const sheet = document.createElement("canvas");
+  sheet.width = cols * cw;
+  sheet.height = rows * ch;
+  document.body.append(sheet);
+  const ctx = sheet.getContext("2d");
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setSize(cw, ch);
+  renderer.toneMapping = THREE.NeutralToneMapping;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const env = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
+
+  const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  const gltf = await loader.loadAsync("/model.glb");
+  const scene = new THREE.Scene();
+  scene.environment = env;
+  scene.environmentIntensity = Number(q.get("env") ?? 1);
+  scene.background = new THREE.Color(bg);
+  const key = new THREE.DirectionalLight("#fff4e6", 1.2);
+  key.position.set(3, 6, 5);
+  scene.add(key);
+  scene.add(gltf.scene);
+  const get = (name) => gltf.scene.getObjectByName(name);
+
+  // Material nomeado -> LED aceso para conferir o emissivo.
+  gltf.scene.traverse((o) => {
+    if (o.isMesh) for (const m of [].concat(o.material)) if (m.name === "led_core") m.emissiveIntensity = 2;
+  });
+
+  for (let i = 0; i < shots.length; i++) {
+    const s = shots[i];
+    const lid = get("case_lid");
+    if (lid) lid.rotation.set((-(s.lid ?? 0) * Math.PI) / 180, 0, 0);
+    const b = get("panel_b");
+    if (b) b.rotation.set(0, Math.PI * (1 - (s.panel ?? 0)), 0);
+    const phone = get("phone");
+    if (phone) phone.visible = s.phone ?? true;
+    const t = s.target ?? [0, 0.7, 0.2];
+    const cam = new THREE.PerspectiveCamera(s.fov ?? 30, cw / ch, 0.01, 200);
+    const a = ((s.az ?? 30) * Math.PI) / 180;
+    const e = ((s.el ?? 20) * Math.PI) / 180;
+    const d = s.dist ?? 8;
+    cam.position.set(t[0] + d * Math.cos(e) * Math.sin(a), t[1] + d * Math.sin(e), t[2] + d * Math.cos(e) * Math.cos(a));
+    cam.lookAt(new THREE.Vector3(...t));
+    renderer.render(scene, cam);
+    const x = (i % cols) * cw;
+    const y = Math.floor(i / cols) * ch;
+    ctx.drawImage(renderer.domElement, x, y);
+    ctx.fillStyle = "rgba(20,33,61,0.85)";
+    ctx.fillRect(x, y, 260, 18);
+    ctx.fillStyle = "#fff";
+    ctx.font = "12px sans-serif";
+    ctx.fillText(s.name ?? `tomada ${i + 1}`, x + 6, y + 13);
+  }
+  window.__done = true;
+</script>

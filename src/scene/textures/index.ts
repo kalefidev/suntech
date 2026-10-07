@@ -1,7 +1,5 @@
 import { quality } from "../quality";
-import { company } from "../../content/company";
 import { createCellMaps } from "./cells";
-import { createLogoNormal } from "./logo";
 import { createBoostMap, createChargerMap } from "./pcb";
 import { createBatteryLabel } from "./batteryLabel";
 
@@ -11,7 +9,6 @@ async function build() {
   const { cells, pcb } = quality.entry().textures;
   return {
     cells: createCellMaps(cells),
-    logo: createLogoNormal(company.name, Math.min(1024, cells / 2)),
     charger: createChargerMap(pcb),
     boost: createBoostMap(pcb),
     battery: createBatteryLabel(Math.max(128, pcb / 2)),

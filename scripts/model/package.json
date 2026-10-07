@@ -1,0 +1,22 @@
+{
+  "name": "suntech-model",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Gera public/models/suntech.glb (fora do package.json do app: CLAUDE.md, Ativos 3D).",
+  "scripts": {
+    "build": "node build.mjs",
+    "view": "node view.mjs"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.2.0",
+    "@gltf-transform/extensions": "^4.2.0",
+    "@gltf-transform/functions": "^4.2.0",
+    "fontkit": "^2.0.4",
+    "meshoptimizer": "^0.25.0",
+    "three": "0.186.1",
+    "three-bvh-csg": "^0.0.18",
+    "three-mesh-bvh": "^0.9.15",
+    "wawoff2": "^2.0.1"
+  }
+}

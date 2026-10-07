@@ -41,36 +41,34 @@
 }
 
 /*
- * Cor do texto: segue o tom agendado pelo céu (scene/choreography.ts). Registrada
- * para trocar com crossfade, e só troca nas travessias, sem texto na tela.
+ * Tom da página (DESIGN.md: Regra do Tom e Regra do Corte). O fundo é uma cor sólida,
+ * `--bg`, que o trilho de scroll escreve (lib/tone.ts); o texto troca entre Noite e
+ * Nuvem com `data-tone`, com crossfade, e só nas trocas, com o texto fora da tela.
  */
 @property --fg {
   syntax: "<color>";
   inherits: true;
-  initial-value: #f4f7fa;
+  initial-value: #14213d;
 }
 
 :root {
-  --fg: var(--color-nuvem);
-  /* Céu da madrugada (04:30), igual ao primeiro quadro do shader. O fallback
-     sem WebGL atualiza estas duas variáveis conforme a hora. */
-  --sky-zenith: #14213d;
-  --sky-horizon: #1d2c52;
+  --bg: #f4f7fa;
+  --fg: var(--color-noite);
   --gutter: clamp(1.25rem, 4vw, 2.5rem);
   --header-h: 4rem;
   transition: --fg 400ms var(--ease-out-quart);
-  color-scheme: dark;
+  color-scheme: light;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--fg) 40%, transparent) transparent;
 }
 
-:root[data-tone="dark"] {
-  --fg: var(--color-noite);
-  color-scheme: light;
+:root[data-tone="light"] {
+  --fg: var(--color-nuvem);
+  color-scheme: dark;
 }
 
 html {
-  background: var(--color-noite);
+  background: var(--bg);
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
 }
@@ -88,13 +86,16 @@ body {
   overflow-x: clip;
 }
 
-/* Fundo antes do WebGL (e no fallback): mesmo gradiente do céu da madrugada. */
+/* Grão: um tile fixo atrás de tudo, na cor do texto (sem blend mode). */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -2;
-  background: linear-gradient(to top, var(--sky-horizon) 0%, var(--sky-zenith) 70%);
+  z-index: -3;
+  background: var(--fg);
+  opacity: 0.045;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events: none;
 }
 
@@ -499,40 +500,92 @@ a {
     margin-bottom: 0.2rem;
   }
 
-  /* Loader: linha fina na linha do horizonte, onde o produto pousa. */
+  /* Loader: uma linha fina no pé da cena, onde o produto vai pousar. */
   .loader-line {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 44%;
+    left: 50%;
+    bottom: 14svh;
+    width: min(20rem, 56vw);
     height: 1px;
+    translate: -50% 0;
     overflow: hidden;
-    background: rgb(244 247 250 / 0.2);
+    background: color-mix(in srgb, var(--fg) 22%, transparent);
   }
 
   .loader-line span {
     display: block;
     height: 100%;
-    background: var(--color-sol);
+    background: var(--fg);
     transform: scaleX(0);
     transform-origin: left;
   }
 
-  .hero {
+  /*
+   * A cena do produto (ProductScene): o hero de 700vh. O 3D vive no canvas fixo atrás
+   * do DOM; aqui ficam o texto de cada beat (embaixo no celular, nas laterais no
+   * desktop) e, num `z-index: -2` fora da seção, a palavra gigante.
+   */
+  .product-scene {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 100svh;
+    height: 100svh;
     padding-top: var(--header-h);
-    padding-bottom: 11svh;
+  }
+
+  .beat {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 6svh;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .beat[data-beat="fechado"] {
+    opacity: 1;
+  }
+
+  /* O bloco de texto do beat. Nos closes (`data-scrim`: Proteger, Guardar, Entregar) as peças
+     fora de foco, a 15%, passam atrás do texto e derrubam o contraste; ali o bloco ganha um pano
+     de fundo na cor do fundo (`--bg`), de cantos arredondados e sem sombra desfocada (o desfoque
+     compilava um shader na primeira vez que aparecia, no meio do scroll: 33 a 50 ms). Nos outros
+     beats o texto fica ao lado do produto, e o pano apagaria a palavra gigante. */
+  .beat__body {
+    --scrim: color-mix(in srgb, var(--bg) 90%, transparent);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .beat[data-scrim] .beat__body::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem -0.75rem;
+    z-index: -1;
+    border-radius: 1rem;
+    background: var(--scrim);
+    pointer-events: none;
+  }
+
+  .beat__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 6.2vw, 1.9rem);
+  }
+
+  .beat__text {
+    margin: 0.55rem 0 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .beat__data,
+  .beat__note {
+    margin: 0.6rem 0 0;
   }
 
   /* Máscara do nome: ele fica escondido logo abaixo da linha até a abertura. */
   .hero__name {
     overflow: clip;
     padding-block: 0.15em;
-    margin-block: -0.15em;
+    margin: -0.15em 0 0.5rem;
   }
 
   .hero__name-text {
@@ -543,22 +596,57 @@ a {
     transform: translateY(110%);
   }
 
-  .hero__title {
-    margin-top: 1.1rem;
-  }
-
-  .hero__lead {
-    margin-top: 1.75rem;
-  }
-
   .hero__cue {
     position: absolute;
     left: var(--gutter);
     bottom: 0;
     width: 1px;
-    height: 7svh;
+    height: 5svh;
     background: currentColor;
     opacity: 0.55;
+  }
+
+  /* A palavra gigante: tom sobre tom, atrás do canvas (z -1) e do texto. Fica fora da
+     seção presa de propósito: dentro dela, o `position: fixed` do pin a levaria para
+     cima do canvas. Só aparece enquanto a cena está presa (ProductScene). */
+  .beat-words {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .beat-words[data-active="1"] {
+    visibility: visible;
+  }
+
+  .beat-word {
+    grid-area: 1 / 1;
+    font-size: min(30rem, calc(94vw / (var(--chars) * 0.74)));
+    font-weight: 800;
+    font-stretch: 125%;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--fg) 11%, transparent);
+    opacity: 0;
+  }
+
+  /* A ponte para a próxima parte: o produto sai nela. */
+  .bridge {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: 80svh;
+  }
+
+  .bridge__text {
+    margin: 0;
+    max-width: 18ch;
   }
 
   .part {
@@ -871,388 +959,6 @@ a {
 
   .split__col h3 {
     margin: 0;
-  }
-
-  /* Cenas presas: palco de uma tela; no celular o texto fica embaixo e o 3D em cima. */
-  .stage {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 100svh;
-    padding-top: var(--header-h);
-    padding-bottom: 7svh;
-  }
-
-  .stage__text h3 {
-    margin: 0;
-  }
-
-  .stage__tomorrow {
-    margin: 2.75rem 0 0;
-    max-width: 16ch;
-  }
-
-  /* Com movimento, o texto da noite e o "Amanhã…" trocam de lugar no mesmo
-     ponto da tela; com reduced motion, ficam um embaixo do outro. */
-  @media (prefers-reduced-motion: no-preference) {
-    .stage__swap {
-      display: grid;
-    }
-
-    .stage__swap > * {
-      grid-area: 1 / 1;
-      align-self: end;
-    }
-
-    .stage__tomorrow {
-      margin-top: 0;
-    }
-  }
-
-  .parts-list,
-  .steps {
-    margin: 2rem 0 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-  }
-
-  .parts-list {
-    gap: 0.5rem;
-  }
-
-  .parts-list li {
-    display: grid;
-    grid-template-columns: 1.75rem minmax(0, 1fr);
-    align-items: baseline;
-  }
-
-  .parts-list__n {
-    font-size: 0.875rem;
-    font-weight: 700;
-  }
-
-  .parts-list__name {
-    font-weight: 650;
-    font-stretch: 106%;
-  }
-
-  .parts-list__role {
-    display: block;
-    font-size: 0.95rem;
-    line-height: 1.45;
-  }
-
-  /* A peça que acabou de se separar (a cena 3D marca): o número vira uma
-     pastilha, sem mudar o tamanho do texto. */
-  .parts-list li .parts-list__n {
-    display: inline-grid;
-    place-items: center;
-    width: 1.35rem;
-    height: 1.35rem;
-    border-radius: 999px;
-    transition:
-      background-color 200ms var(--ease-out-quart),
-      color 200ms var(--ease-out-quart);
-  }
-
-  /* Pastilha no tom do texto, com o número na cor oposta. */
-  .parts-list li[data-active="1"] .parts-list__n {
-    background: var(--fg);
-    color: var(--color-noite);
-  }
-
-  :root[data-tone="dark"] .parts-list li[data-active="1"] .parts-list__n {
-    color: var(--color-nuvem);
-  }
-
-  /* Callouts de "Por dentro": camada fixa acima do canvas, abaixo do header.
-     Cada callout vai até a peça (transform escrito pela cena 3D). */
-  .callouts {
-    position: fixed;
-    inset: 0;
-    z-index: 30;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 240ms var(--ease-out-quart);
-  }
-
-  .callouts[data-visible="1"] {
-    opacity: 1;
-  }
-
-  .callout {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 0;
-    height: 0;
-    will-change: transform;
-  }
-
-  .callout__dot {
-    position: absolute;
-    left: -0.7rem;
-    top: -0.7rem;
-    display: grid;
-    place-items: center;
-    width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 999px;
-    background: var(--color-noite);
-    color: var(--color-nuvem);
-    box-shadow: 0 0 0 2px var(--color-nuvem);
-    font-size: 0.75rem;
-    font-weight: 700;
-    line-height: 1;
-    transform: scale(0.6);
-    opacity: 0;
-    transition:
-      transform 220ms var(--ease-out-quart),
-      opacity 160ms linear;
-  }
-
-  /* A linha se desenha (pathLength 1) e a etiqueta aparece na ponta dela. */
-  .callout__line {
-    position: absolute;
-    left: 0.55rem;
-    bottom: 0.4rem;
-    width: 3.2rem;
-    height: 1.9rem;
-    overflow: visible;
-  }
-
-  .callout__line path {
-    fill: none;
-    stroke: var(--color-nuvem);
-    stroke-width: 1.5;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    /* Sai na hora (resposta do sistema); entra com atraso, depois do ponto. */
-    transition: stroke-dashoffset 140ms var(--ease-out-quart);
-  }
-
-  .callout__label {
-    position: absolute;
-    left: 3.6rem;
-    bottom: 2rem;
-    padding: 0.32rem 0.7rem;
-    border-radius: 999px;
-    background: var(--color-nuvem);
-    color: var(--color-noite);
-    font-size: 0.875rem;
-    font-stretch: 108%;
-    font-weight: 650;
-    white-space: nowrap;
-    box-shadow: 0 6px 16px -10px rgb(20 33 61 / 0.6);
-    opacity: 0;
-    transform: translateY(4px);
-    transition:
-      opacity 120ms linear,
-      transform 160ms var(--ease-out-quart);
-  }
-
-  .callout[data-side="left"] .callout__line {
-    left: auto;
-    right: 0.55rem;
-    transform: scaleX(-1);
-  }
-
-  .callout[data-side="left"] .callout__label {
-    left: auto;
-    right: 3.6rem;
-  }
-
-  .callout[data-on="1"] .callout__dot {
-    transform: none;
-    opacity: 1;
-  }
-
-  .callout[data-current="1"] .callout__line path {
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 260ms var(--ease-out-quart) 80ms;
-  }
-
-  /* A etiqueta nova espera a linha chegar; a velha já saiu (sem sobrepor). */
-  .callout[data-current="1"] .callout__label {
-    opacity: 1;
-    transform: none;
-    transition:
-      opacity 200ms linear 200ms,
-      transform 260ms var(--ease-out-quart) 200ms;
-  }
-
-  /* Etiquetas das etapas no esquema de "Como funciona" (a cena 3D escreve a
-     posição e o estado). A cor da etapa é luz dentro de uma pastilha escura:
-     apagada, o número fica Grafite; acesa, na cor da etapa. */
-  .steps-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 30;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 240ms var(--ease-out-quart);
-  }
-
-  .steps-layer[data-visible="1"] {
-    opacity: 1;
-  }
-
-  .step-tag {
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.28rem 0.75rem 0.28rem 0.3rem;
-    border-radius: 999px;
-    background: var(--color-noite);
-    color: var(--color-nuvem);
-    font-size: 0.875rem;
-    font-stretch: 108%;
-    font-weight: 650;
-    white-space: nowrap;
-    translate: -50% calc(-100% - 0.4rem);
-    will-change: transform;
-  }
-
-  /* O anel da etapa em curso: só a opacidade anima (a sombra fica parada). */
-  .step-tag::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    box-shadow: 0 0 0 1.5px var(--step-color, transparent);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 220ms var(--ease-out-quart);
-  }
-
-  .step-tag__n {
-    display: inline-grid;
-    place-items: center;
-    width: 1.35rem;
-    height: 1.35rem;
-    border-radius: 999px;
-    background: var(--color-grafite);
-    color: var(--color-nuvem);
-    font-size: 0.75rem;
-    font-weight: 700;
-    transition:
-      background-color 220ms var(--ease-out-quart),
-      color 220ms var(--ease-out-quart);
-  }
-
-  .step-tag__title {
-    opacity: 0.72;
-    transition: opacity 220ms linear;
-  }
-
-  .step-tag:not([data-state="off"]) .step-tag__n {
-    background: var(--step-color);
-    color: var(--color-noite);
-  }
-
-  .step-tag:not([data-state="off"]) .step-tag__title {
-    opacity: 1;
-  }
-
-  /* A etapa em curso ganha o anel na cor dela. */
-  .step-tag[data-state="active"]::after {
-    opacity: 1;
-  }
-
-  /* "3,7 V → 5 V" embaixo do conversor: só aparece na etapa 4. */
-  .step-tag--volts {
-    gap: 0.35rem;
-    padding: 0.28rem 0.7rem;
-    font-variant-numeric: tabular-nums;
-    translate: -50% 0.4rem;
-    opacity: 0;
-    transition: opacity 220ms linear;
-  }
-
-  .step-tag--volts[data-state="lit"] {
-    opacity: 1;
-  }
-
-  .step-tag__arrow {
-    width: 1.1rem;
-    height: 0.55rem;
-    fill: none;
-    stroke: var(--color-energia-saida);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .steps {
-    gap: 1.4rem;
-  }
-
-  .steps__title {
-    margin: 0;
-  }
-
-  /* A etapa em curso no esquema (a cena 3D marca): o número vira pastilha,
-     como na lista de peças. */
-  .steps__title .num {
-    display: inline-grid;
-    place-items: center;
-    width: 1.3em;
-    height: 1.3em;
-    margin-right: 0.2em;
-    border-radius: 999px;
-    transition:
-      background-color 200ms var(--ease-out-quart),
-      color 200ms var(--ease-out-quart);
-  }
-
-  .steps__item[data-active="1"] .steps__title .num {
-    background: var(--fg);
-    color: var(--color-noite);
-  }
-
-  :root[data-tone="dark"] .steps__item[data-active="1"] .steps__title .num {
-    color: var(--color-nuvem);
-  }
-
-  .steps__text {
-    margin-top: 0.4rem;
-  }
-
-  .legend {
-    margin-top: 2rem;
-  }
-
-  .legend__title {
-    margin: 0;
-    font-weight: 600;
-  }
-
-  .legend ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.25rem;
-    margin: 0.6rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .legend li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* A cor da energia é luz dentro de um fio escuro, nunca tinta sobre o céu. */
-  .legend__swatch {
-    width: 1.6rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    border: 2px solid var(--color-grafite);
   }
 
   .energy-diagram {
@@ -1805,16 +1511,8 @@ a {
     list-style: none;
   }
 
-  /* No celular, a lista de peças mostra só os nomes (as funções continuam
-     para o leitor de tela), e os callouts mostram só o número: a lista é a
-     legenda numerada. */
+  /* No celular, o HUD do pitch em duas linhas: relógio e botões; depois, quem fala. */
   @media not all and (min-width: 768px) and (min-aspect-ratio: 1/1) {
-    .callout__line,
-    .callout__label {
-      display: none;
-    }
-
-    /* HUD do pitch em duas linhas: relógio e botões; depois, quem fala. */
     .pitch-hud {
       grid-template-columns: auto minmax(0, 1fr);
       grid-template-areas:
@@ -1825,55 +1523,6 @@ a {
 
     .pitch-hud__actions {
       justify-self: end;
-    }
-
-    /* Na coluna do esquema, as etiquetas ficam à esquerda dos nós. */
-    .step-tag {
-      translate: calc(-100% - 0.4rem) -50%;
-    }
-
-    .step-tag--volts {
-      translate: 0.4rem -50%;
-    }
-
-    /* "Como funciona" no celular, com a cena: o esquema ocupa a tela de cima
-       e o texto mostra só a etapa em curso (as quatro empilhadas no mesmo
-       lugar, para a altura não pular). O leitor de tela lê a lista inteira;
-       as cores ficam nas etiquetas do esquema. */
-    @media (prefers-reduced-motion: no-preference) {
-      :root[data-scene="on"] .steps__item {
-        grid-area: 1 / 1;
-        opacity: 0;
-        transition: opacity 120ms linear;
-      }
-
-      :root[data-scene="on"] .steps__item[data-active="1"] {
-        opacity: 1;
-        transition: opacity 220ms linear 100ms;
-      }
-
-      :root[data-scene="on"] .steps__text {
-        position: static;
-        width: auto;
-        height: auto;
-        overflow: visible;
-        clip-path: none;
-        white-space: normal;
-      }
-
-      :root[data-scene="on"] .legend {
-        display: none;
-      }
-    }
-
-    .parts-list__role,
-    .steps__text {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
     }
   }
 
@@ -1972,16 +1621,36 @@ a {
       display: none;
     }
 
-    .loader-line {
-      left: 62%;
-      right: 5%;
-      top: auto;
-      bottom: 16%;
+    /* Cena do produto, no desktop: o texto de cada beat fica na lateral dele, com a
+       palavra e o 3D no centro. */
+    .beat {
+      top: 50%;
+      bottom: auto;
+      right: auto;
+      left: auto;
+      /* A coluna é o que sobra dos dois lados do sujeito (--span, a largura dele na tela). */
+      width: clamp(13rem, calc((100vw - var(--span) * 100vw) / 2 - var(--gutter) * 1.5), 28rem);
+      translate: 0 -50%;
     }
 
-    .hero {
-      justify-content: center;
-      padding-bottom: 0;
+    .beat[data-side="left"] {
+      left: var(--gutter);
+    }
+
+    .beat[data-side="right"] {
+      right: var(--gutter);
+    }
+
+    .beat__title {
+      font-size: clamp(1.75rem, 3.1vw, 3.25rem);
+    }
+
+    .beat__text {
+      font-size: clamp(1.0625rem, 1.15vw, 1.25rem);
+    }
+
+    .hero__cue {
+      height: 7svh;
     }
 
     .chapter {
@@ -2020,11 +1689,6 @@ a {
     .split__col + .split__col {
       padding-left: 2rem;
       border-left: 1px solid color-mix(in srgb, currentColor 30%, transparent);
-    }
-
-    .stage {
-      justify-content: center;
-      padding-bottom: 0;
     }
 
     .ticket {
@@ -2131,12 +1795,6 @@ a {
     animation-duration: 200ms;
   }
 
-  /* Callouts: só a opacidade (sem o ponto crescer nem a etiqueta subir). */
-  .callout__dot,
-  .callout__label {
-    transform: none;
-  }
-
   :root:not([data-opened]) .hero__name-text {
     transform: none;
   }
@@ -2157,43 +1815,89 @@ a {
     pointer-events: auto;
   }
 
-  /* Sem pins: cada cena vira um bloco normal no estado final. */
-  .stage {
+  /* Sem pins: a cena do produto vira uma pilha de blocos, um por beat (cada um com o 3D
+     parado no ponto do meio dele); a palavra gigante some. */
+  .product-scene {
     height: auto;
+    padding-top: 0;
+  }
+
+  .beat-words {
+    display: none;
+  }
+
+  .hero__cue {
+    display: none;
+  }
+}
+
+/* A cena do produto em pilha de blocos: reduced motion e sem WebGL. */
+@media (prefers-reduced-motion: reduce) {
+  .product-scene .beat {
+    position: relative;
+    inset: auto;
+    translate: none;
+    opacity: 1;
+    width: auto;
     min-height: 100svh;
-    padding-block: 18svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-block: 12svh 7svh;
+    pointer-events: auto;
   }
 
-  /* No celular, o produto rola junto com a cena (lib/tracks.ts), no alto
-     dela: o texto começa abaixo da figura. */
-  @media not all and (min-width: 768px) and (min-aspect-ratio: 1/1) {
-    :root[data-scene="on"] .stage {
-      justify-content: flex-start;
-      padding-top: var(--figure, 50svh);
+  .product-scene .beat__body {
+    max-width: min(28rem, 100%);
+  }
+
+  @media (min-width: 768px) and (min-aspect-ratio: 1/1) {
+    .product-scene .beat {
+      justify-content: center;
+      padding-block: 12svh;
     }
 
-    :root[data-scene="on"] #por-dentro {
-      --figure: 46svh;
+    .product-scene .beat[data-side="right"] {
+      align-items: flex-end;
     }
 
-    :root[data-scene="on"] #como-funciona {
-      --figure: 68svh;
-    }
-
-    :root[data-scene="on"] #energia-fica {
-      --figure: 62svh;
-    }
-
-    /* Sem pin, o texto tem lugar: as funções das peças e o texto das etapas
-       voltam a aparecer. */
-    .parts-list__role,
-    .steps__text {
-      position: static;
-      width: auto;
-      height: auto;
-      overflow: visible;
-      clip-path: none;
-      white-space: normal;
+    /* A mesma coluna da cena presa: o que sobra dos dois lados do sujeito. */
+    .product-scene .beat__body {
+      width: clamp(13rem, calc((100vw - var(--span) * 100vw) / 2 - var(--gutter) * 1.5), 28rem);
+      max-width: none;
     }
   }
+}
+
+:root[data-webgl="off"] .product-scene {
+  height: auto;
+  padding-top: 0;
+}
+
+:root[data-webgl="off"] .product-scene .beat {
+  position: relative;
+  inset: auto;
+  translate: none;
+  opacity: 1;
+  width: auto;
+  min-height: 70svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 8svh;
+  pointer-events: auto;
+}
+
+:root[data-webgl="off"] .product-scene .beat__body {
+  max-width: 34rem;
+}
+
+/* Sem canvas, não há o que cobrir. */
+:root[data-webgl="off"] .beat__body::before {
+  display: none;
+}
+
+:root[data-webgl="off"] .beat-words,
+:root[data-webgl="off"] .hero__cue {
+  display: none;
 }

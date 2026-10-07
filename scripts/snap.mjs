@@ -1,10 +1,14 @@
 // Verificação visual obrigatória (seção 12 do brief).
 //
 // Faz o build, mede o JS (gzip) contra o orçamento da seção 11, sobe o preview
-// e fotografa cada seção de `window.__sections` no início, no meio e no fim
-// (nas cenas presas, 0%, 50% e 100% do pin). Passadas: 1440×900 e 390×844
-// (toque), normal e com reduced motion, mais 1920×1080 (a TV do estande),
-// 768×1024 (tablet em pé) e `?nowebgl` (fallback). Em cada ponto, mede o
+// e fotografa cada seção de `window.__sections` no início, no meio e no fim.
+// A cena do produto (a cena presa) é fotografada no começo do pin, no ponto de
+// repouso de cada beat (`restOf`, scene/choreography.ts: câmera parada, texto inteiro) e no fim; com reduced motion e no
+// fallback, que não têm pin, no centro de cada bloco `[data-beat]`. Passadas:
+// 1440×900 e 390×844 (toque), normal e com reduced motion, mais 1920×1080 (a
+// TV do estande), 768×1024 (tablet em pé), 390×844 no tier baixo e
+// `?nowebgl` (fallback). O tier de qualidade é fixo em cada passada (`?tier=`),
+// para a foto não mudar no meio da sessão. Em cada ponto, mede o
 // contraste nos pixels reais: tira uma segunda foto com o texto transparente
 // e compara a cor de cada texto com o fundo logo atrás dele (10º percentil,
 // WCAG AA).
@@ -25,6 +29,7 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import path from "node:path";
 import process from "node:process";
+import { BEATS, restOf } from "../src/scene/choreography.ts";
 
 const args = process.argv.slice(2);
 const PHASE = args.find((a) => !a.startsWith("--")) ?? "fase-1";
@@ -41,13 +46,15 @@ const WAIT_MS = 1500;
 const BUDGET = { initial: 150, total: 500 };
 
 const PASSES = [
-  { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false },
-  { name: "390x844", viewport: { width: 390, height: 844 }, touch: true },
-  { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false, reduced: true },
-  { name: "390x844", viewport: { width: 390, height: 844 }, touch: true, reduced: true },
-  { name: "1920x1080", viewport: { width: 1920, height: 1080 }, touch: false, dir: "tv" },
+  { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false, tier: "alto" },
+  { name: "390x844", viewport: { width: 390, height: 844 }, touch: true, tier: "medio" },
+  { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false, tier: "alto", reduced: true },
+  { name: "390x844", viewport: { width: 390, height: 844 }, touch: true, tier: "medio", reduced: true },
+  { name: "1920x1080", viewport: { width: 1920, height: 1080 }, touch: false, tier: "alto", dir: "tv" },
   // Tablet em pé (seção 10 do brief): o layout empilhado, mais largo que o celular.
-  { name: "768x1024", viewport: { width: 768, height: 1024 }, touch: true, dir: "tablet" },
+  { name: "768x1024", viewport: { width: 768, height: 1024 }, touch: true, tier: "medio", dir: "tablet" },
+  // Celular fraco: sem bloom e com a sombra falsa.
+  { name: "390x844", viewport: { width: 390, height: 844 }, touch: true, tier: "baixo", dir: "baixo" },
   { name: "1440x900", viewport: { width: 1440, height: 900 }, touch: false, nowebgl: true },
 ]
   .filter((p) => !QUICK || (!p.reduced && !p.dir && !p.nowebgl))
@@ -272,6 +279,14 @@ function pointsOf(section, vh, maxScroll) {
   const clamp = (y) => Math.round(Math.min(Math.max(0, y), maxScroll));
   if (section.pinStart !== undefined && section.pinEnd !== undefined) {
     const span = section.pinEnd - section.pinStart;
+    if (section.id === "produto") {
+      // O começo, o repouso de cada beat (câmera parada e texto inteiro) e o fim.
+      return [
+        ["start", clamp(section.pinStart)],
+        ...BEATS.map((beat) => [beat.id, clamp(section.pinStart + span * restOf(beat))]),
+        ["end", clamp(section.pinEnd)],
+      ];
+    }
     return [
       ["start", clamp(section.pinStart)],
       ["mid", clamp(section.pinStart + span * 0.5)],
@@ -286,8 +301,16 @@ function pointsOf(section, vh, maxScroll) {
   ];
 }
 
+/** Sem pin (reduced motion e fallback): o scroll que põe cada bloco `[data-beat]` no centro da tela. */
+function beatBlockPoints() {
+  return [...document.querySelectorAll("[data-beat]")].map((el) => [
+    el.dataset.beat,
+    Math.round(el.getBoundingClientRect().top + window.scrollY + el.offsetHeight / 2 - window.innerHeight / 2),
+  ]);
+}
+
 async function runPass(browser, pass, report) {
-  const label = [pass.name, pass.reduced && "reduced", pass.nowebgl && "nowebgl"].filter(Boolean).join(" ");
+  const label = [pass.name, pass.reduced && "reduced", pass.nowebgl && "nowebgl", pass.dir === "baixo" && "tier baixo"].filter(Boolean).join(" ");
   const dir = path.join(OUT_DIR, pass.reduced ? "reduced" : pass.nowebgl ? "nowebgl" : pass.dir ?? "");
   await mkdir(dir, { recursive: true });
 
@@ -314,7 +337,7 @@ async function runPass(browser, pass, report) {
   });
   page.on("pageerror", (err) => errors.push(err.message));
 
-  await page.goto(`${BASE}/?snap${pass.nowebgl ? "&nowebgl" : ""}`, { waitUntil: "load" });
+  await page.goto(`${BASE}/?snap${pass.tier ? `&tier=${pass.tier}` : ""}${pass.nowebgl ? "&nowebgl" : ""}`, { waitUntil: "load" });
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
   const metrics = await page.evaluate(() => window.__metrics);
   const webgl = await page.evaluate(() => document.documentElement.dataset.scene === "on" && !!document.querySelector("canvas"));
@@ -329,7 +352,9 @@ async function runPass(browser, pass, report) {
 
   for (const section of sections) {
     if (SECTIONS && !SECTIONS.includes(section.id)) continue;
-    for (const [point, y] of pointsOf(section, vh, maxScroll)) {
+    // Sem pin, a cena do produto é uma pilha de blocos de 100svh, um por beat.
+    const blocks = section.id === "produto" && section.pinStart === undefined ? await page.evaluate(beatBlockPoints) : [];
+    for (const [point, y] of blocks.length ? blocks : pointsOf(section, vh, maxScroll)) {
       await page.evaluate((target) => {
         if (window.__lenis) window.__lenis.scrollTo(target, { immediate: true, force: true });
         else window.scrollTo(0, target);
