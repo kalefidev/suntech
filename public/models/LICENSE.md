@@ -35,3 +35,10 @@ Procuramos peças prontas com licença permissiva (celular, célula 18650, módu
 solar) em Poly Pizza (CC0 e CC-BY), OpenGameArt ("lowpoly electronic components", CC0) e Poly
 Haven (CC0). **Nada foi importado.** Se alguma malha de terceiros entrar no gerador, registre
 aqui: autor, link, licença e o que foi alterado (a CC-BY exige a atribuição também no site).
+
+## Quando o modelo feito à mão entrar
+
+O `npm run model:import` grava o `suntech.glb` feito no Blender (fonte em `models-src/suntech.blend`).
+Nesse dia, troque a seção `suntech.glb` acima por: autor (o dono do projeto), programa (Blender
+e versão) e data. Para cada malha, textura ou HDRI de terceiros usada no `.blend`: autor, link,
+licença e o que foi alterado (a CC-BY exige a atribuição também no site).

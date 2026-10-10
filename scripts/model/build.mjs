@@ -22,6 +22,19 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.resolve(here, "../../public/models/suntech.glb");
 const RAW = path.join(here, ".cache/suntech.raw.glb");
 const raw = process.argv.includes("--raw");
+// --reference: grava só o molde (.cache/suntech.raw.glb, para importar no Blender) e para.
+const reference = process.argv.includes("--reference");
+
+// O modelo feito à mão (npm run model:import) não pode ser sobrescrito por engano.
+if (!reference && !process.argv.includes("--force") && fs.existsSync(OUT)) {
+  const glb = fs.readFileSync(OUT);
+  const json = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString("utf8"));
+  if (json.extras?.suntech?.source === "blender") {
+    console.log(`public/models/suntech.glb é o modelo feito à mão (${json.extras.suntech.from}, ${json.extras.suntech.imported?.slice(0, 10)}).
+Não vou sobrescrever. Para só o molde do Blender: npm run model:reference. Para voltar ao gerado: npm run model -- --force`);
+    process.exit(1);
+  }
+}
 
 // A caixa fica à frente do painel dobrado (z = 0,55; o painel fica em z = −0,6).
 export const CASE_AT = [0, 0, 0.55];
@@ -59,6 +72,10 @@ const stats = countTriangles(scene);
 const glb = Buffer.from(await exportGLB(scene));
 fs.mkdirSync(path.dirname(RAW), { recursive: true });
 fs.writeFileSync(RAW, glb);
+if (reference) {
+  console.log(`molde para o Blender: ${path.relative(process.cwd(), RAW)} (${(glb.length / 1024).toFixed(0)} KB, sem compressão). public/models/suntech.glb não foi tocado.`);
+  process.exit(0);
+}
 
 await MeshoptEncoder.ready;
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.encoder": MeshoptEncoder });

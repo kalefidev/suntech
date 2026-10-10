@@ -114,19 +114,33 @@ function makeMaterial(base: MeshStandardMaterial, part: PartName, textures: Prod
       };
   }
   const mapKey = COLOR_MAPS[base.name];
+  const physical = (base as MeshPhysicalMaterial).isMeshPhysicalMaterial ? (base as MeshPhysicalMaterial) : null;
+  // Com textura de cor própria (modelo feito à mão), a cor do ajuste tingiria a textura: vale a do GLB.
+  const { color: overrideColor, ...overrides } = OVERRIDES[base.name] ?? {};
   const material = new MeshPhysicalMaterial({
     name: base.name,
     // Com mapa de cor, o mapa manda (a cor do GLB só serve de reserva, sem mapa).
-    color: mapKey ? "#FFFFFF" : base.color.clone(),
-    map: mapKey ? textures[mapKey] : null,
+    color: mapKey ? "#FFFFFF" : base.map ? base.color.clone() : ((overrideColor as string | undefined) ?? base.color.clone()),
+    // Texturas do GLB (feito à mão) passam adiante; as das placas são desenhadas pelo site.
+    map: mapKey ? textures[mapKey] : base.map,
+    normalMap: base.normalMap,
+    normalScale: base.normalScale.clone(),
+    roughnessMap: base.roughnessMap,
+    metalnessMap: base.metalnessMap,
+    aoMap: base.aoMap,
+    aoMapIntensity: base.aoMapIntensity,
+    emissiveMap: base.emissiveMap,
     roughness: base.roughness,
     metalness: base.metalness,
     emissive: base.emissive.clone(),
     emissiveIntensity: base.emissiveIntensity,
+    // Verniz do Blender (Coat), se o material vier com ele; os ajustes por nome vencem.
+    clearcoat: physical?.clearcoat ?? 0,
+    clearcoatRoughness: physical?.clearcoatRoughness ?? 0,
     // Nasce transparente: o foco esmaece as peças, e o Warmup não pode trocar de programa depois.
     transparent: true,
     opacity: baseOpacity,
-    ...OVERRIDES[base.name],
+    ...overrides,
   });
   return { material, baseOpacity };
 }

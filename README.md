@@ -34,8 +34,11 @@ Outros comandos:
 | `npm run test:pitch` | Testa o modo pitch: 180 s exatos, pausa no Espaço e saída no Esc (rode o build antes) |
 | `npm run check:numbers` | Garante que nenhum número está escrito à mão nos componentes |
 | `npm run og` | Gera `public/og.png` (a imagem das prévias de link) a partir do hero (rode o build antes) |
-| `npm run model:install` / `npm run model` | Instala (uma vez) e roda o gerador do modelo 3D em `scripts/model/`, que grava `public/models/suntech.glb` |
+| `npm run model:install` / `npm run model` | Instala (uma vez) e roda o gerador do modelo 3D em `scripts/model/`, que grava `public/models/suntech.glb` (não sobrescreve o modelo feito à mão) |
 | `npm run model:view` | Folhas de contato do modelo, para conferir as peças |
+| `npm run model:import` | Publica o modelo feito à mão no Blender (`models-src/suntech.glb`): confere o contrato, comprime e grava `public/models/suntech.glb`. Passo a passo em `docs/v3-modelo-a-mao.md` |
+| `npm run model:check` | Confere um GLB contra o contrato de peças (nomes, pivôs, âncoras, UV, tamanho) |
+| `npm run model:reference` | Regrava só o molde para importar no Blender (`scripts/model/.cache/suntech.raw.glb`) |
 
 O `snap`, o `test:pitch` e o `og` usam o Playwright. Na primeira vez, rode
 `npx playwright install chromium`.
