@@ -40,6 +40,8 @@ A página tem a **cena do produto** (hero de 700vh no desktop, 490vh no celular:
 
 ## O que falta, em ordem
 
+**O plano do que dá para fazer sem o modelo está em `docs/v3-fase-3b.md`** (etapas 1 a 7 e as tarefas em paralelo, cada uma a pedido do dono). Comece por ele; a lista abaixo é o resumo.
+
 1. **Revisão do dono pela prévia** (no celular e no notebook) e as perguntas abaixo.
 2. **O modelo do dono** (`models-src/suntech.blend`, em andamento, **não commitado**; o `models-src/suntech.glb` ainda é o teste com cubos). Quando ele exportar: `npm run model:import` e "Depois de trocar" no `docs/v3-modelo-a-mao.md` (enquadramento com `framing.mjs --solve --apply`, `MOTION`, `reverse`, `sweep`, `snap`, `npm run build && npm run og`, `LICENSE.md` e o commit do `.blend` com o GLB).
 3. **Polimento 3D, depois do modelo:** interior da caixa, aço do USB nos closes, preto da caixa sobre o Noite.
