@@ -59,7 +59,6 @@ function resolve(path: string): [Target, string] {
 
 function build(): void {
   const max = ScrollTrigger.maxScroll(window);
-  const byId = new Map(getSections().map((b) => [b.id, b]));
   // Layout empilhado (celular, tablet em pé): as chaves `narrow` substituem as
   // da seção. A avaliação é refeita a cada refresh, inclusive ao girar a tela.
   const narrow = !window.matchMedia(WIDE).matches;
@@ -67,17 +66,16 @@ function build(): void {
 
   for (const track of TRACKS) {
     const points: Array<[number, number]> = [];
-    const ids = new Set([...Object.keys(track.keys), ...(narrow ? Object.keys(track.narrow ?? {}) : [])]);
-    for (const id of ids) {
-      const keys = (narrow ? track.narrow?.[id as SectionId] : undefined) ?? track.keys[id as SectionId];
-      const b = byId.get(id);
-      if (!b || !keys) continue;
+    // Na ordem da página, e nenhuma chave antes da anterior: a base de uma seção
+    // pode passar 1 px do topo da seguinte (altura arredondada), e a chave do fim
+    // dela, ordenada depois do início da próxima, virava uma rampa pela seção inteira.
+    for (const b of getSections()) {
+      const keys = (narrow ? track.narrow?.[b.id as SectionId] : undefined) ?? track.keys[b.id as SectionId];
+      if (!keys) continue;
       const [a, z] = rangeOf(b, max);
-      for (const [at, value] of keys) points.push([a + (z - a) * at, value]);
+      for (const [at, value] of [...keys].sort((p, q) => p[0] - q[0])) points.push([Math.max(a + (z - a) * at, points.at(-1)?.[0] ?? -Infinity), value]);
     }
     if (points.length === 0) continue;
-    // Ordenação estável: em empate, vale a ordem da página.
-    points.sort((p, q) => p[0] - q[0]);
 
     const [target, key] = resolve(track.path);
     const ease = gsap.parseEase(track.ease ?? "none");

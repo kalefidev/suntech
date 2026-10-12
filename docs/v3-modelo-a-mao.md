@@ -121,4 +121,5 @@ Testado de ponta a ponta no Blender 5.2 LTS: molde importado, malha trocada, exp
 1. `npm run build`, preview no ar e `node scripts/dev/framing.mjs --solve --apply` no desktop e com `--size=390x844` (regrava as câmeras); atualizar o `span` de cada beat com a coluna `l`.
 2. Ajustar as distâncias da explosão em `src/scene/model/motion.ts` (`MOTION`, em unidades do GLB) se as peças tiverem outro tamanho.
 3. `node scripts/dev/reverse.mjs`, `node scripts/dev/sweep.mjs` e `npm run snap <fase>`.
-4. Atualizar `public/models/LICENSE.md` (modelo feito à mão, peças de fora com autor e licença) e commitar `models-src/suntech.blend` junto com o `public/models/suntech.glb`.
+4. `npm run build && npm run og`: a imagem de prévia de link (`public/og.png`) é uma foto do hero, então mostra o modelo; confira se o `og:image:alt` em `vite.config.ts` ainda descreve a foto.
+5. Atualizar `public/models/LICENSE.md` (modelo feito à mão, peças de fora com autor e licença) e commitar `models-src/suntech.blend` junto com o `public/models/suntech.glb`.

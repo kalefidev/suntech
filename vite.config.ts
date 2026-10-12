@@ -56,7 +56,7 @@ function socialTags(): Plugin {
         meta({ property: "og:image", content: `${site}/og.png` }),
         meta({ property: "og:image:width", content: "1200" }),
         meta({ property: "og:image:height", content: "630" }),
-        meta({ property: "og:image:alt", content: "O Carregador Solar SunTech: o painel solar dobrável aberto ao lado da caixa, ao amanhecer." }),
+        meta({ property: "og:image:alt", content: "O Carregador Solar SunTech fechado, sobre fundo claro: a caixa preta com o painel solar dobrável em pé atrás dela, ao lado do título “Carregue o celular com a luz do sol.”" }),
         meta({ name: "twitter:image", content: `${site}/og.png` }),
         { tag: "link", attrs: { rel: "canonical", href: `${site}/` }, injectTo: "head" as const },
       ];

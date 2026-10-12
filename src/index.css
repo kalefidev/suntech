@@ -20,7 +20,10 @@
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-@theme {
+/* `static`: o Tailwind emite todas as variáveis, mesmo as que o código monta por
+   nome (`var(--color-${label.color})` nas etiquetas). Sem ele, elas só existiam
+   porque um arquivo velho, sem .gitignore, citava os nomes (Fase 3a). */
+@theme static {
   --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
 
   --color-noite: #14213d;
@@ -1156,6 +1159,55 @@ a {
 
   .data-table--costs {
     min-width: 20rem;
+  }
+
+  /* Celular: a comparação empilha por critério, com o nome da coluna em cada
+     resposta; numa tabela de 34rem, a coluna da SunTech ficava fora da tela. */
+  @media (max-width: 40rem) {
+    .data-table--compare {
+      min-width: 0;
+    }
+
+    .data-table--compare thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .data-table--compare tbody tr {
+      display: grid;
+      grid-template-columns: minmax(7.5rem, 38%) 1fr;
+      column-gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+    }
+
+    .data-table--compare tbody th {
+      grid-column: 1 / -1;
+      padding: 0 0 0.4rem;
+      border: 0;
+    }
+
+    .data-table--compare tbody td {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      padding: 0.3rem 0;
+      border: 0;
+    }
+
+    /* O nome da coluna é só visual (texto alternativo vazio): o leitor de tela já
+       o anuncia pelo cabeçalho escondido. */
+    .data-table--compare tbody td::before {
+      content: attr(data-label);
+      content: attr(data-label) / "";
+      font-size: 0.875rem;
+      font-stretch: 110%;
+      font-weight: 600;
+      opacity: 0.8;
+    }
   }
 
   .num-col {

@@ -3,7 +3,6 @@ name: SunTech
 description: Um objeto, aberto pelo scroll. O produto fica grande no centro; cada beat tem um tom sólido e uma palavra gigante atrás dele.
 colors:
   sol: "#FFB22C"
-  brasa: "#E8773A"
   noite: "#14213D"
   nuvem: "#F4F7FA"
   ceu: "#CFE8F3"
@@ -12,22 +11,19 @@ colors:
   energia-painel: "#FF9F1C"
   energia-guardada: "#3DDC97"
   energia-saida: "#4CC9F0"
-  material-caixa: "#141518"
-  material-caixa-dentro: "#1B1D21"
-  material-aco: "#B9BEC4"
+  material-caixa: "#202328"
+  material-verso-painel: "#2B2F37"
+  material-anodizado: "#343941"
+  material-plugue: "#B9BEC4"
   material-cabo: "#121316"
-  material-led-apagado: "#0B2230"
-  material-lente: "#CFEFFF"
-  material-celular: "#1B1E24"
-  material-fio-vermelho: "#B4261E"
-  material-fio-preto: "#17181B"
-  luz-estudio: "#FFFFFF"
-  luz-quente: "#FFF6EA"
+  sombra-contato: "#0A0D14"
+  luz-chave: "#FFF4E6"
   luz-fria: "#BCD3FF"
+  luz-quente: "#FFE2C2"
 typography:
   word:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(9rem, 28vw, 30rem)"
+    fontSize: "min(30rem, calc(94vw / (var(--chars) * 0.74)))"
     fontWeight: 800
     lineHeight: 0.8
     letterSpacing: "-0.04em"
@@ -43,6 +39,20 @@ typography:
   headline:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2rem, 5vw, 4.5rem)"
+    fontWeight: 720
+    lineHeight: 1
+    letterSpacing: "-0.015em"
+    fontVariation: "'wdth' 115"
+  beat-title:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.75rem, 3.1vw, 3.25rem)"
+    fontWeight: 720
+    lineHeight: 1
+    letterSpacing: "-0.015em"
+    fontVariation: "'wdth' 115"
+  beat-title-narrow:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.5rem, 6.2vw, 1.9rem)"
     fontWeight: 720
     lineHeight: 1
     letterSpacing: "-0.015em"
@@ -83,11 +93,21 @@ typography:
     fontSize: "clamp(1.1875rem, 1.6vw, 1.375rem)"
     fontWeight: 420
     lineHeight: 1.45
+  beat-text:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.0625rem, 1.15vw, 1.25rem)"
+    fontWeight: 420
+    lineHeight: 1.4
   body:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.0625rem"
     fontWeight: 400
     lineHeight: 1.5
+  brand:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 780
+    fontVariation: "'wdth' 118"
   ui:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1rem"
@@ -100,21 +120,15 @@ typography:
     fontWeight: 600
     lineHeight: 1.3
     fontVariation: "'wdth' 110"
+  nav:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 500
   caption:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 450
     lineHeight: 1.4
-  role:
-    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.95rem"
-    fontWeight: 420
-    lineHeight: 1.45
-  micro:
-    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.75rem"
-    fontWeight: 700
-    lineHeight: 1
   menu-number:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "2.25rem"
@@ -131,38 +145,37 @@ typography:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.6rem, 2.2vw, 2.75rem)"
     fontWeight: 700
-    lineHeight: 1.1
     fontVariation: "'wdth' 112"
   hud-sector:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.35rem, 1.75vw, 2.1rem)"
     fontWeight: 700
-    lineHeight: 1.1
     fontVariation: "'wdth' 112"
   hud-stop:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.2rem, 1.5vw, 1.85rem)"
     fontWeight: 600
-    lineHeight: 1.15
   hud-label:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(0.8rem, 0.75vw, 1rem)"
     fontWeight: 600
-    lineHeight: 1.2
   hud-button:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1rem, 0.95vw, 1.25rem)"
     fontWeight: 650
-    lineHeight: 1.2
     fontVariation: "'wdth' 108"
 rounded:
   pill: "999px"
   ticket: "18px"
+  scrim: "1rem"
   focus: "2px"
 spacing:
   gutter: "clamp(1.25rem, 4vw, 2.5rem)"
   header: "4rem"
   touch: "44px"
+  block: "clamp(4.5rem, 12svh, 8rem)"
+  pause: "clamp(7rem, 22svh, 13rem)"
+  part-top: "32svh"
 components:
   button-cta:
     backgroundColor: "{colors.noite}"
@@ -175,6 +188,9 @@ components:
     backgroundColor: "{colors.sol}"
     textColor: "{colors.noite}"
     rounded: "{rounded.pill}"
+  header:
+    typography: "{typography.nav}"
+    height: "{spacing.header}"
   boarding-pass:
     backgroundColor: "{colors.nuvem}"
     textColor: "{colors.noite}"
@@ -183,41 +199,52 @@ components:
   menu-sheet:
     backgroundColor: "{colors.noite}"
     textColor: "{colors.nuvem}"
-    typography: "{typography.title}"
+    typography: "{typography.menu-title}"
   component-tag:
     backgroundColor: "{colors.noite}"
     textColor: "{colors.nuvem}"
     typography: "{typography.label}"
     rounded: "{rounded.pill}"
-    padding: "0.28rem 0.75rem 0.28rem 0.3rem"
+    padding: "0.3rem 0.95rem 0.3rem 0.3rem"
+  beat-scrim:
+    rounded: "{rounded.scrim}"
+    padding: "0.5rem 0.75rem"
+  pitch-hud:
+    backgroundColor: "{colors.grafite}"
+    textColor: "{colors.nuvem}"
+  hud-button:
+    typography: "{typography.hud-button}"
+    rounded: "{rounded.pill}"
+    padding: "0.55em 1.1em"
+    height: "2.75rem"
 ---
 
 # Design System: SunTech
 
-<!-- Refeito em 06/10/2026 na Fase 0 da v3, a partir do plano (docs/v3-fase-0.md)
-e do `CLAUDE.md`; a arte da v2 (o céu e o ciclo do dia) saiu. Ainda é intenção,
-não código: rode /impeccable document na Fase 3, com a v3 pronta, para
-conferir contra o build e refazer o sidecar `.impeccable/design.json`.
-Os valores marcados "a afinar" fecham na Fase 1, com as fotos do `snap`. -->
+<!-- Documentado a partir do build em 12/10/2026 (Fase 3a da v3): `src/index.css`,
+`scene/choreography.ts`, `content/copy.ts`, `sections/*.tsx` e
+`scene/model/SuntechModel.tsx`. O modelo 3D ainda é provisório (o dono o modela
+à mão no Blender): os materiais estão aqui pelo nome e pelo papel, não pela
+geometria. -->
 
 ## Overview
 
 **Creative North Star: "Um objeto, aberto pelo scroll"**
 
 O primeiro ato da página é um produto só, grande e no centro da tela. Quem
-rola o abre: a tampa gira e sai, as peças se afastam em cascata, a câmera
-chega a cada componente (captar, proteger, guardar, entregar), tudo volta ao
-lugar e a energia chega ao celular. São nove beats numa cena presa. Cada beat
-tem um tom de fundo sólido, que alterna entre claro e escuro, uma palavra
-gigante atrás do produto, em tom sobre tom, e um texto curto na lateral. A
-câmera e as peças se mexem; o centro não.
+rola o abre: a tampa gira, as peças se afastam em cascata, a câmera chega a
+cada componente (captar, proteger, guardar, entregar), tudo volta ao lugar e a
+energia chega ao celular. São nove beats numa cena presa. Cada beat tem um tom
+de fundo sólido, alternando claro e escuro, uma palavra gigante atrás do
+produto, em tom sobre tom, e um texto curto na lateral. A câmera e as peças se
+mexem; o centro não.
 
 As 6 partes das aulas vêm em seguida, em tipografia sobre campos de tom
-sólido, sem caixas. Não existe céu, hora do dia nem gradiente de fundo: a cor
-de cada trecho é um dos quatro tons da marca, escolhido por beat ou por
-parte. O padrão é o de página de lançamento de hardware, com a clareza de um
-trabalho escolar bem organizado: quem avalia acha cada aula pelo número da
-parte.
+sólido, um campo por parte, separados por uma borda reta. Não existe céu, hora
+do dia nem gradiente de fundo: a cor de cada trecho é um dos quatro tons da
+marca, escolhido por beat ou por parte. O padrão é o de página de lançamento
+de hardware, com a clareza de um trabalho escolar bem organizado: quem avalia
+acha cada aula pelo número da parte.
 
 Rejeições confirmadas (seções 6 e 14 do `BRIEF.md`): fade-up genérico em
 toda seção, grade de cards iguais, gradiente decorativo, rótulo em caixa-alta
@@ -226,8 +253,8 @@ fonte mono em rótulo e fundo quase preto no lugar de uma cor escolhida.
 
 **Key Characteristics:**
 - O produto no centro o tempo todo, grande; o scroll move a câmera e as peças.
-- Um tom sólido por beat e por parte, alternando claro e escuro; a troca só
-  acontece com o texto fora da tela.
+- Um tom sólido por beat e por parte, alternando claro e escuro; na cena, a
+  troca acontece com o texto fora da tela; nas partes, é uma borda reta.
 - Uma palavra gigante por beat, atrás do produto, tom sobre tom.
 - Uma família tipográfica, dois papéis pelo eixo de largura.
 - Contraste AA em todo ponto do scroll, medido nos pixels.
@@ -241,66 +268,72 @@ branco frio de nuvem, um azul-céu claro e um grafite, com o amarelo de sol
 como único acento.
 
 ### Primary
-- **Sol** (#FFB22C): o acento. O CTA (texto Sol sobre Noite, 8,9:1, que
-  preenche de Sol no hover e no foco), a seleção de texto, a linha do loader,
-  o LED e a energia entrando.
-
-### Secondary
-- **Brasa** (#E8773A): sem papel na v3 (era o amanhecer e o entardecer do
-  céu). Sai do `@theme` se a Fase 2 não achar uso para ela.
+- **Sol**: o acento. O CTA (texto Sol sobre Noite, 8,9:1, que preenche de Sol
+  no hover e no foco), o contorno de foco do CTA e do HUD, a seleção de texto,
+  o número da parte atual no menu do celular, o setor e a barra do HUD do
+  pitch e a amostra de cor da marca.
 
 ### Tertiary
 O código de cor da energia é informação, nunca enfeite, e sempre aparece com
 o nome escrito ao lado:
-- **Luz** (#FFD166): fótons descendo do sol até o painel.
-- **Corrente do painel** (#FF9F1C): pulsos do painel até o controlador.
-- **Energia guardada** (#3DDC97): a bateria enchendo.
-- **Saída de 5 V** (#4CC9F0): pulsos do conversor até o celular.
+- **Luz** (energia-luz): a etapa 1, Captar.
+- **Corrente do painel** (energia-painel): a etapa 2, Proteger.
+- **Energia guardada** (energia-guardada): a etapa 3, Guardar; também a carga
+  na tela do celular.
+- **Saída de 5 V** (energia-saida): a etapa 4, Entregar; também o cabo que se
+  desenha até o celular e o raio na tela dele.
+
+No DOM, essas cores aparecem em dois lugares: a pastilha numerada e o ponto na
+peça da etiqueta de componente (com o número em Noite e o nome ao lado) e,
+só sem WebGL, o esquema do caminho da energia (um traço colorido sobre um fio
+Grafite, com o nome embaixo em `--fg`).
 
 ### Neutral: os quatro tons de fundo
-| Tom | Cor | Texto | Contraste | Onde |
-|---|---|---|---|---|
-| Nuvem | #F4F7FA | Noite | 14,9:1 | Fechado, Abre, Guardar, Remonta; partes claras |
-| Céu | #CFE8F3 | Noite | 12,5:1 | Captar |
-| Noite | #14213D | Nuvem | 14,9:1 | Explode, Proteger, Energia; partes escuras |
-| Grafite | #2B3036 | Nuvem | 12,4:1 | Entregar; isolamento dos fios, HUD do pitch |
+| Tom | Texto | Contraste | Onde |
+|---|---|---|---|
+| Nuvem | Noite | 14,9:1 | Fechado, Abre, Guardar, Remonta; Partes 2 e 6 |
+| Céu | Noite | 12,5:1 | Captar; Parte 4 |
+| Noite | Nuvem | 14,9:1 | Explode, Proteger, Energia; Partes 1 e 5 |
+| Grafite | Nuvem | 12,4:1 | Entregar; Parte 3 (Solução e Diferencial); HUD do pitch |
 
-Os beats alternam claro e escuro (Nuvem, Nuvem, Noite, Céu, Noite, Nuvem,
-Grafite, Nuvem, Noite); a cena termina em Noite, e a Parte 1 continua no
-escuro. A tabela dos beats está em `docs/v3-fase-0.md`.
+Os beats seguem Nuvem, Nuvem, Noite, Céu, Noite, Nuvem, Grafite, Nuvem e
+Noite (`BEATS` em `scene/choreography.ts`); a cena termina em Noite, e a
+Parte 1 continua no escuro. As partes seguem `PART_TONE`: Noite, Nuvem,
+Grafite (dois trechos no mesmo campo), Céu, Noite e Nuvem.
+
+A Brasa (#E8773A) continua declarada no `@theme`, mas não tem nenhum uso no
+build: não é cor do sistema.
 
 ### Materiais do produto (3D)
 Cores físicas, não de interface: só existem nos materiais PBR da cena, nunca
-no DOM. A caixa é um preto fosco quente (#141518; por dentro, #1B1D21) com
-verniz leve; contra o preto entram acentos claros: o aço escovado (#B9BEC4)
-das peças de metal, o azul-petróleo do LED apagado (#0B2230) atrás de uma
-lente clara (#CFEFFF), o azul da placa de controle e a etiqueta da célula. O
-cabo e os plugues são quase pretos (#121316), os fios internos são o vermelho
-e o preto de sempre (#B4261E e #17181B) e o celular é um grafite frio
-(#1B1E24). As luzes do estúdio (os painéis do ambiente, locais, sem HDRI de
-rede) são branco puro, uma chave quente (#FFF6EA) e um preenchimento frio
-(#BCD3FF), com tiras de luz de contorno cuja intensidade muda com o tom: o
-preto sobre fundo escuro precisa delas para existir.
+no DOM. O modelo é provisório; os materiais vêm do GLB pelo nome, e o runtime
+ajusta alguns (`OVERRIDES` em `SuntechModel.tsx`):
+- **Caixa** (`case_matte`, material-caixa): grafite fosco com verniz leve.
+- **Verso do painel** (`backsheet`, material-verso-painel): um degrau mais
+  claro, com mais verniz.
+- **Anodizado** (`anodized`, material-anodizado): o metal escuro das peças
+  anodizadas, o degrau mais claro da família.
+- **Aço e alumínio** (`steel`, `aluminum`): escovados, não espelho, para não
+  estourar o bloom nos closes do USB.
+- **Ouro, lente, vidro, corpo e vidro do celular, chips e o topo das placas**:
+  ajustes só de verniz e brilho; a cor fica com o GLB.
+- **Desenhados pelo runtime**: as células do painel, o invólucro das células
+  18650 (com a carga), o topo das duas placas (azul no módulo de carga, preto
+  no conversor) e a tela do celular.
+- **Cabo do celular**: capa quase preta (material-cabo) e plugue de aço
+  (material-plugue), com o fio de luz na cor da Saída.
+
+As luzes do estúdio são locais (painéis do ambiente, sem HDRI de rede):
+painéis brancos, uma chave direcional quente (luz-chave), um preenchimento
+frio (luz-fria) e um contorno quente (luz-quente). A sombra de contato é um
+azul quase preto (sombra-contato), nunca preto puro.
 
 ### Named Rules
-**A Regra do Tom.** Cada beat e cada parte tem um tom sólido, definido em
-`scene/choreography.ts` (dados, sem `three`) e aplicado por uma timeline só: o
-3D lê dela, o CSS (`--bg`, `data-tone`) também. Texto Noite sobre fundo claro,
-Nuvem sobre escuro. Não existe gradiente de fundo, céu nem hora do dia.
+**A Regra do Tom.** Cada beat e cada parte tem um tom sólido, definido em `scene/choreography.ts` (dados, sem `three`) e aplicado pelo trilho de scroll: o 3D lê dele, o CSS (`--bg`, `data-tone`, `data-field`) também. Texto Noite sobre fundo claro, Nuvem sobre escuro. Não existe gradiente de fundo, céu nem hora do dia.
 
-**A Regra do Corte.** Entre L 0,167 e L 0,246 (luminância WCAG), nem Nuvem nem
-Noite chegam a 4,5:1, e a troca de tom passa por aí. Por isso ela acontece só
-nos 3% finais de cada beat, com o texto em opacidade 0 e o header fora de
-cena. Nenhum texto fica à vista sobre um fundo intermediário. Nas partes das
-aulas o corte é literal: cada parte pinta o próprio campo (`PART_TONE` em
-`scene/choreography.ts`: Noite, Nuvem, Grafite, Grafite, Céu, Noite, Nuvem) e
-a divisa rola como uma borda reta; o header vira uma faixa no tom da parte
-que está sob ele. Depois do pin, a imagem da cena sobe junto com a página e o
-produto sai pelo topo, antes de a ponte e a Parte 1 chegarem.
+**A Regra do Corte.** Entre L 0,167 e L 0,246 (luminância WCAG), nem Nuvem nem Noite chegam a 4,5:1, e a troca de tom na cena passa por aí. Por isso ela ocupa só ±1,5% do pin em volta da divisa entre dois beats, com o texto do beat em opacidade 0; enquanto o fundo está entre L 0,1 e 0,4, o header sai de cena. Nas partes das aulas o corte é literal: cada parte pinta o próprio campo e a divisa rola como uma borda reta. Nenhum texto fica à vista sobre um fundo intermediário.
 
-**A Regra da Luz, Não Tinta.** As cores de energia são luz dentro de um fio
-Grafite (de 6,5 a 9,2:1), nunca cor de texto e nunca fundo. Na legenda, viram
-um traço colorido com o nome em `--fg`.
+**A Regra da Luz, Não Tinta.** As cores de energia são luz (num fio Grafite, no cabo, na tela do celular) ou a pastilha de uma etapa, sempre com o nome escrito ao lado; nunca cor de texto e nunca fundo de bloco.
 
 ## Typography
 
@@ -311,86 +344,97 @@ um traço colorido com o nome em `--fg`.
 **Character:** uma família só, com o eixo de largura separando os papéis: a
 Archivo expandida (de 108 a 125%) e pesada dá aos títulos, números e à palavra
 gigante a presença de uma página de hardware, e a Archivo normal (100%) deixa
-a leitura calma. Subset latin, eixos `wdth` e `wght`, com preload.
+a leitura calma. Subset latin, eixos `wdth` e `wght`, com preload e
+`font-display: block`.
 
 ### Hierarchy
-- **Word** (800, `clamp(9rem, 28vw, 30rem)`, 0,8; largura 125%): a palavra
-  gigante de cada beat, atrás do produto, a 10% de `--fg` (a afinar). Só
-  decoração: `aria-hidden`, fora da conta de contraste.
+- **Word** (800, até 30rem, ajustada ao número de letras para caber em 94% da
+  largura; 0,8; largura 125%): a palavra gigante de cada beat, atrás do
+  produto, a 11% de `--fg`. Só decoração: `aria-hidden`, fora da conta de
+  contraste.
 - **Numeral** (800, `clamp(5rem, 14vw, 12rem)`, 0,8; largura 125%;
   algarismos tabulares): o número de cada uma das 6 partes.
 - **Headline** (720, `clamp(2rem, 5vw, 4.5rem)`, 1,0; largura 115%): o
-  título do hero, de cada beat e de cada parte.
+  título de cada parte (limitado a 9,2% da largura da coluna, para a palavra
+  mais longa caber).
+- **Beat title** (720, `clamp(1.75rem, 3.1vw, 3.25rem)` no modo largo e
+  `clamp(1.5rem, 6.2vw, 1.9rem)` no celular; 1,0; largura 115%): o título de
+  cada beat, inclusive o h1 do hero. É a Headline num degrau menor, porque
+  divide a tela com o produto.
 - **Title** (650, `clamp(1.375rem, 2.2vw, 1.75rem)`, 1,15; largura 110%):
   subtítulos dentro das partes.
 - **Quote** (560, `clamp(1.5rem, 3vw, 2.5rem)`, 1,2; largura 108%; até 30ch):
-  a pergunta norteadora e as citações.
-- **Highlight** (560, `clamp(1.6rem, 3.3vw, 3.15rem)`, 1,2; até 30ch): os dois
-  destaques da página (situação-problema e frase-síntese), depois da pausa
-  longa.
+  a pergunta norteadora, a ponte depois da cena e o slogan.
+- **Highlight** (560, `clamp(1.6rem, 3.3vw, 3.15rem)`, 1,2; até 30ch): os
+  destaques da página, depois da pausa longa.
 - **Persona** (720, `clamp(2rem, 4.2vw, 3.75rem)`, 1,0; largura 115%): o nome
   da persona, um degrau abaixo do título da parte.
 - **Monogram** (800, `clamp(4rem, 11vw, 10rem)`, 0,8; largura 125%): as
   iniciais da persona, o retrato tipográfico.
 - **Lead** (420, `clamp(1.1875rem, 1.6vw, 1.375rem)`, 1,45; até 42ch):
-  aberturas, o texto do hero e o dado de cada beat.
+  aberturas das partes.
+- **Beat text** (420, `clamp(1.0625rem, 1.15vw, 1.25rem)` no modo largo e 16px
+  no celular; 1,4): o texto de cada beat, mais curto e mais justo que o Lead.
 - **Body** (400, 17px, 1,5; até 65ch): o texto corrido.
-- **UI** (650, 16px, 1,2; largura 110%): o CTA, a marca no header e o corpo
-  das tabelas.
-- **Label** (600, 14px, 1,3; largura 110%): nomes de grupo, perguntas,
-  cabeçalhos de tabela e as etiquetas de componente. Sem caixa-alta.
-- **Caption** (450, 14px, 1,4): "Aula N", fontes e rótulos de estimativa.
+- **Brand** (780, 16px, largura 118%): "SunTech" no header.
+- **UI** (650, 16px, 1,2; largura 110%): o CTA e o corpo das tabelas.
+- **Label** (600, 14px, 1,3; largura 110%): nomes de grupo, perguntas, o dado
+  de cada componente na cena e as etiquetas de componente. Sem caixa-alta.
+- **Nav** (500, 14px; número em 700): as âncoras do header.
+- **Caption** (450, 14px, 1,4): "Aula N", fontes, a nota do último beat e o
+  "N de 6" do header.
 
 ### Named Rules
-**A Regra da Família Única.** Uma família, dois papéis: expandida para
-títulos, números e a palavra gigante, normal para leitura. Nada de segunda
-fonte, nada de mono.
+**A Regra da Família Única.** Uma família, dois papéis: expandida para títulos, números e a palavra gigante, normal para leitura. Nada de segunda fonte, nada de mono.
 
-**A Regra da Legenda Embaixo.** A aula de origem e a fonte de um dado ficam
-abaixo do que explicam, como legenda. Nunca um rótulo em caixa-alta acima do
-título.
+**A Regra da Legenda Embaixo.** A aula de origem e a fonte de um dado ficam abaixo do que explicam, como legenda. Nunca um rótulo em caixa-alta acima do título.
 
-**A Regra do Número Tabular.** Preço, custos, contadores, horários do pitch e
-numerais de capítulo usam `tabular-nums lining-nums`, e a unidade fica presa
-ao número por um espaço inseparável ("3,7 V", "R$ 249").
+**A Regra do Número Tabular.** Preço, custos, contadores, horários do pitch, numerais de capítulo e o número das etiquetas usam `tabular-nums lining-nums`, e a unidade fica presa ao número por um espaço inseparável ("3,7 V", "R$ 249").
 
-**A Regra da Palavra Atrás.** A palavra gigante fica sempre atrás do produto
-(DOM em `z-index: -2`, abaixo do canvas transparente), nunca sobre ele, e
-anda com o scroll por `transform`. Nada de fade-up.
+**A Regra da Palavra Atrás.** A palavra gigante fica sempre atrás do produto (DOM em `z-index: -2`, abaixo do canvas transparente), nunca sobre ele, e anda com o scroll por `transform` (entra pelo lado oposto ao texto, desliza 6% e cresce 5%). Nada de fade-up. Com reduced motion ou sem WebGL, ela não aparece.
 
 ## Layout
 
 Editorial e assimétrico. O modo "largo" vale com pelo menos 768 px **e**
-tela em paisagem: o texto vive numa coluna à esquerda de até `60vw` menos a
-margem. Abaixo disso, tudo empilha.
+tela em paisagem (`(min-width: 768px) and (min-aspect-ratio: 1/1)`). Abaixo
+disso, tudo empilha.
 
-- **Cena do produto (pin de 700vh no desktop, 490vh no celular):** o produto
-  fica no centro da tela, com o conjunto ou a peça em foco ocupando 55 a 70%
-  da altura (e até 66% da largura) no desktop. O texto e a etiqueta de cada
-  beat ficam nas laterais, com pelo menos 22% de largura livre por lado, sem
-  cobrir peça. No celular, o produto continua no centro (a largura limita: até
-  88%) e o texto fica embaixo, em 25% da altura. Com reduced motion, a cena
-  vira nove blocos de 100svh, cada um parado no ponto do meio do beat.
-- **Margem lateral:** `clamp(1.25rem, 4vw, 2.5rem)` em toda a página.
+- **Cena do produto (pin de 700vh no modo largo, 490vh no celular):** o
+  produto fica no centro da tela, com o conjunto ou a peça em foco ocupando 55
+  a 70% da altura (e até 66% da largura) no desktop. O texto do beat fica na
+  lateral (o lado vem de `BEATS`, alternando), numa coluna que é o que sobra
+  dos dois lados do sujeito: `clamp(13rem, (100vw − largura do sujeito) / 2 −
+  1,5 × margem, 28rem)`, centrada na altura. A etiqueta da peça fica no lado
+  oposto. No celular, o produto continua no centro (a largura manda: até 88%)
+  e o texto fica embaixo, a 6svh da base. Com reduced motion, a cena vira nove
+  blocos de 100svh, cada um parado no ponto de repouso do beat; sem WebGL,
+  blocos de 70svh só com texto.
+- **Margem lateral:** gutter em toda a página.
 - **Partes:** começam com uma abertura de capítulo (numeral, título e aula) e
-  32svh de respiro acima. O espaço entre os blocos vem do conteúdo: blocos do
-  mesmo raciocínio ficam a `clamp(4.5rem, 12svh, 8rem)`, e a pausa longa
-  (`clamp(7rem, 22svh, 13rem)`) vem só antes dos destaques (situação-problema,
-  frase-síntese, plano de voo e slogan final). Cada parte tem um tom.
-- **Coluna larga:** nas partes sem produto na tela, os blocos que pedem
-  largura usam até `88vw` (as oportunidades e as três respostas em colunas, o
-  destaque, a persona com o monograma à direita e os 40 km cruzando a tela).
-- **Tabelas:** rolam na horizontal dentro do próprio container no celular.
-- **Header:** 4rem de altura, fixo e sem fundo.
+  32svh de respiro acima (22svh na variante justa). Blocos do mesmo raciocínio
+  ficam a um block de distância; a pausa longa vem só antes dos destaques.
+  Cada parte pinta o próprio campo de tom.
+- **Colunas:** texto até `60vw` menos a margem; coluna estreita até
+  `min(34rem, 44vw − margem)`; coluna larga até `88vw` menos a margem, nos
+  blocos que pedem largura (oportunidades, destaques, a persona com o
+  monograma à direita e os 40 km cruzando a tela).
+- **Tabelas:** a de comparação, até 40rem de tela, empilha por critério: o
+  critério vira um título e cada resposta ganha o nome da coluna antes dela
+  (em label, a 80%). As outras rolam na horizontal dentro do próprio
+  container.
+- **Header:** 4rem de altura, fixo.
 
 ## Elevation & Depth
 
 O DOM é plano: a profundidade vem da cena WebGL, que é transparente e fica
-atrás do texto (o produto com luz de contorno e sombra de contato, a palavra
-gigante atrás dele). O grão é um tile CSS fixo, a 3 ou 4%, sem blend mode.
-No DOM, só duas peças têm sombra, as duas por função: o cartão de embarque,
-que é um objeto físico na metáfora da aula, e o CTA, que precisa se destacar
-do fundo.
+atrás do texto (o produto com luz de contorno, mais forte nos fundos escuros,
+e sombra de contato que esmaece na explosão; bloom só no que emite luz, como o
+LED; tone mapping neutro). O grão é um tile de ruído fixo, na cor do texto a
+4,5%, sem blend mode; cada campo de parte repete o grão por dentro, para o
+mesmo tom não parecer mais escuro do que o da ponte e a divisa não virar
+emenda. No DOM, só duas peças têm sombra, as duas por função: o cartão de
+embarque, que é um objeto físico na metáfora da aula, e o CTA, que precisa se
+destacar do fundo.
 
 ### Shadow Vocabulary
 - **Cartão de embarque** (`filter: drop-shadow(0 14px 18px rgb(20 33 61 / 0.28)) drop-shadow(0 2px 3px rgb(20 33 61 / 0.14))`):
@@ -400,62 +444,70 @@ do fundo.
   curta e azulada, nunca preta.
 
 ### Named Rules
-**A Regra do Fundo Como Superfície.** Nada de painel de vidro, cartão ou faixa
-atrás do texto para "garantir contraste". O contraste vem da escolha do tom e
-da Regra do Corte.
+**A Regra do Fundo Como Superfície.** Nada de painel de vidro, cartão ou faixa atrás do texto para "garantir contraste": o contraste vem da escolha do tom e da Regra do Corte. A única exceção são os closes de Proteger, Guardar e Entregar, em que as peças esmaecidas (a 15%) passam atrás do texto: ali o bloco ganha um pano no próprio `--bg` a 90%, de cantos de 1rem, sem sombra e sem desfoque. Nos outros beats o pano apagaria a palavra gigante, e sem WebGL ele não existe.
 
 ## Shapes
 
 Linhas finas e formas simples. Os blocos de conteúdo se separam por fios de
-1px em `currentColor` com 28 a 30% de opacidade, nunca por caixas. As formas
-redondas são poucas e têm papel: o CTA e as etiquetas de componente em
-pílula (999px), os pontos da linha do tempo e da distância sítio–cidade, e as
-amostras de cor. O único objeto com cantos arredondados é o cartão de
-embarque (18px), com dois recortes circulares e o picote tracejado na divisa
-do canhoto. No produto 3D, nenhuma aresta viva: tudo que aparece tem chanfro.
+1px em `currentColor` com 25 a 30% de opacidade, nunca por caixas. As formas
+redondas são poucas e têm papel: o CTA, os botões do HUD e as etiquetas de
+componente em pílula, os pontos da linha do tempo e da distância sítio–cidade,
+a pastilha numerada da etiqueta e as amostras de cor. Objetos de cantos
+arredondados: o cartão de embarque, com dois recortes circulares e o picote
+tracejado na divisa do canhoto, e o pano do texto nos closes. No produto 3D,
+nenhuma aresta viva: tudo que aparece tem chanfro.
 
 ## Components
 
 ### Buttons
-- **Shape:** pílula (999px), com no mínimo 3rem de altura.
-- **CTA:** fundo Noite com texto Sol, Archivo expandida (110%) com peso 650,
-  e respiro de `0.8rem 1.4rem`.
-- **Hover / Focus:** preenche de Sol com texto Noite, em 180ms com ease-out;
-  no `:active`, encolhe para 0,97. O foco usa o contorno de 2px em Sol.
+- **Shape:** pílula, com no mínimo 3rem de altura.
+- **CTA:** fundo Noite com texto Sol, em UI, com sombra curta azulada.
+- **Hover / Focus:** preenche de Sol com texto Noite, em 180ms com
+  ease-out-quart (o hover só com ponteiro fino); no `:active`, encolhe para
+  0,97 (por `scale`, porque o magnético usa o `transform`). O foco usa o
+  contorno de 2px em Sol.
 - **Magnético (final):** o CTA "Ver o pitch em 3 minutos" segue o ponteiro de
   leve, só com `pointer: fine` e sem reduced motion.
+- **Pular para o conteúdo:** pílula Noite com texto Nuvem, que aparece só com
+  o foco do teclado, na hora.
 
 ### Navigation
-- **Header:** só texto, sem fundo. "SunTech" à esquerda; à direita, as 6
-  âncoras numeradas ("1 Problema" a "6 Jovem"), com o número em peso 700.
+- **Header:** "SunTech" (Brand) à esquerda; à direita, as 6 âncoras numeradas
+  ("1 Problema" a "6 Jovem"), com o número em peso 700. Na cena do produto,
+  sem fundo, sobre o 3D; nas partes, vira uma faixa sólida no `--bg` da parte
+  que está sob ele, e a divisa entre dois campos passa por baixo dela.
 - **Estado atual:** um fio de 1px que cresce da esquerda (`scaleX`) sob a
   parte atual; o mesmo fio aparece no hover, em 220ms.
-- **Progresso:** "N de 6" e um fio fino na base do header.
-- **Troca de tom:** o header sai de cena (sobe e some) enquanto o fundo troca
-  de tom, como na v2.
+- **Progresso:** "N de 6" em caption (só nas partes) e um fio de 1px na base
+  do header, a 22% sob o preenchimento.
+- **Saída de cena:** o header sobe e some (260ms) ao rolar para baixo e
+  enquanto o fundo cruza a faixa sem contraste; volta ao rolar para cima e, na
+  hora, com o foco do teclado. Com reduced motion, só some (opacidade) e não
+  pega clique escondido.
 - **Celular:** as âncoras ficam num botão "Menu" que abre uma folha em Noite,
-  com o foco preso, Esc para fechar e o número da parte atual em Sol.
+  com o foco preso, Esc para fechar, números em menu-number e o da parte
+  atual em Sol.
 
 ### Palavra gigante (assinatura)
 Uma palavra por beat, tirada de `copy.ts` (Sol, Abre, Dentro, Captar,
-Proteger, Guardar, Entregar, Simples, Energia), em Word, a 10% de `--fg`, atrás
-do produto. Anda com o scroll (deslocamento lateral e escala de poucos por
-cento, por `transform`) e troca com o beat, sem fade-up.
+Proteger, Guardar, Entregar, Simples, Energia), em Word, a 11% de `--fg`,
+atrás do produto. Só aparece enquanto a cena está presa.
 
 ### Texto e etiqueta do beat (assinatura)
-Na lateral, um título em Headline e, nos quatro componentes, um dado de
-`product.ts` em Lead (2 placas de 6 V e 3 W; TP4056 com proteção DW01; 2
-células 18650, 5.200 mAh; boost de 3,7 V para 5 V). Perto da peça em foco, a
-etiqueta de componente: um ponto na peça, uma linha e uma pílula Noite com o
-número numa pastilha na cor da etapa, e o nome. No desktop, a pílula fica na
-coluna livre do lado oposto ao texto; no celular, o texto fica embaixo e a
-pílula logo acima dele. Só aparece com a câmera parada no close (junto com o
-texto). No celular, os closes das células e do conversor giram 90° (a peça
-fica em pé na tela em pé).
+Na lateral, um título em Beat title e um texto em Beat text; nos quatro
+componentes, um dado de `product.ts` em label; no último beat, uma nota em
+caption. O texto entra e sai com a opacidade presa ao scroll, nunca por
+gatilho. Perto da peça em foco, a etiqueta de componente: um ponto na peça (na
+cor da etapa, contornado de Noite), uma linha de 1,5px em `--fg` e uma pílula
+Noite com borda Nuvem a 22%, o número numa pastilha redonda na cor da etapa e
+o nome. A etiqueta só aparece com a câmera parada no close. No celular, os
+closes das células e do conversor giram 90° (a peça fica em pé na tela em
+pé).
 
 ### Abertura de capítulo (assinatura)
 Numeral enorme à esquerda, com o título alinhado à base dele e a aula de
-origem abaixo, como legenda. No celular, o numeral fica em cima.
+origem abaixo, como legenda. No celular, o numeral fica em cima. O numeral
+sobe da máscara com o scroll.
 
 ### Dado com fonte (assinatura)
 O número fica dentro da frase, maior (1,85em, peso 720, largura 112%), com
@@ -465,74 +517,74 @@ todo (o leitor de tela lê ele, e ele segura a largura); a contagem corre por
 cima.
 
 ### Revelações
-Só os numerais de capítulo (sobem da máscara com o scroll, ease linear), os
-títulos e destaques (linhas sobem da máscara ao entrar na tela, com a curva
-de revelação), os contadores, as linhas desenhadas (DrawSVG) e o manifesto.
-Os parágrafos só rolam. Com reduced motion, nada se mexe.
+Só os numerais de capítulo, os títulos e destaques (linhas sobem da máscara,
+presas ao scroll, com a curva de revelação), os contadores, as linhas
+desenhadas (picote, linha do tempo, distância, barras de custo) e o
+manifesto. Os parágrafos só rolam. Com reduced motion, nada se mexe.
 
 ### Cartão de embarque (assinatura)
 O plano de voo da Aula 5 (Propósito, Destino, Trajeto e Operações) num
-cartão em Nuvem com texto Noite: os quatro campos em duas colunas e o canhoto
-com o nome da empresa, separados por picote tracejado e dois recortes. É o
-único cartão da página, porque é a metáfora da própria aula.
+cartão em Nuvem com texto Noite, qualquer que seja o campo: os quatro campos
+em duas colunas e o canhoto de 11rem com o nome da empresa, separados por um
+picote tracejado (2px, Noite a 25%) que se desenha com o scroll e por dois
+recortes de 11px. É o único cartão da página, porque é a metáfora da própria
+aula.
 
 ### Tabelas
-Sem fundo e sem zebra: fios de 1px entre as linhas, cabeçalho em label, a
-coluna da SunTech em peso 700, valores alinhados à direita com algarismos
-tabulares e o rótulo "(estimativa)" na legenda da tabela de custos.
-
-### Legenda da energia
-Cada cor de energia é um traço em pílula, contornado de Grafite, com o nome
-escrito ao lado em `--fg`.
+Sem fundo e sem zebra: fios de 1px entre as linhas, cabeçalho em label
+(peso 650), a coluna da SunTech em peso 700, valores alinhados à direita com
+algarismos tabulares e o rótulo "(estimativa)" na legenda da tabela de custos.
+No celular, a comparação empilha por critério (ver Layout).
 
 ### Barras de custo
-Na tabela de custos, uma barra de 5px em `currentColor` embaixo de cada item,
-com a parte dele no total; embaixo do preço, uma barra divide os R$ 249 em
-custo (cheio) e margem (listrada, lida sem cor). Os valores ficam no texto.
+Na tabela de custos, uma barra de 5px em `currentColor` a 80% embaixo de cada
+item, com a parte dele no total; embaixo do preço, uma barra de 12px divide os
+R$ 249 em custo (cheio) e margem (listrada a 45°, lida sem cor). Os valores
+ficam no texto.
+
+### Amostras de cor
+Na identidade da empresa, círculos de 1,75rem em Sol, Céu e Noite, com um
+contorno interno de 1px em Noite a 30% e o nome ao lado.
 
 ### HUD do modo pitch
-Faixa fixa embaixo, em Grafite com texto Nuvem: relógio (`hud-clock`), "Fala
-agora" (`hud-label`), o setor em Sol (`hud-sector`), a parada (`hud-stop`), a
-barra de progresso em Sol e os botões em pílula contornada (`hud-button`). O
-tipo cresce com a tela, para ler a 3 m na TV; no celular, em duas linhas.
+Faixa fixa embaixo, em Grafite com texto Nuvem: relógio (hud-clock), "Fala
+agora" (hud-label, a 70%), o setor em Sol (hud-sector), a parada (hud-stop),
+a barra de progresso de 3px em Sol e os botões em pílula contornada
+(hud-button, borda a 55%, que preenchem de Nuvem no hover). O tipo cresce com
+a tela, para ler a 3 m na TV; no celular, em duas linhas. Entra subindo em
+260ms (com reduced motion, só aparece).
 
 ### Cursor
-Só com `pointer: fine` e sem reduced motion: um anel no tom do texto
-(`--fg`) que acompanha a seta do sistema (ela continua: respeita o tamanho
-de cursor que a pessoa escolheu) e cresce sobre o que é clicável.
+Só com `pointer: fine` e sem reduced motion: um anel de 2,75rem e 1,5px no
+tom do texto (`--fg`), a 60%, que acompanha a seta do sistema (ela continua:
+respeita o tamanho de cursor que a pessoa escolheu) e cresce de 0,3 para 1
+sobre o que é clicável.
+
+### Loader
+Uma linha de 1px no pé da cena, onde o produto vai pousar, que se preenche em
+`--fg` sobre um trilho a 22%.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** mantenha o produto no centro da tela e mexa só a câmera e as peças.
-- **Do** troque o tom (fundo e texto) só nos 3% finais do beat, com o texto
-  em opacidade 0, com o crossfade de 400ms de `--fg`.
-- **Do** ponha a palavra gigante atrás do produto, a 10% de `--fg`, e a
-  esconda do leitor de tela.
-- **Do** use a Archivo expandida (de 108 a 125%) para títulos, números e a
-  palavra, e a largura 100% para leitura, com corpo de 17px, entrelinha 1,5 e
-  até 65ch.
-- **Do** ponha a aula de origem e as fontes abaixo do que explicam, em
-  caption.
-- **Do** mostre cada cor de energia como luz num fio Grafite, sempre com o
-  nome.
-- **Do** revele com a curva `cubic-bezier(0.22, 1, 0.36, 1)` (numerais,
-  títulos por linha, contadores e linhas desenhadas) e use ease linear nas
-  timelines com scrub, com uma só camada de suavização.
-- **Do** mantenha alvos de toque com 44px ou mais e foco visível em tudo.
+- **Do** troque o tom da cena só na janela de ±1,5% do pin em volta da divisa, com o texto do beat em opacidade 0, e deixe `--fg` trocar com o crossfade de 400ms.
+- **Do** deixe cada parte pintar o próprio campo (`data-field`) e o header virar uma faixa no `--bg` dela.
+- **Do** ponha a palavra gigante atrás do produto, a 11% de `--fg`, e a esconda do leitor de tela.
+- **Do** use a Archivo expandida (de 108 a 125%) para títulos, números e a palavra, e a largura 100% para leitura, com corpo de 17px, entrelinha 1,5 e até 65ch.
+- **Do** ponha a aula de origem e as fontes abaixo do que explicam, em caption.
+- **Do** mostre cada cor de energia como luz ou como a pastilha da etapa, sempre com o nome.
+- **Do** revele com a curva `cubic-bezier(0.22, 1, 0.36, 1)` e deixe as timelines presas ao scroll com `scrub: true`, sobre o Lenis, numa só camada de suavização.
+- **Do** mantenha alvos de toque com 44px ou mais e foco visível em tudo (contorno de 2px em `--fg`, afastado 3px).
 
 ### Don't:
-- **Don't** dê fundo a uma seção além do tom dela, nem ponha vidro, cartão ou
-  faixa atrás do texto.
+- **Don't** dê fundo a uma seção além do tom dela, nem ponha vidro, cartão ou faixa atrás do texto; o pano dos closes de Proteger, Guardar e Entregar é a única exceção.
 - **Don't** use gradiente de fundo, céu, hora do dia ou estrelas.
 - **Don't** use fade com slide-up em toda seção; os parágrafos só rolam.
-- **Don't** crie grade de cards iguais; cada bloco tem o layout que o
-  conteúdo pede.
-- **Don't** use rótulo em caixa-alta acima de título, palavra do título
-  destacada em cor ou itálico, "→" em botão ou fonte mono em rótulo.
-- **Don't** cubra uma peça com texto, nem ponha a palavra gigante na frente do
-  produto.
-- **Don't** use as cores de energia como cor de texto ou como enfeite.
+- **Don't** crie grade de cards iguais; cada bloco tem o layout que o conteúdo pede.
+- **Don't** use rótulo em caixa-alta acima de título, palavra do título destacada em cor ou itálico, "→" em botão ou fonte mono em rótulo.
+- **Don't** cubra uma peça com texto, nem ponha a palavra gigante na frente do produto.
+- **Don't** use as cores de energia como cor de texto, como fundo de bloco ou como enfeite.
+- **Don't** use as cores dos materiais 3D no DOM, nem as cores da interface como material.
 - **Don't** use separadores "·", "—" ou "→" na interface.
-- **Don't** use fundo quase preto no lugar de Noite, nem cinza neutro no
-  lugar de Grafite.
+- **Don't** use fundo quase preto no lugar de Noite, nem cinza neutro no lugar de Grafite.

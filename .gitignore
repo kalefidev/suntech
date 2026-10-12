@@ -36,3 +36,8 @@ scripts/model/.cache/
 # Modelo feito à mão: o .blend entra no commit; o export cru e os backups do Blender, não
 models-src/*.glb
 *.blend1
+
+# Sobras da v2: ficam no disco, fora do git
+ONDE-PARAMOS.md
+ONDE-PARAMOS-CODIGO.md
+PROMPT-1-SUNTECH.md

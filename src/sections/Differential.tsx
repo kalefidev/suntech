@@ -32,23 +32,27 @@ export function Differential() {
           {t.diffTitle}
         </h3>
         <div className="table-scroll" role="region" aria-labelledby="diferencial-tabela-titulo" tabIndex={0}>
-          <table className="data-table data-table--compare">
-            <thead>
-              <tr>
-                <td />
+          {/* Papéis explícitos: no celular a tabela vira grade (CSS), e o Safari tira a
+              semântica de tabela de quem muda de `display`. */}
+          <table className="data-table data-table--compare" role="table">
+            <thead role="rowgroup">
+              <tr role="row">
+                <td role="cell" />
                 {t.diffColumns.map((column, i) => (
-                  <th key={column} scope="col" data-ours={i === t.diffColumns.length - 1 || undefined}>
+                  <th key={column} scope="col" role="columnheader" data-ours={i === t.diffColumns.length - 1 || undefined}>
                     {column}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
               {t.diffRows.map((row) => (
-                <tr key={row.label}>
-                  <th scope="row">{row.label}</th>
+                <tr key={row.label} role="row">
+                  <th scope="row" role="rowheader">
+                    {row.label}
+                  </th>
                   {row.cells.map((cell, i) => (
-                    <td key={i} data-ours={i === row.cells.length - 1 || undefined}>
+                    <td key={i} role="cell" data-ours={i === row.cells.length - 1 || undefined} data-label={t.diffColumns[i]}>
                       {cell}
                     </td>
                   ))}
